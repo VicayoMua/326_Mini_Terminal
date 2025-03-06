@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mini Terminal</title>
+    <link rel="stylesheet" href="lib/xterm.css"/>
+    <link rel="stylesheet" href="./index.css"/>
+</head>
+<body>
+
+<div class="main-page">
+
+    <div class="header">
+        <h1>Welcome to 326 Mini Terminal!</h1>
+    </div>
+
+    <div class="terminal-container" id="terminal-container"></div>
+
+    <div class="additional-buttons">
+        <h2>Additional Buttons</h2>
+        <p>This is the additional buttons.</p>
+    </div>
+
+    <div class="footer">
+        <p>Authors: Vicayo Zhang...</p>
+    </div>
+
+</div>
+
+
+<!-- Library Scripts -->
+<!--<script src="https://unpkg.com/xterm/lib/xterm.js"></script> &lt;!&ndash; Include xterm.js from CDN &ndash;&gt;-->
+<script src="lib/xterm.js"></script>
+<!--<script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script> &lt;!&ndash; Include xterm-addon-fit.js from CDN &ndash;&gt;-->
+<script src="lib/xterm-addon-fit.js"></script>
+
+
+<!-- Core Terminal Scripts -->
+<script src="src/terminal_setup_core.js"></script>
+
+
+<!-- Additional Terminal Scripts -->
+<script src="src/terminal_setup_command_ls.js"></script>
+<script src="src/terminal_setup_command_touch.js"></script>
+<script src="src/terminal_setup_command_cd.js"></script>
+<script src="src/terminal_setup_command_pwd.js"></script>
+<script src="src/terminal_setup_command_mkdir.js"></script>
+<script src="src/terminal_setup_command_rename.js"></script>
+<script src="src/terminal_setup_command_edit.js"></script>
+
+
+<!--
+
+    Built-in commands:
+        * - hello,
+        * - help,
+        * - man,
+        * - echo,
+
+    Solvable commands: (Milestone 3-4)
+        * - ls,
+        2 - add button 'extract terminal log' (outside the terminal object)
+        3 - mkdir,
+        4 - touch,
+        5 - pwd
+        6 - cd,
+        7 - rename,
+        8 - cp,
+
+    Challenging: (Milestone 5)
+        1 - save log button,
+        2 - "edit" command,
+        3 - add button 'import fs from json file',
+        4 - add button 'export fs from json file',
+
+    Other things to do: (Milestone 6)
+        0 - double-check the "description" property of each supported command,
+        1 - add button 'add file from local' (outside the terminal object),
+        2 - Add cool user interface,
+        3 - Web Assembly...
+
+-->
+
+</body>
+</html>
