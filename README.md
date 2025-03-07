@@ -17,7 +17,7 @@ A terminal simulator, which can be accessed on web browsers and run on local dev
     - Additionally, we can set up additional buttons outside the terminal window to support log-saving, file-system-importing, and file-system-exporting. So, people can easily save and resume their work efficiently.
     - Finally, if time allows, the terminal will have supports for Web Assembly, so the terminal can be used to program new programs.
 - **Why This Project?**
-    - ...
+The “Web Terminal Simulator” also is a great application to implement. Using EdLab has been a task at many points. Logging in everytime through the terminal followed by verification can become frustrating when you repeatedly want to access your files and resume your work after a short break. 
 
 ## Team Members
 - **Vicayo Zhang** – Project Leader
