@@ -20,7 +20,7 @@
     - First Issue To Work ON: 
     - Second Issue To Work ON: 
     - Third Issue To Work ON:
-- **NAME** – ROLE
+- **Aryan Ghosh** – Project Developer
     - First Issue To Work ON:
     - Second Issue To Work ON:
     - Third Issue To Work ON:
