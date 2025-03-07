@@ -25,7 +25,7 @@ The “Web Terminal Simulator” also is a great application to implement. Using
     - Second Issue To Work ON: 
     - Third Issue To Work ON:
 - **Aryan Ghosh** – Project Developer
-    - First Issue To Work ON:
+    - First Issue To Work ON: Command input screen
     - Second Issue To Work ON:
     - Third Issue To Work ON:
 - **NAME** – ROLE
