@@ -5,12 +5,15 @@
 
 ## Project Description
 - **Problem:**
+    - ...
 - **Solution:**
+    - ...
 - **Key Features:**
     - The terminal simulator will support the most usual Linux commands, like ls, pwd, cd, mkdir, rename, touch, cp, edit. It has file managing system simulations.
     - Additionally, we can set up additional buttons outside the terminal window to support log-saving, file-system-importing, and file-system-exporting. So, people can easily save and resume their work efficiently.
     - Finally, if time allows, the terminal will have supports for Web Assembly, so the terminal can be used to program new programs.
 - **Why This Project?**
+    - ...
 
 ## Team Members
 - **Vicayo Zhang** – Project Manager / Leader
