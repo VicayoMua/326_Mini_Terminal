@@ -16,7 +16,7 @@
     - ...
 
 ## Team Members
-- **Vicayo Zhang** – Project Manager / Leader
+- **Vicayo Zhang** – Project Leader
     - First Issue To Work ON: 
     - Second Issue To Work ON: 
     - Third Issue To Work ON:
