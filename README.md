@@ -5,7 +5,10 @@
 
 ## Project Description
 - **Problem:**
-    - ...
+Large universities, like UMass, usually provide ssh server environments, like EdLab, for students to get familiar with Linux-styled commands. However, most students only use the most basic features on EdLab, so the power assumption and the continuous maintenance cost are not worth it. 
+Students, who are not enrolled in a university and have no previous experience in installing and using Linux, usually find it hard to install a Linux distribution on their PCs. 
+
+  
 - **Solution:**
     - ...
 - **Key Features:**
