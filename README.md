@@ -10,7 +10,8 @@ Students, who are not enrolled in a university and have no previous experience i
 
   
 - **Solution:**
-    - ...
+A terminal simulator, which can be accessed on web browsers and run on local devices (phones, tablets, and PCs), can perfectly solve this problem.
+
 - **Key Features:**
     - The terminal simulator will support the most usual Linux commands, like ls, pwd, cd, mkdir, rename, touch, cp, edit. It has file managing system simulations.
     - Additionally, we can set up additional buttons outside the terminal window to support log-saving, file-system-importing, and file-system-exporting. So, people can easily save and resume their work efficiently.
