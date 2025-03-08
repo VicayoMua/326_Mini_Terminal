@@ -373,7 +373,7 @@ const terminalCore = (() => {
         getCurrentKeyboardListener: () => currentTerminalKeyboardListener,
         getCurrentFolderPointer: () => currentTerminalFolderPointer,
         getSupportedCommands: () => supportedCommands,
-        getLog: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
+        getLogAsString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
         getXTermObject: () => terminal, // avoid using this for a maintainable code structure and better performance!!!
     };
 })();
