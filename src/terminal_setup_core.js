@@ -355,9 +355,9 @@ const terminalCore = (() => {
             if (if_print_to_log)
                 terminalLog.push(sentence);
             if (if_print_raw_to_window) {
-                terminal.write(sentence);
+                terminal.write(sentence); // leave <sentence> as it was
             } else {
-                terminal.write(sentence.replaceAll('\n', '\n\r   '));
+                terminal.write(sentence.replaceAll('\n', '\n\r   ')); // replace all '\n' in <sentence> with '\n\r   '
             }
         },
         createFolderPointer: () => { // () => Folder Pointer
