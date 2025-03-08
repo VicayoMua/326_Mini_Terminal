@@ -22,15 +22,15 @@ A terminal simulator, which can be accessed on web browsers and run on local dev
 The “Web Terminal Simulator” also is a great application to implement. Using EdLab has been a task at many points. Logging in everytime through the terminal followed by verification can become frustrating when you repeatedly want to access your files and resume your work after a short break. 
 
 ## Team Members
-- **Vicayo Zhang** – Project Leader
-    - First Issue To Work ON: 
-    - Second Issue To Work ON: 
-    - Third Issue To Work ON:
-- **Aryan Ghosh** – Project Developer
+- **Vicayo Zhang** – Project Manager & Core Service Developer
+    - First Issue To Work ON: Basic terminal input and output logics
+    - Second Issue To Work ON: Log recording logics
+    - Third Issue To Work ON: file system simulation logics
+- **Aryan Ghosh** – Software Developer & Admin Monitoring
     - First Issue To Work ON: Command input screen
     - Second Issue To Work ON: User Session data
     - Third Issue To Work ON: Project Documentation
-- **Stella Dey** – Project Developer
+- **Stella Dey** – Debugging & Testing Coordinator
     - First Issue To Work ON: Customizable Theme - (Light/Dark Mode) #17
     - Second Issue To Work ON: File System Structure Data #18
     - Third Issue To Work ON: Project Documentation
