@@ -1,9 +1,9 @@
 /*
 * **************************************************************************************************************
 *
-*                                           START OF MY NEW FILE
+*                                              START OF FILE
 *
-*                This file initializes the terminal window frame and the virtual file system.
+*             This file initializes the terminal window frame and all the terminal core services.
 *
 * **************************************************************************************************************
 * */
