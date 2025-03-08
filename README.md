@@ -26,6 +26,7 @@ The “Web Terminal Simulator” also is a great application to implement. Using
     - First Issue To Work ON: Basic terminal input and output logics
     - Second Issue To Work ON: Log recording logics
     - Third Issue To Work ON: file system simulation logics
+    - Fourth Issue To Work ON: some demo on-terminal applications/commands (hello, help, man, and echo)
 - **Aryan Ghosh** – Software Developer & Admin Monitoring
     - First Issue To Work ON: Command input screen
     - Second Issue To Work ON: User Session data
