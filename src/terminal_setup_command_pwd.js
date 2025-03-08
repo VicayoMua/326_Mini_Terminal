@@ -6,7 +6,7 @@
 
 terminalCore.getSupportedCommands()['pwd'] = {
     executable: (parameters) => {
-        terminalCore.printToWindow(`${terminalCore.getCurrentFolderPointer().getFullPath()}`, false, true);
+
     },
     description: 'Print the current full path.'
 };
