@@ -31,6 +31,6 @@ The “Web Terminal Simulator” also is a great application to implement. Using
     - Second Issue To Work ON: User Session data
     - Third Issue To Work ON: Project Documentation
 - **Stella Dey** – Project Developer
-    - First Issue To Work ON:
-    - Second Issue To Work ON:
-    - Third Issue To Work ON: 
+    - First Issue To Work ON: Customizable Theme - (Light/Dark Mode) #17
+    - Second Issue To Work ON: File System Structure Data #18
+    - Third Issue To Work ON: Project Documentation
