@@ -1,6 +1,6 @@
 /*
 *
-* Using { terminalFilePointer, printToTerminal } from terminal_setup_core.js
+* Using { terminalFilePointer, printToTerminal } from terminal_core_generator.js
 *
 * */
 
