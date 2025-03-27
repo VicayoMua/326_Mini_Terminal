@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
     <title>Mini Terminal</title>
+
     <link rel="stylesheet" href="lib/xterm.css"/>
     <link rel="stylesheet" href="./index.css"/>
+
+    <!-- Library Scripts -->
+    <!--<script src="https://unpkg.com/xterm/lib/xterm.js"></script> &lt;!&ndash; Include xterm.js from CDN &ndash;&gt;-->
+    <script src="lib/xterm.js"></script>
+    <!--<script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script> &lt;!&ndash; Include xterm-addon-fit.js from CDN &ndash;&gt;-->
+    <script src="lib/xterm-addon-fit.js"></script>
+
 </head>
 <body>
 
@@ -31,18 +42,9 @@
 </div>
 
 
-<!-- Library Scripts -->
-<!--<script src="https://unpkg.com/xterm/lib/xterm.js"></script> &lt;!&ndash; Include xterm.js from CDN &ndash;&gt;-->
-<script src="lib/xterm.js"></script>
-<!--<script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script> &lt;!&ndash; Include xterm-addon-fit.js from CDN &ndash;&gt;-->
-<script src="lib/xterm-addon-fit.js"></script>
-
-
 <!-- Terminal Core Scripts -->
 <script src="src/terminal_core_generator.js"></script>
-
-
-
+<script src="src/terminal_setup_core.js"></script>
 
 <!--
 
