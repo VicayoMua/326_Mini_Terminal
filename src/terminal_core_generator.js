@@ -1,17 +1,14 @@
 /*
 * **************************************************************************************************************
 *
-*                                           START OF MY NEW FILE
+*                                              START OF FILE
 *
-*                This file initializes the terminal window frame and the virtual file system.
+*             This file initializes the terminal window frame and all the terminal core services.
 *
 * **************************************************************************************************************
 * */
 
-
-const htmlElem_terminalContainer = document.getElementById('terminal-container');
-
-const terminalCore = (() => {
+function generateTerminalCore() {
     // Terminal Object
     const terminal = new window.Terminal({
         fontFamily: '"Fira Code", monospace',
@@ -39,6 +36,7 @@ const terminalCore = (() => {
             brightWhite: '#eff0eb'
         },
     });
+    const htmlElem_terminalContainer = document.getElementById('terminal-container');
     // Put Terminal Window to Webpage Container
     terminal.open(htmlElem_terminalContainer);
 
@@ -95,10 +93,10 @@ const terminalCore = (() => {
                 }
                 return contents.length === 0 ? 'No file or folder existing here...' : contents;
             },
-            getSubfolderNames: ()=>{
+            getSubfolderNames: () => {
                 return Object.keys(currentFolder.subfolders);
             },
-            getFileNames: ()=>{
+            getFileNames: () => {
                 return Object.keys(currentFolder.files);
             },
 
@@ -355,9 +353,9 @@ const terminalCore = (() => {
             if (if_print_to_log)
                 terminalLog.push(sentence);
             if (if_print_raw_to_window) {
-                terminal.write(sentence);
+                terminal.write(sentence); // leave <sentence> as it was
             } else {
-                terminal.write(sentence.replaceAll('\n', '\n\r   '));
+                terminal.write(sentence.replaceAll('\n', '\n\r   ')); // replace all '\n' in <sentence> with '\n\r   '
             }
         },
         createFolderPointer: () => { // () => Folder Pointer
@@ -373,69 +371,7 @@ const terminalCore = (() => {
         getCurrentKeyboardListener: () => currentTerminalKeyboardListener,
         getCurrentFolderPointer: () => currentTerminalFolderPointer,
         getSupportedCommands: () => supportedCommands,
-        getLog: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
+        getLogAsString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
         getXTermObject: () => terminal, // avoid using this for a maintainable code structure and better performance!!!
     };
-})();
-
-// Built-in Command
-terminalCore.getSupportedCommands()['help'] = {
-    executable: (_) => {
-        terminalCore.printToWindow(
-            `Supported commands are: ${
-                Object.keys(terminalCore.getSupportedCommands()).reduce(
-                    (acc, elem, index) => {
-                        if (index === 0) return `${elem}`;
-                        return `${acc}, ${elem}`;
-                    },
-                    undefined
-                )
-            }.\nFor more details, please use the command "man [command_name]".`,
-            false,
-            true
-        );
-    },
-    description: 'A brief manual of the terminal simulator.',
-};
-
-// Built-in Command
-terminalCore.getSupportedCommands()['man'] = {
-    executable: (parameters) => {
-        switch (parameters.length) {
-            case 1: {
-                const
-                    commandName = parameters[0],
-                    commandObject = terminalCore.getSupportedCommands()[commandName];
-                if (commandObject === undefined) {
-                    terminalCore.printToWindow(
-                        `The command "${commandName}" is not supported!`,
-                        true,
-                        true
-                    );
-                } else {
-                    terminalCore.printToWindow(
-                        `Description of ${commandName}: \n\n${commandObject.description}`,
-                        false,
-                        true
-                    );
-                }
-                break;
-            }
-            default: {
-                terminalCore.printToWindow(`Wrong grammar!\nUsage: man [command_name]`, false, true);
-            }
-        }
-    },
-    description: 'A detailed manual of the terminal simulator.\nUsage: man [command_name]',
-};
-
-// Built-in Command
-terminalCore.getSupportedCommands()['echo'] = {
-    executable: (parameters) => {
-        terminalCore.printToWindow(`"${parameters.reduce((acc, elem, index) => {
-            if (index === 0) return elem;
-            return `${acc} ${elem}`;
-        }, '')}"`, false, true);
-    },
-    description: 'Simply print all the parameters -- with quotation marks [\"] added at the beginning and the end.\n Usage: echo [parameter_sequence]',
-};
+}

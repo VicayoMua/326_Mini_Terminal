@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
     <title>Mini Terminal</title>
+
     <link rel="stylesheet" href="lib/xterm.css"/>
     <link rel="stylesheet" href="./index.css"/>
+
+    <!-- Library Scripts -->
+    <!--<script src="https://unpkg.com/xterm/lib/xterm.js"></script> &lt;!&ndash; Include xterm.js from CDN &ndash;&gt;-->
+    <script src="lib/xterm.js"></script>
+    <!--<script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script> &lt;!&ndash; Include xterm-addon-fit.js from CDN &ndash;&gt;-->
+    <script src="lib/xterm-addon-fit.js"></script>
+
 </head>
+
 <body>
 
 <input type="checkbox" id="theme-toggle" class="theme-toggle" hidden>
@@ -18,21 +30,22 @@
 <div class="main-page">
 
     <div class="header">
-        <h1>Welcome to 326 Mini Terminal!</h1>
+        <h1>Welcome to Mini Terminal!</h1>
     </div>
     <div class="terminal-container" id="terminal-container"></div>
 
     <div class="additional-buttons">
-        <h2>Additional Buttons</h2>
-        <p>This is the additional buttons.</p>
+        <button type="button" onclick="alert('Button clicked!')">Download Terminal Log</button>
+        <button type="button" onclick="alert('Button clicked!')">Import FileSystem.JSON</button>
+        <button type="button" onclick="alert('Button clicked!')">Export FileSystem.JSON</button>
+        <button type="button" onclick="alert('Button clicked!')">Add Local File</button>
     </div>
 
     <div class="footer">
-        <p>Authors: Vicayo Zhang...</p>
+        <p>Authors: Vicayo Zhang, Aryan Ghosh, and Stella Dey</p>
     </div>
 
 </div>
-
 
 <!-- Library Scripts -->
 <!--<script src="https://unpkg.com/xterm/lib/xterm.js"></script> &lt;!&ndash; Include xterm.js from CDN &ndash;&gt;-->
@@ -63,7 +76,15 @@
 
 
 
+<!-- Terminal Core Scripts -->
+<script src="src/terminal_core_generator.js"></script>
+<script src="src/terminal_setup_core_and_commands.js"></script>
+
+
 <!--
+
+    Symbol '*' remarks the finished tasks.
+    Symbol '?' remarks the tasks that we may need to update.
 
     Built-in commands:
         * - hello,
@@ -72,7 +93,7 @@
         * - echo,
 
     Solvable commands: (Milestone 3-4)
-        * - ls,
+        ? - ls,
         2 - add button 'extract terminal log' (outside the terminal object)
         3 - mkdir,
         4 - touch,
