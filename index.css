@@ -83,3 +83,30 @@
     border-radius: 8px;
     text-align: center;
 }
+
+@media (max-width: 768px) {
+    .main-page {
+        grid-template-columns: 1fr; /* Switch to a single column layout */
+    }
+    .additional-buttons {
+        order: -1; /* Moves the buttons above the terminal container */
+    }
+}
+
+@media (max-width: 480px) {
+    .header, .footer {
+        padding: 8px; /* Smaller padding for smaller screens */
+    }
+    .additional-buttons button {
+        padding: 8px 16px; /* Smaller button size for ease of use on mobile */
+        font-size: 14px; /* Smaller font size for better readability on small devices */
+    }
+}
+
+/* Ensuring Cross-Browser Compatibility */
+* {
+    box-sizing: border-box; /* Includes padding and border in element's total width and height */
+}
+html {
+    font-family: 'Arial', sans-serif; /* Common font for consistency across different browsers */
+}
