@@ -9,17 +9,12 @@
 </head>
 <body>
 
-<input type="checkbox" id="theme-toggle" class="theme-toggle" hidden>
-<label for="theme-toggle" class="mode-toggle">
-    <span class="sun">☀️</span>
-    <span class="moon">🌙</span>
-</label>
-
 <div class="main-page">
 
     <div class="header">
         <h1>Welcome to 326 Mini Terminal!</h1>
     </div>
+
     <div class="terminal-container" id="terminal-container"></div>
 
     <div class="additional-buttons">
@@ -53,14 +48,6 @@
 <script src="src/terminal_setup_command_mkdir.js"></script>
 <script src="src/terminal_setup_command_rename.js"></script>
 <script src="src/terminal_setup_command_edit.js"></script>
-
-<script>
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('change', () => {
-        document.body.classList.toggle('dark-mode', themeToggle.checked);
-    });
-</script>
-
 
 
 <!--
