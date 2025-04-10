@@ -146,6 +146,28 @@
     text-align: center;
 }
 
+/* Styles for the multi-view navigation bar */
+.view-nav {
+  display: block;           /* Ensure it's displayed as a block element */
+  padding: 10px;
+  text-align: center;
+  background-color: var(--bg-color);  /* Use a variable or set a color */
+  border-bottom: 1px solid var(--text-color);
+  margin-bottom: 10px;      /* Some spacing after the nav */
+}
+
+.view-nav a {
+  color: var(--text-color); /* Consistent text color */
+  text-decoration: none;
+  margin-right: 15px;
+  transition: color 0.3s;
+}
+
+.view-nav a:hover {
+  color: var(--terminal-text);  /* Change color on hover for interactivity */
+}
+
+
 @media (max-width: 768px) {
     .main-page {
         grid-template-columns: 1fr; /* Switch to a single column layout */
