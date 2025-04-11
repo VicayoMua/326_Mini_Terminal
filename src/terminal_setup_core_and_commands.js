@@ -1,7 +1,9 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const terminalCore = generateTerminalCore();
+let terminalCore = undefined;
 
-    // Built-in Command
+document.addEventListener('DOMContentLoaded', () => {
+    terminalCore = generateTerminalCore();
+
+    // Finished
     terminalCore.getSupportedCommands()['help'] = {
         executable: (_) => {
             terminalCore.printToWindow(
@@ -21,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'A brief manual of the terminal simulator.',
     };
 
-    // Built-in Command
+    // Finished
     terminalCore.getSupportedCommands()['man'] = {
         executable: (parameters) => {
             switch (parameters.length) {
@@ -52,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'A detailed manual of the terminal simulator.\nUsage: man [command_name]',
     };
 
-    // Built-in Command
+    // Finished
     terminalCore.getSupportedCommands()['echo'] = {
         executable: (parameters) => {
             terminalCore.printToWindow(`"${parameters.reduce((acc, elem, index) => {
