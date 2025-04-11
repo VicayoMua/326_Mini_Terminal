@@ -38,10 +38,12 @@
     <input type="button" id="body-theme-toggle" onclick="switch_theme()" hidden>
     <label for="body-theme-toggle" class="body-theme-toggle">🌙</label>
     <script>
-        const switch_theme = () => {
+        const switch_theme = (() => {
             const theme_icon = document.querySelector('label[for=\"body-theme-toggle\"]');
-            theme_icon.innerHTML = document.body.classList.toggle('dark-body-mode') ? '☀️' : '🌙';
-        };
+            return () => {
+                theme_icon.innerHTML = document.body.classList.toggle('dark-body-mode') ? '☀️' : '🌙';
+            };
+        })();
     </script>
 
     <nav class="view-navigation">

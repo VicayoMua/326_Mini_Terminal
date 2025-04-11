@@ -5,19 +5,20 @@ let terminalStateDB = undefined;
     // Open (or create) the IndexedDB database called "TerminalStateDB" with version 1
     const dbRequest = indexedDB.open("TerminalStateDB", 1);
     // Listen for the 'upgradeneeded' event to create the object store if necessary
-    dbRequest.addEventListener("upgradeneeded", event => {
+    dbRequest.onupgradeneeded = (event) => {
         const db = event.target.result;
         // Create the object store "TerminalStateStore" with "id" as the key path, if it doesn't exist
         if (!db.objectStoreNames.contains("TerminalStateStore")) {
             db.createObjectStore("TerminalStateStore", {keyPath: "id"});
         }
-    });
-    dbRequest.addEventListener("success", event => {
+    };
+    dbRequest.onsuccess = (event) => {
         terminalStateDB = event.target.result;
-    });
-    dbRequest.addEventListener("error", event => {
+    };
+
+    dbRequest.onerror = (event) => {
         alert(`Error opening IndexedDB: ${event.target.error}.`);
-    });
+    };
 })();
 
 function save_terminal_state_button() {
@@ -38,8 +39,9 @@ function save_terminal_state_button() {
         terminalState = {
             id: "terminal_state",
             data: terminalCore
-        },
-        putRequest = store.put(terminalState);
+        };
+
+    const putRequest = store.put(terminalState);
 
     // Listen for the success event for the put request
     putRequest.addEventListener("success", () => {
