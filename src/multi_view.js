@@ -10,7 +10,6 @@ function switchView(view) {
     case 'terminal':
       container.innerHTML = `
         <div class="terminal-view">
-          <!-- Insert your terminal initialization and content here -->
           <h2>Terminal View</h2>
           <p>This is the terminal interface.</p>
         </div>
