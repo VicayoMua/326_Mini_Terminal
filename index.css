@@ -49,19 +49,19 @@
     user-select: none;
   }
   
-  .mode-toggle .sun {
+  .mode-toggle .mode-toggle-sun {
     display: none;
   }
   
-  .mode-toggle .moon {
+  .mode-toggle .mode-toggle-moon {
     display: inline;
   }
   
-  #theme-toggle:checked + .mode-toggle .sun {
+  #theme-toggle:checked + .mode-toggle .mode-toggle-sun {
     display: inline;
   }
   
-  #theme-toggle:checked + .mode-toggle .moon {
+  #theme-toggle:checked + .mode-toggle .mode-toggle-moon {
     display: none;
   }
   
