@@ -32,11 +32,11 @@
         <h1>Welcome to Mini Terminal!</h1>
     </div>
 
-    <input type="button" id="theme-toggle" hidden onclick="switch_theme()">
-    <label for="theme-toggle" class="mode-toggle">🌙</label>
+    <input type="button" id="body-theme-toggle" hidden onclick="switch_theme()">
+    <label for="body-theme-toggle" class="body-theme-toggle">🌙</label>
     <script>
         const switch_theme = () => {
-            const theme_icon = document.querySelector('label[for=\"theme-toggle\"]');
+            const theme_icon = document.querySelector('label[for=\"body-theme-toggle\"]');
             theme_icon.innerHTML = document.body.classList.toggle('dark-body-mode') ? '☀️' : '🌙';
         };
     </script>
