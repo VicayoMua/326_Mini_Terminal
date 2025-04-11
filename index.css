@@ -6,11 +6,9 @@
     --sidebar-bg: lightyellow;
     --footer-bg: #EAD7FF;
     --footer-text: black;
-    --xterm-bg: #f4f4f4;
-    --xterm-text: #111;
-  }
-  
-  body.dark-mode {
+}
+
+body.dark-body-mode {
     --bg-color: #1e1e1e;
     --text-color: #eee;
     --terminal-bg: #1a1a1a;
@@ -18,23 +16,21 @@
     --sidebar-bg: #333;
     --footer-bg: #2b2b2b;
     --footer-text: #aaa;
-    --xterm-bg: #1a1a1a;
-    --xterm-text: #e0e0e0;
-  }
-  
-  body {
+}
+
+body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
     margin: 0;
     padding: 0;
-  }
-  
-  .theme-toggle {
+}
+
+.theme-toggle {
     display: none;
-  }
-  
-  .mode-toggle {
+}
+
+.mode-toggle {
     position: absolute;
     top: 10px;
     right: 15px;
@@ -47,33 +43,33 @@
     z-index: 1000;
     border: none;
     user-select: none;
-  }
-  
-  .mode-toggle .mode-toggle-sun {
+}
+
+.mode-toggle .mode-toggle-sun {
     display: none;
-  }
-  
-  .mode-toggle .mode-toggle-moon {
+}
+
+.mode-toggle .mode-toggle-moon {
     display: inline;
-  }
-  
-  #theme-toggle:checked + .mode-toggle .mode-toggle-sun {
+}
+
+#theme-toggle:checked + .mode-toggle .mode-toggle-sun {
     display: inline;
-  }
-  
-  #theme-toggle:checked + .mode-toggle .mode-toggle-moon {
+}
+
+#theme-toggle:checked + .mode-toggle .mode-toggle-moon {
     display: none;
-  }
-  
-  .main-page {
+}
+
+.main-page {
     display: grid;
     grid-template-columns: 1fr 300px;
     grid-template-rows: 100px 1fr 80px;
     gap: 10px;
     height: 100vh;
-  }
-  
-  .header {
+}
+
+.header {
     grid-row: 1;
     grid-column: 1 / 3;
 
@@ -83,9 +79,9 @@
     border-radius: 8px;
     text-align: center;
     color: var(--text-color);
-  }
-  
-  .terminal-container {
+}
+
+.terminal-container {
     grid-row: 2;
     grid-column: 1;
     background-color: var(--terminal-bg);
@@ -148,23 +144,23 @@
 
 /* Styles for the multi-view navigation bar */
 .view-nav {
-  display: block;           /* Ensure it's displayed as a block element */
-  padding: 10px;
-  text-align: center;
-  background-color: var(--bg-color);  /* Use a variable or set a color */
-  border-bottom: 1px solid var(--text-color);
-  margin-bottom: 10px;      /* Some spacing after the nav */
+    display: block; /* Ensure it's displayed as a block element */
+    padding: 10px;
+    text-align: center;
+    background-color: var(--bg-color); /* Use a variable or set a color */
+    border-bottom: 1px solid var(--text-color);
+    margin-bottom: 10px; /* Some spacing after the nav */
 }
 
 .view-nav a {
-  color: var(--text-color); /* Consistent text color */
-  text-decoration: none;
-  margin-right: 15px;
-  transition: color 0.3s;
+    color: var(--text-color); /* Consistent text color */
+    text-decoration: none;
+    margin-right: 15px;
+    transition: color 0.3s;
 }
 
 .view-nav a:hover {
-  color: var(--terminal-text);  /* Change color on hover for interactivity */
+    color: var(--terminal-text); /* Change color on hover for interactivity */
 }
 
 
@@ -172,6 +168,7 @@
     .main-page {
         grid-template-columns: 1fr; /* Switch to a single column layout */
     }
+
     .additional-buttons {
         order: -1; /* Moves the buttons above the terminal container */
     }
@@ -181,6 +178,7 @@
     .header, .footer {
         padding: 8px; /* Smaller padding for smaller screens */
     }
+
     .additional-buttons button {
         padding: 8px 16px; /* Smaller button size for ease of use on mobile */
         font-size: 14px; /* Smaller font size for better readability on small devices */
@@ -191,6 +189,7 @@
 * {
     box-sizing: border-box; /* Includes padding and border in element's total width and height */
 }
+
 html {
     font-family: 'Arial', sans-serif; /* Common font for consistency across different browsers */
 }

@@ -26,16 +26,12 @@
 
 <body>
 
-<input type="checkbox" id="theme-toggle" hidden>
+<input type="checkbox" id="theme-toggle" hidden onchange="
+    document.body.classList.toggle('dark-body-mode', this.checked);
+">
 <label for="theme-toggle" class="mode-toggle">
     <span class="mode-toggle-sun">☀️</span>
     <span class="mode-toggle-moon">🌙</span>
-    <script>
-        const themeToggle = document.getElementById('theme-toggle');
-        themeToggle.addEventListener('change', () => {
-            document.body.classList.toggle('dark-mode', themeToggle.checked);
-        });
-    </script>
 </label>
 
 <div class="main-page">
@@ -54,10 +50,22 @@
     <div class="terminal-container" id="terminal-container"></div>
 
     <div class="additional-buttons">
-        <button type="button" onclick="alert('Button clicked!')">Download Terminal Log</button>
-        <button type="button" onclick="alert('Button clicked!')">Import FileSystem.JSON</button>
-        <button type="button" onclick="alert('Button clicked!')">Export FileSystem.JSON</button>
-        <button type="button" onclick="alert('Button clicked!')">Add Local File</button>
+        <button
+                type="button"
+                onclick="alert('Button clicked!')"> Download Terminal Log
+        </button>
+        <button
+                type="button"
+                onclick="alert('Button clicked!')"> Import FileSystem.JSON
+        </button>
+        <button
+                type="button"
+                onclick="alert('Button clicked!')"> Export FileSystem.JSON
+        </button>
+        <button
+                type="button"
+                onclick="alert('Button clicked!')"> Add Local File
+        </button>
     </div>
 
     <div class="footer">
@@ -65,12 +73,6 @@
     </div>
 
 </div>
-
-
-
-
-
-
 
 
 <!--
