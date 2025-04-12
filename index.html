@@ -10,6 +10,8 @@
 
     <link rel="stylesheet" href="lib/xterm.css"/>
     <link rel="stylesheet" href="./index.css"/>
+    <link rel="stylesheet" href="./styles/add_local_file.css"/>
+
 
     <!-- Library Scripts -->
     <!--<script src="https://unpkg.com/xterm/lib/xterm.js"></script> &lt;!&ndash; Include xterm.js from CDN &ndash;&gt;-->
@@ -24,6 +26,7 @@
 
     <!-- Multi-View Switching -->
     <script src="src/multi_view.js"></script>
+    <script src="src/add_local_file.js" defer></script>
 
 </head>
 
@@ -88,6 +91,17 @@
                 onclick="alert('Button clicked!')">
             Add Local File
         </button>
+
+        <div id="add-file-form" style="display: none; margin-top: 10px;">
+            <input
+              type="text"
+              id="filename-input"
+              placeholder="Enter filename (e.g., myfile.txt)"
+              oninput="validateFilename()"
+            />
+            <button onclick="submitFile()">Add File</button>
+            <p id="filename-feedback" style="margin: 5px 0; color: red;"></p>
+          </div>
     </div>
 
     <script>

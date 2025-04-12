@@ -1,55 +1,57 @@
-// document.addEventListener('DOMContentLoaded', function() {
-//     initRouter();
-// });
-//
-//
-// function initRouter() {
-//     window.addEventListener('hashchange', handleRouteChange);
-//     handleRouteChange();
-// }
-//
-// function handleRouteChange() {
-//     const view = window.location.hash.slice(1) || 'terminal';
-//     const terminalContainer = document.getElementById('terminal-container');
-//     const viewContainer = document.getElementById('view-container');
-//     if (!viewContainer) {
-//         console.error('Error: The element with id "view-container" was not found. ' +
-//                       'Please add a <div id="view-container"></div> in your HTML.');
-//         return;
-//     }
-//     switch (view) {
-//         case 'terminal':
-//             terminalContainer.style.display = 'block';
-//             viewContainer.style.display = 'none';
-//             break;
-//
-//         case 'settings':
-//             terminalContainer.style.display = 'none';
-//             viewContainer.style.display = 'block';
-//             viewContainer.innerHTML = `
-//                 <h1>Settings</h1>
-//                 <p>Manage your settings here.</p>
-//             `;
-//             break;
-//
-//         case 'about':
-//             // Hide the terminal and show an about view in view-container
-//             terminalContainer.style.display = 'none';
-//             viewContainer.style.display = 'block';
-//             viewContainer.innerHTML = `
-//                 <h1>About</h1>
-//                 <p>This Mini Terminal application was built by Vicayo Zhang, Aryan Ghosh, and Stella Dey.</p>
-//             `;
-//             break;
-//
-//         default:
-//             // For any other undefined view, display a 404 message
-//             terminalContainer.style.display = 'none';
-//             viewContainer.style.display = 'block';
-//             viewContainer.innerHTML = `
-//                 <h1>404 - Not Found</h1>
-//                 <p>The view "${view}" does not exist.</p>
-//             `;
-//             break;
-//     }
-// }
+function switchView(view) {
+  const container = document.getElementById('view-container');
+  if (!container) {
+    console.error("View container not found!");
+    return;
+  }
+  
+  // switch statement to determine which view to load
+  switch(view) {
+    case 'terminal':
+      container.innerHTML = `
+        <div class="terminal-view">
+          <h2>Terminal View</h2>
+          <p>This is the terminal interface.</p>
+        </div>
+      `;
+      break;
+    case 'settings':
+      container.innerHTML = `
+        <div class="settings-view">
+          <h2>Settings</h2>
+          <p>Configure your settings here.</p>
+        </div>
+      `;
+      break;
+    case 'about':
+      container.innerHTML = `
+        <div class="about-view">
+          <h2>About</h2>
+          <p>Information about the Mini Terminal application.</p>
+        </div>
+      `;
+      break;
+    default:
+      container.innerHTML = `
+        <div class="error-view">
+          <h2>Error</h2>
+          <p>The view "${view}" does not exist.</p>
+        </div>
+      `;
+  }
+  
+  //Update the browser URL without reloading using History API
+  history.pushState({view: view}, view, '#' + view);
+}
+
+window.onpopstate = function(event) {
+  if (event.state && event.state.view) {
+    switchView(event.state.view);
+  }
+};
+
+window.addEventListener('load', () => {
+  // Default view set to terminal
+  const defaultView = window.location.hash.substring(1) || 'terminal';
+  switchView(defaultView);
+});
