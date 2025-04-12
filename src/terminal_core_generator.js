@@ -63,13 +63,54 @@ function generateTerminalCore() {
             return false;
         }
     })();
+
     // Create File System Root
-    const fsRoot = { // FolderObject
+    let fsRoot = { // FolderObject
+        keyCheck: "TERMINAL FS ROOT",
         parentFolder: undefined, // FolderObject
         subfolders: {}, // subfolderName : folderObject
         files: {} // fileName : fileContents
     };
     fsRoot.parentFolder = fsRoot;
+
+    let terminalFSDB = undefined;
+
+    // Set Up <terminalFSDB> and try to restore old <fsRoot>
+    (() => {
+        // Open (or create) the IndexedDB database called "TerminalFSDB" with version 1
+        const dbRequest = indexedDB.open("TerminalFSDB", 1);
+        // Listen for the 'upgradeneeded' event to create the object store if necessary
+        dbRequest.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            // Create the object store "TerminalFSStore" with "id" as the key path, if it doesn't exist
+            if (!db.objectStoreNames.contains("TerminalfSStore")) {
+                db.createObjectStore("TerminalFSStore", {keyPath: "id"});
+            }
+        };
+        dbRequest.onsuccess = (event) => {
+            terminalFSDB = event.target.result;
+
+            // Start a read-only transaction for the object store
+            const store = terminalFSDB.transaction(["TerminalFSStore"], "readonly")
+                .objectStore("TerminalFSStore");
+
+            // Use the get() method to read the terminal file system
+            const getRequest = store.get("terminal_file_system");
+
+            // Listen for the success event for the get request
+            getRequest.addEventListener("success", (event) => {
+                const result = event.target.result; // result: {id: ..., data: ...}
+                if (result !== undefined && result.data["keyCheck"] === "TERMINAL FS ROOT") {
+                    fsRoot = result;
+                    console.log(`Terminal file system restored successfully.`);
+                }
+            });
+        };
+
+        dbRequest.onerror = (event) => {
+            alert(`Error opening IndexedDB: ${event.target.error}.`);
+        };
+    })();
 
     // Tool to Create Folder Pointer (File Browser)
     function createTerminalFolderPointer() {
@@ -106,10 +147,26 @@ function generateTerminalCore() {
                 currentFullPathStack = [];
             },
             gotoSubfolder: (subfolderName) => {
+                if (subfolderName.length === 0)
+                    throw new Error(`Subfolder names cannot be empty strings`);
                 if (currentFolder.subfolders[subfolderName] === undefined)
                     throw new Error(`Folder ${subfolderName} not found`);
                 currentFolder = currentFolder.subfolders[subfolderName];
                 currentFullPathStack.push(subfolderName);
+            },
+            gotoSubpath: (subpath) =>{
+                if (subpath.length === 0)
+                    throw new Error(`Subpaths cannot be empty strings`);
+                let is_first_time = true;
+                for (const subfolderName of subpath.split('/')){
+                    if (subfolderName.length === 0 && !is_first_time)
+                        throw new Error(`Subfolder names cannot be empty strings`);
+                    if (currentFolder.subfolders[subfolderName] === undefined)
+                        throw new Error(`Folder ${subfolderName} not found`);
+                    currentFolder = currentFolder.subfolders[subfolderName];
+                    currentFullPathStack.push(subfolderName);
+                    is_first_time = false;
+                }
             },
             gotoParentFolder: () => {
                 currentFolder = currentFolder.parentFolder;
@@ -170,6 +227,7 @@ function generateTerminalCore() {
 
     // Create Terminal Global Folder Pointer Object
     const currentTerminalFolderPointer = createTerminalFolderPointer();
+
     // Create Terminal Log Array
     let terminalLog = [];
 
@@ -243,7 +301,6 @@ function generateTerminalCore() {
                     const param = parsingHelper();
                     if (param.length > 0) commandParameters.push(param);
                 }
-                // alert(`[${commandParameters}]`);
                 if (supportedCommands[commandName] === undefined) return [1, commandName]; // Error: Command is not supported.
                 try {
                     supportedCommands[commandName].executable(commandParameters);
@@ -358,20 +415,46 @@ function generateTerminalCore() {
                 terminal.write(sentence.replaceAll('\n', '\n\r   ')); // replace all '\n' in <sentence> with '\n\r   '
             }
         },
-        createFolderPointer: () => { // () => Folder Pointer
-            return createTerminalFolderPointer();
-        },
         setDefaultKeyboardListener: () => { // returns void
             setNewTerminalKeyboardListener(defaultTerminalKeyboardListeningCallback);
         },
         setNewKeyboardListener: (keyboard_listening_callback) => { // returns void
             setNewTerminalKeyboardListener(keyboard_listening_callback);
         },
-        getIsFitEnabled: () => isFitEnabled,
+        // getIsFitEnabled: () => isFitEnabled,
         getCurrentKeyboardListener: () => currentTerminalKeyboardListener,
         getCurrentFolderPointer: () => currentTerminalFolderPointer,
+        getNewFolderPointer: () => { // () => Folder Pointer
+            return createTerminalFolderPointer();
+        },
         getSupportedCommands: () => supportedCommands,
-        getLogAsString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
-        getXTermObject: () => terminal, // avoid using this for a maintainable code structure and better performance!!!
+        // getLogAsString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
+        // getXTermObject: () => terminal, // avoid using this for a maintainable code structure and better performance!!!
+        button_to_save_terminal_file_system_to_indexDB: () => {
+            if (terminalFSDB === undefined) {
+                alert(`Error: terminalFSDB is undefined.`);
+                return;
+            }
+
+            // Start a read-write transaction for the object store
+            const store = terminalFSDB.transaction(["TerminalFSStore"], "readwrite")
+                .objectStore("TerminalFSStore");
+
+            // Use the put() method to insert or update the terminal file system
+            const putRequest = store.put({
+                id: "terminal_file_system",
+                data: fsRoot
+            });
+
+            // Listen for the success event for the put request
+            putRequest.addEventListener("success", () => {
+                console.log(`Terminal file system saved successfully.`);
+            });
+
+            // Listen for errors during the put operation
+            putRequest.addEventListener("error", event => {
+                alert(`Error saving terminal file system: ${event.target.error}.`);
+            });
+        },
     };
 }
