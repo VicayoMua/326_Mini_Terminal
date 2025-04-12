@@ -1,6 +1,6 @@
 // Toggle form visibility when "Add Local File" is clicked
 document.querySelectorAll("button").forEach((btn) => {
-    if (btn.textContent.includes("Add Local File")) {
+    if (btn.textContent.includes("Add New File")) {
       btn.onclick = () => {
         const form = document.getElementById("add-file-form");
         form.style.display = form.style.display === "none" ? "block" : "none";
@@ -28,7 +28,7 @@ document.querySelectorAll("button").forEach((btn) => {
     }
   }
   
-  function submitFile() {
+  window.submitFile = function () {
     if (!validateFilename()) {
       alert("Please fix the filename before submitting.");
       return;
@@ -36,11 +36,19 @@ document.querySelectorAll("button").forEach((btn) => {
   
     const filename = document.getElementById("filename-input").value.trim();
   
-    // Simulate file addition (you can integrate with your virtual FS here)
-    alert("File ${filename} added successfully!");
+    try {
+      const folderPointer = terminalCore.getCurrentFolderPointer();
+      folderPointer.changeFile(filename, ""); // create file with empty content
   
-    // Reset form
+      // Feedback in terminal
+      terminalCore.printToWindow(`File "${filename}" created in current directory.`, false, true);
+    } catch (err) {
+      terminalCore.printToWindow(`Error creating file: ${err.message}`, false, true);
+    }
+  
+    // Reset and close form
     document.getElementById("filename-input").value = "";
     document.getElementById("filename-feedback").textContent = "";
     document.getElementById("add-file-form").style.display = "none";
-  }
+  };
+  
