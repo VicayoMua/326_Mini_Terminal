@@ -31,6 +31,7 @@
     - Store previously entered commands and allow users to cycle through them using the up/down arrow keys.
     - Finally, if time allows, the terminal will have supports for Web Assembly, so the terminal can be used to program
       new programs.
+
 - **Why This Project?**
   The “Web Terminal Simulator” also is a great application to implement. Using EdLab has been a task at many points.
   Logging in everytime through the terminal followed by verification can become frustrating when you repeatedly want to
@@ -43,10 +44,12 @@
     - Second Issue To Work ON: Log recording logics
     - Third Issue To Work ON: file system simulation logics
     - Fourth Issue To Work ON: some demo on-terminal applications/commands (hello, help, man, and echo)
+
 - **Aryan Ghosh** – Software Developer & Admin Monitoring
     - First Issue To Work ON: Command input screen
     - Second Issue To Work ON: User Session data
     - Third Issue To Work ON: Project Documentation
+
 - **Stella Dey** – Debugging & Testing Coordinator
     - First Issue To Work ON: Customizable Theme - (Light/Dark Mode) #17
     - Second Issue To Work ON: File System Structure Data #18
