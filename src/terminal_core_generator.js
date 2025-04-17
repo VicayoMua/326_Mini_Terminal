@@ -8,37 +8,11 @@
 * **************************************************************************************************************
 * */
 
-const isValidNameInFileSystem = /^(?!\.{1,2}$)[^\/\0]{1,255}$/.test;
+const
+    isLegalKeyNameInFileSystem = /^(?!\.{1,2}$)[^\/\0]{1,255}$/.test,
+    isLegalPathNameInFileSystem = /^(?!\.{1,2}$)[^\0]{1,255}$/.test;
 
-function generateTerminalCore() {
-    // Terminal Object
-    const terminal = new window.Terminal({
-        fontFamily: '"Fira Code", monospace',
-        cursorBlink: true,
-        allowProposedApi: true,
-        theme: {
-            foreground: '#f1f1f0',
-            background: 'black',
-            selection: '#97979b33',
-            black: '#282a36',
-            brightBlack: '#686868',
-            red: '#ff5c57',
-            brightRed: '#ff5c57',
-            green: '#5af78e',
-            brightGreen: '#5af78e',
-            yellow: '#f3f99d',
-            brightYellow: '#f3f99d',
-            blue: '#57c7ff',
-            brightBlue: '#57c7ff',
-            magenta: '#ff6ac1',
-            brightMagenta: '#ff6ac1',
-            cyan: '#9aedfe',
-            brightCyan: '#9aedfe',
-            white: '#f1f1f0',
-            brightWhite: '#eff0eb'
-        },
-    });
-    const htmlElem_terminalContainer = document.getElementById('terminal-container');
+function generateTerminalCore(terminal, htmlElem_terminalContainer) {
     // Put Terminal Window to Webpage Container
     terminal.open(htmlElem_terminalContainer);
 
@@ -144,16 +118,8 @@ function generateTerminalCore() {
             getFileNames: () => {
                 return Object.keys(currentFolder.files);
             },
-            haveFile: (fileName) => {
-                if (fileName.length === 0)
-                    throw new Error(`File names cannot be empty strings`);
-                return (currentFolder.files[fileName] !== undefined);
-            },
-            haveSubfolder: (subfolderName) => {
-                if (subfolderName.length === 0)
-                    throw new Error(`Subfolder names cannot be empty strings`);
-                return (currentFolder.subfolders[subfolderName] !== undefined);
-            },
+            haveFile: (fileName) => (isLegalKeyNameInFileSystem(fileName) && currentFolder.files[fileName] !== undefined),
+            haveSubfolder: (subfolderName) => (isLegalKeyNameInFileSystem(subfolderName) && currentFolder.subfolders[subfolderName] !== undefined),
 
             /*
             *  Directory Pointer Controllers
@@ -163,16 +129,16 @@ function generateTerminalCore() {
                 currentFullPathStack = [];
             },
             gotoSubfolder: (subfolderName) => {
-                if (subfolderName.length === 0)
-                    throw new Error(`Subfolder names cannot be empty strings`);
+                if (!isLegalKeyNameInFileSystem(subfolderName))
+                    throw new Error(`Subfolder name is illegal`);
                 if (currentFolder.subfolders[subfolderName] === undefined)
                     throw new Error(`Folder ${subfolderName} not found`);
                 currentFolder = currentFolder.subfolders[subfolderName];
                 currentFullPathStack.push(subfolderName);
             },
             gotoSubpath: (subpath) => {
-                if (subpath.length === 0)
-                    throw new Error(`Subpaths cannot be empty strings`);
+                if (!isLegalPathNameInFileSystem(subpath))
+                    throw new Error(`Subpath name is illegal`);
                 let is_first_time = true;
                 for (const subfolderName of subpath.split('/')) {
                     if (subfolderName.length === 0 && !is_first_time)
@@ -194,21 +160,21 @@ function generateTerminalCore() {
             /*
             *  Directory File Controllers
             * */
-            getFile: (fileName) => {
-                if (fileName.length === 0)
-                    throw new Error(`File names cannot be empty strings`);
+            getFileContent: (fileName) => {
+                if (!isLegalKeyNameInFileSystem(fileName))
+                    throw new Error(`File name is illegal`);
                 if (currentFolder.files[fileName] === undefined)
                     throw new Error(`File ${fileName} not found`);
                 return currentFolder.files[fileName];
             },
-            changeFile: (fileName, newContent) => {
-                if (fileName.length === 0)
-                    throw new Error(`File names cannot be empty strings`);
+            changeFileContent: (fileName, newContent) => {
+                if (!isLegalKeyNameInFileSystem(fileName))
+                    throw new Error(`File name is illegal`);
                 currentFolder.files[fileName] = newContent;
             },
             renameExistingFile: (oldFileName, newFileName) => {
-                if (oldFileName.length === 0 || newFileName.length === 0)
-                    throw new Error(`File names cannot be empty strings`);
+                if (!isLegalKeyNameInFileSystem(oldFileName) || !isLegalKeyNameInFileSystem(newFileName))
+                    throw new Error(`File name is illegal`);
                 if (currentFolder.files[oldFileName] === undefined)
                     throw new Error(`File ${oldFileName} not found`);
                 if (currentFolder.files[newFileName] !== undefined)
@@ -217,8 +183,8 @@ function generateTerminalCore() {
                 delete currentFolder.files[oldFileName];
             },
             deleteFile: (fileName) => {
-                if (fileName.length === 0)
-                    throw new Error(`File names cannot be empty strings`);
+                if (!isLegalKeyNameInFileSystem(fileName))
+                    throw new Error(`File name is illegal`);
                 if (currentFolder.files[fileName] === undefined)
                     throw new Error(`File ${fileName} not found.`);
                 delete currentFolder.files[fileName];
@@ -228,8 +194,8 @@ function generateTerminalCore() {
             *  Directory Subfolder Controllers
             * */
             createSubfolder: (newSubfolderName) => {
-                if (newSubfolderName.length === 0)
-                    throw new Error(`Subfolder names cannot be empty strings`);
+                if (!isLegalKeyNameInFileSystem(newSubfolderName))
+                    throw new Error(`Subfolder name is illegal`);
                 if (currentFolder.subfolders[newSubfolderName] !== undefined)
                     throw new Error(`Folder ${newSubfolderName} already exists`);
                 currentFolder.subfolders[newSubfolderName] = {
@@ -253,8 +219,8 @@ function generateTerminalCore() {
                 // }
             },
             renameExistingSubfolder: (oldSubfolderName, newSubfolderName) => {
-                if (oldSubfolderName.length === 0 || newSubfolderName.length === 0)
-                    throw new Error(`Subfolder names cannot be empty strings`);
+                if (!isLegalKeyNameInFileSystem(oldSubfolderName) || !isLegalKeyNameInFileSystem(newSubfolderName))
+                    throw new Error(`Subfolder name is illegal`);
                 if (currentFolder.subfolders[oldSubfolderName] === undefined)
                     throw new Error(`Folder ${oldSubfolderName} not found`);
                 if (currentFolder.subfolders[newSubfolderName] !== undefined)
@@ -263,8 +229,8 @@ function generateTerminalCore() {
                 delete currentFolder.subfolders[oldSubfolderName];
             },
             deleteSubfolder: (subfolderName) => {
-                if (subfolderName.length === 0)
-                    throw new Error(`Subfolder names cannot be empty strings`);
+                if (!isLegalKeyNameInFileSystem(subfolderName))
+                    throw new Error(`Subfolder name is illegal`);
                 if (currentFolder.subfolders[subfolderName] === undefined)
                     throw new Error(`Folder ${subfolderName} not found`);
                 delete currentFolder.subfolders[subfolderName]; // doable because of auto-garbage-collection
@@ -559,7 +525,7 @@ function generateTerminalCore() {
                     while (currentTerminalFolderPointer.haveFile(filename)) {
                         filename = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} __ ` + filename;
                     }
-                    currentTerminalFolderPointer.changeFile(filename, fileContent);
+                    currentTerminalFolderPointer.changeFileContent(filename, fileContent);
                     terminal.write(`[Button:] Successfully added file "${filename}" to the current directory.\n\n\r $ `);
                     terminalLog.push(`[Button:] Successfully added file "${filename}" to the current directory.\n\n $ `);
                 };

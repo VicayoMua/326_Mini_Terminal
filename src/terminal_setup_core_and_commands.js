@@ -4,7 +4,35 @@ let
     button_to_add_local_file = undefined;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const terminalCore = generateTerminalCore();
+    const terminalCore = generateTerminalCore(
+        new window.Terminal({
+            fontFamily: '"Fira Code", monospace',
+            cursorBlink: true,
+            allowProposedApi: true,
+            theme: {
+                foreground: '#f1f1f0',
+                background: 'black',
+                selection: '#97979b33',
+                black: '#282a36',
+                brightBlack: '#686868',
+                red: '#ff5c57',
+                brightRed: '#ff5c57',
+                green: '#5af78e',
+                brightGreen: '#5af78e',
+                yellow: '#f3f99d',
+                brightYellow: '#f3f99d',
+                blue: '#57c7ff',
+                brightBlue: '#57c7ff',
+                magenta: '#ff6ac1',
+                brightMagenta: '#ff6ac1',
+                cyan: '#9aedfe',
+                brightCyan: '#9aedfe',
+                white: '#f1f1f0',
+                brightWhite: '#eff0eb'
+            },
+        }),
+        document.getElementById('terminal-container')
+    );
 
     // Set Up Button Functions Linking
     button_to_save_terminal_file_system_to_indexDB = terminalCore.button_to_save_terminal_file_system_to_indexDB;
