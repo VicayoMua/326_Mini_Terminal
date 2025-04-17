@@ -118,7 +118,9 @@ function generateTerminalCore() {
         let currentFullPathStack = [];
 
         return {
-
+            /*
+            *  Directory Information Getters
+            * */
             getContentListAsString: () => {
                 let contents = '';
                 const
@@ -140,8 +142,20 @@ function generateTerminalCore() {
             getFileNames: () => {
                 return Object.keys(currentFolder.files);
             },
+            haveFile: (fileName) => {
+                if (fileName.length === 0)
+                    throw new Error(`File names cannot be empty strings`);
+                return (currentFolder.files[fileName] !== undefined);
+            },
+            haveSubfolder: (subfolderName) => {
+                if (subfolderName.length === 0)
+                    throw new Error(`Subfolder names cannot be empty strings`);
+                return (currentFolder.subfolders[subfolderName] !== undefined);
+            },
 
-
+            /*
+            *  Directory Pointer Controllers
+            * */
             gotoRoot: () => {
                 currentFolder = fsRoot;
                 currentFullPathStack = [];
@@ -175,16 +189,24 @@ function generateTerminalCore() {
             getFullPath: () => currentFullPathStack.length === 0 ? '/' :
                 currentFullPathStack.reduce((acc, elem) => `${acc}/${elem}`, ''),
 
-
+            /*
+            *  Directory File Controllers
+            * */
             getFile: (fileName) => {
+                if (fileName.length === 0)
+                    throw new Error(`File names cannot be empty strings`);
                 if (currentFolder.files[fileName] === undefined)
                     throw new Error(`File ${fileName} not found`);
                 return currentFolder.files[fileName];
             },
             changeFile: (fileName, newContent) => {
+                if (fileName.length === 0)
+                    throw new Error(`File names cannot be empty strings`);
                 currentFolder.files[fileName] = newContent;
             },
             renameExistingFile: (oldFileName, newFileName) => {
+                if (oldFileName.length === 0 || newFileName.length === 0)
+                    throw new Error(`File names cannot be empty strings`);
                 if (currentFolder.files[oldFileName] === undefined)
                     throw new Error(`File ${oldFileName} not found`);
                 if (currentFolder.files[newFileName] !== undefined)
@@ -193,13 +215,19 @@ function generateTerminalCore() {
                 delete currentFolder.files[oldFileName];
             },
             deleteFile: (fileName) => {
+                if (fileName.length === 0)
+                    throw new Error(`File names cannot be empty strings`);
                 if (currentFolder.files[fileName] === undefined)
                     throw new Error(`File ${fileName} not found.`);
                 delete currentFolder.files[fileName];
             },
 
-
+            /*
+            *  Directory Subfolder Controllers
+            * */
             createSubfolder: (newSubfolderName) => {
+                if (newSubfolderName.length === 0)
+                    throw new Error(`Subfolder names cannot be empty strings`);
                 if (currentFolder.subfolders[newSubfolderName] !== undefined)
                     throw new Error(`Folder ${newSubfolderName} already exists`);
                 currentFolder.subfolders[newSubfolderName] = {
@@ -209,6 +237,8 @@ function generateTerminalCore() {
                 };
             },
             renameExistingSubfolder: (oldSubfolderName, newSubfolderName) => {
+                if (oldSubfolderName.length === 0 || newSubfolderName.length === 0)
+                    throw new Error(`Subfolder names cannot be empty strings`);
                 if (currentFolder.subfolders[oldSubfolderName] === undefined)
                     throw new Error(`Folder ${oldSubfolderName} not found`);
                 if (currentFolder.subfolders[newSubfolderName] !== undefined)
@@ -217,6 +247,8 @@ function generateTerminalCore() {
                 delete currentFolder.subfolders[oldSubfolderName];
             },
             deleteSubfolder: (subfolderName) => {
+                if (subfolderName.length === 0)
+                    throw new Error(`Subfolder names cannot be empty strings`);
                 if (currentFolder.subfolders[subfolderName] === undefined)
                     throw new Error(`Folder ${subfolderName} not found`);
                 delete currentFolder.subfolders[subfolderName]; // doable because of auto-garbage-collection
@@ -486,8 +518,32 @@ function generateTerminalCore() {
             link.click();
             URL.revokeObjectURL(url);
         },
-        button_to_add_local_file: ()=>{
+        button_to_add_local_file: () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '';
+            input.onchange = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;   // user hit “cancel”
 
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    const
+                        fileContent = evt.target.result,  // the file’s text content
+                        date = new Date();
+                    let
+                        filename = file.name;
+                    while (currentTerminalFolderPointer.haveFile(filename)) {
+                        filename = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} __ ` + filename;
+                    }
+                    currentTerminalFolderPointer.changeFile(filename, fileContent);
+                };
+                reader.onerror = (error) => {
+                    alert(`generateTerminalCore: button_to_add_local_file: error reading the file "${file.name}", ${error}.`);
+                };
+                reader.readAsText(file);
+            };
+            input.click();
         },
         // button_to_import_filesystem_json: () => {
         //     const input = document.createElement('input');
