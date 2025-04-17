@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Simply print all the parameters -- with quotation marks [\"] added at the beginning and the end.\n Usage: echo [parameter_sequence]',
     };
 
-    // TODO: Update it!!!
+    // Finished
     terminalCore.getSupportedCommands()['ls'] = {
         executable: (parameters) => {
             switch (parameters.length) {
@@ -102,10 +102,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     terminalCore.getSupportedCommands()['mkdir'] = {
         executable: (parameters) => {
-            if (parameters.length !== 1)
-                return;
+            switch (parameters.length) {
+                case 1: {
+
+                    break;
+                }
+                default: {
+                    terminalCore.printToWindow(`Wrong grammar!\nUsage: mkdir folder_name/folder_path`, false, true);
+                }
+            }
         },
-        description: 'Make a new directory.\nUsage: mkdir [folder_name/folder_path]'
+        description: 'Make a new directory.\nUsage: mkdir folder_name/folder_path'
     };
 
     terminalCore.getSupportedCommands()['touch'] = {

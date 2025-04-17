@@ -8,6 +8,8 @@
 * **************************************************************************************************************
 * */
 
+const isValidNameInFileSystem = /^(?!\.{1,2}$)[^\/\0]{1,255}$/.test;
+
 function generateTerminalCore() {
     // Terminal Object
     const terminal = new window.Terminal({
@@ -236,6 +238,20 @@ function generateTerminalCore() {
                     files: {}
                 };
             },
+            createSubpath: (subpath) => {
+                // if (subpath.length === 0)
+                //     throw new Error(`Subpaths cannot be empty strings`);
+                // let is_first_time = true;
+                // for (const subfolderName of subpath.split('/')) {
+                //     if (subfolderName.length === 0 && !is_first_time)
+                //         throw new Error(`Subfolder names cannot be empty strings`);
+                //     if (currentFolder.subfolders[subfolderName] === undefined)
+                //         throw new Error(`Folder ${subfolderName} not found`);
+                //     currentFolder = currentFolder.subfolders[subfolderName];
+                //     currentFullPathStack.push(subfolderName);
+                //     is_first_time = false;
+                // }
+            },
             renameExistingSubfolder: (oldSubfolderName, newSubfolderName) => {
                 if (oldSubfolderName.length === 0 || newSubfolderName.length === 0)
                     throw new Error(`Subfolder names cannot be empty strings`);
@@ -274,7 +290,7 @@ function generateTerminalCore() {
             description: 'Say "Hello World!"'
         },
 
-        // A lot of other commands are going to be added in the future (in other .js files)!
+        // A lot of other commands are going to be added in the future (in .js files)!
     };
 
     // Initialize Command Handling
@@ -435,6 +451,7 @@ function generateTerminalCore() {
             }
         });
     }
+
     setDefaultTerminalKeyboardListener();
 
 
