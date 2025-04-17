@@ -498,7 +498,6 @@ function generateTerminalCore() {
                     try {
                         // TODO 2: Use the JSON file to restore the terminal file system.
                         const fsObj = JSON.parse(evt.target.result);
-                        const folderPointer = terminalCore.getNewFolderPointer();
 
                     } catch (e) {
                         alert(`generateTerminalCore: button_to_import_filesystem_json: Error converting JSON: ${e}.`);
@@ -509,7 +508,7 @@ function generateTerminalCore() {
             input.click();
         },
         button_to_export_filesystem_json: () => {
-            const fsJSON = JSON.stringify(terminalCore.get);
+            const fsJSON = JSON.stringify(fsRoot);
         },
 
         /*
