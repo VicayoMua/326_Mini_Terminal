@@ -108,7 +108,7 @@ function generateTerminalCore() {
         };
 
         dbRequest.onerror = (event) => {
-            alert(`Error opening IndexedDB: ${event.target.error}.`);
+            alert(`generateTerminalCore: Error opening IndexedDB: ${event.target.error}.`);
         };
     })();
 
@@ -154,11 +154,11 @@ function generateTerminalCore() {
                 currentFolder = currentFolder.subfolders[subfolderName];
                 currentFullPathStack.push(subfolderName);
             },
-            gotoSubpath: (subpath) =>{
+            gotoSubpath: (subpath) => {
                 if (subpath.length === 0)
                     throw new Error(`Subpaths cannot be empty strings`);
                 let is_first_time = true;
-                for (const subfolderName of subpath.split('/')){
+                for (const subfolderName of subpath.split('/')) {
                     if (subfolderName.length === 0 && !is_first_time)
                         throw new Error(`Subfolder names cannot be empty strings`);
                     if (currentFolder.subfolders[subfolderName] === undefined)
@@ -306,7 +306,7 @@ function generateTerminalCore() {
                     supportedCommands[commandName].executable(commandParameters);
                     return [0, commandName]; // Success!
                 } catch (e) { // e is alerted as a pop-up!!!
-                    alert(`${e}`);
+                    alert(`generateTerminalCore: commandHandler: ${e}.`);
                     return [2, commandName]; // Error: Command exists but throws exceptions.
                 }
             },
@@ -434,7 +434,7 @@ function generateTerminalCore() {
         *  Terminal Status/Content Getters
         * */
         // getIsFitEnabled: () => isFitEnabled,
-        getCurrentLogAsString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
+        // getCurrentLogAsString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
 
         /*
         *  Terminal File System Ports
@@ -452,7 +452,7 @@ function generateTerminalCore() {
         * */
         button_to_save_terminal_file_system_to_indexDB: () => {
             if (terminalFSDB === undefined) {
-                alert(`Error: terminalFSDB is undefined.`);
+                alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error for undefined terminalFSDB.`);
                 return;
             }
 
@@ -473,8 +473,43 @@ function generateTerminalCore() {
 
             // Listen for errors during the put operation
             putRequest.addEventListener("error", event => {
-                alert(`Error saving terminal file system: ${event.target.error}.`);
+                alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error saving terminal file system: ${event.target.error}.`);
             });
+        },
+        button_to_download_terminal_log: () => {
+            const current_log = terminalLog.reduce((acc, elem) => acc + elem, '');
+            const url = URL.createObjectURL(new Blob([current_log], {type: 'text/plain'}));
+            const date = new Date();
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `terminal_log @ ${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`; // the filename the user will get
+            link.click();
+            URL.revokeObjectURL(url);
+        },
+        button_to_import_filesystem_json: () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;  // user cancelled
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    try {
+                        // TODO 2: Use the JSON file to restore the terminal file system.
+                        const fsObj = JSON.parse(evt.target.result);
+                        const folderPointer = terminalCore.getNewFolderPointer();
+
+                    } catch (e) {
+                        alert(`generateTerminalCore: button_to_import_filesystem_json: Error converting JSON: ${e}.`);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        },
+        button_to_export_filesystem_json: () => {
+            const fsJSON = JSON.stringify(terminalCore.get);
         },
 
         /*

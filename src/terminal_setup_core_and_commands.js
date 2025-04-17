@@ -1,22 +1,17 @@
 let
     button_to_save_terminal_file_system_to_indexDB = undefined,
-    button_to_download_terminal_log = undefined;
+    button_to_download_terminal_log = undefined,
+    button_to_import_filesystem_json = undefined,
+    button_to_export_filesystem_json = undefined;
 
 document.addEventListener('DOMContentLoaded', () => {
     const terminalCore = generateTerminalCore();
 
     // Set Up Button Functions Linking
     button_to_save_terminal_file_system_to_indexDB = terminalCore.button_to_save_terminal_file_system_to_indexDB;
-    button_to_download_terminal_log = ()=>{
-        const current_log = terminalCore.getCurrentLogAsString();
-        const url = URL.createObjectURL(new Blob([ current_log ], { type: 'text/plain' }));
-        const date = new Date();
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `terminal_log @ ${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}.txt`; // the filename the user will get
-        link.click();
-        URL.revokeObjectURL(url);
-    };
+    button_to_download_terminal_log = terminalCore.button_to_download_terminal_log;
+    button_to_import_filesystem_json = terminalCore.button_to_import_filesystem_json;
+    button_to_export_filesystem_json = terminalCore.button_to_export_filesystem_json;
 
     // Finished
     terminalCore.getSupportedCommands()['help'] = {
