@@ -486,6 +486,9 @@ function generateTerminalCore() {
             link.click();
             URL.revokeObjectURL(url);
         },
+        button_to_add_local_file: ()=>{
+
+        },
         // button_to_import_filesystem_json: () => {
         //     const input = document.createElement('input');
         //     input.type = 'file';
