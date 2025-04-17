@@ -406,6 +406,9 @@ function generateTerminalCore() {
 
     // Finish Setting Up The Terminal Environment!!!
     return {
+        /*
+        *  Terminal Output Ports
+        * */
         printToWindow: (sentence, if_print_raw_to_window, if_print_to_log) => { // (string, boolean, boolean) => void
             if (if_print_to_log)
                 terminalLog.push(sentence);
@@ -415,21 +418,38 @@ function generateTerminalCore() {
                 terminal.write(sentence.replaceAll('\n', '\n\r   ')); // replace all '\n' in <sentence> with '\n\r   '
             }
         },
+
+        /*
+        *  Terminal Keyboard Listener Controllers
+        * */
         setDefaultKeyboardListener: () => { // returns void
             setNewTerminalKeyboardListener(defaultTerminalKeyboardListeningCallback);
         },
         setNewKeyboardListener: (keyboard_listening_callback) => { // returns void
             setNewTerminalKeyboardListener(keyboard_listening_callback);
         },
-        // getIsFitEnabled: () => isFitEnabled,
         getCurrentKeyboardListener: () => currentTerminalKeyboardListener,
+
+        /*
+        *  Terminal Status/Content Getters
+        * */
+        // getIsFitEnabled: () => isFitEnabled,
+        getCurrentLogAsString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
+
+        /*
+        *  Terminal File System Ports
+        * */
         getCurrentFolderPointer: () => currentTerminalFolderPointer,
-        getNewFolderPointer: () => { // () => Folder Pointer
-            return createTerminalFolderPointer();
-        },
+        getNewFolderPointer: () => createTerminalFolderPointer(),
+
+        /*
+        *  Terminal Command Controllers
+        * */
         getSupportedCommands: () => supportedCommands,
-        // getLogAsString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
-        // getXTermObject: () => terminal, // avoid using this for a maintainable code structure and better performance!!!
+
+        /*
+        *  Terminal Built-in Button Ports
+        * */
         button_to_save_terminal_file_system_to_indexDB: () => {
             if (terminalFSDB === undefined) {
                 alert(`Error: terminalFSDB is undefined.`);
@@ -456,5 +476,10 @@ function generateTerminalCore() {
                 alert(`Error saving terminal file system: ${event.target.error}.`);
             });
         },
+
+        /*
+        *  Other Dangerous Ports, better not to Release!!!
+        * */
+        // getXTermObject: () => terminal, // avoid using this for a maintainable code structure and better performance!!!
     };
 }
