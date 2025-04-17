@@ -293,7 +293,7 @@ function generateTerminalCore() {
                 return false;
             },
             execute: () => { // returns [status_code, command_name]
-                if (commandBuffer.length === 0) return [1, '']; // Error: (Empty) Command is not supported.
+                if (commandBuffer.length === 0) return [-1, '']; // Error: (Empty) Command is not supported.
 
                 let index = 0;
 
@@ -359,8 +359,8 @@ function generateTerminalCore() {
     }
 
     // Initialize Default Terminal Window's Listening to Keyboard Input
-    const defaultTerminalKeyboardListeningCallback =
-        (s) => {
+    function setDefaultTerminalKeyboardListener() {
+        setNewTerminalKeyboardListener((s) => {
             for (const char of s) {
                 switch (char) {
                     // case '\x1b[A': { // Up arrow
@@ -393,6 +393,10 @@ function generateTerminalCore() {
                         {
                             const [statusCode, commandName] = commandHandler.execute();
                             switch (statusCode) {
+                                case -1: {
+                                    // (Empty) Command is not supported.
+                                    break;
+                                }
                                 case 1: {
                                     terminal.write(`${commandName}: command not found`);
                                     terminalLog.push(`${commandName}: command not found`);
@@ -429,8 +433,10 @@ function generateTerminalCore() {
                     }
                 }
             }
-        };
-    setNewTerminalKeyboardListener(defaultTerminalKeyboardListeningCallback);
+        });
+    }
+    setDefaultTerminalKeyboardListener();
+
 
     // Initialize Terminal Window Display
     terminal.write(` $ `);
@@ -455,10 +461,10 @@ function generateTerminalCore() {
         *  Terminal Keyboard Listener Controllers
         * */
         setDefaultKeyboardListener: () => { // returns void
-            setNewTerminalKeyboardListener(defaultTerminalKeyboardListeningCallback);
+            setDefaultTerminalKeyboardListener();
         },
-        setNewKeyboardListener: (keyboard_listening_callback) => { // returns void
-            setNewTerminalKeyboardListener(keyboard_listening_callback);
+        setNewKeyboardListener: (keyboard_listener_callback) => { // returns void
+            setNewTerminalKeyboardListener(keyboard_listener_callback);
         },
         getCurrentKeyboardListener: () => currentTerminalKeyboardListener,
 
@@ -537,6 +543,8 @@ function generateTerminalCore() {
                         filename = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} __ ` + filename;
                     }
                     currentTerminalFolderPointer.changeFile(filename, fileContent);
+                    terminal.write(`[Button:] Successfully added file "${filename}" to the current directory.\n\n\r $ `);
+                    terminalLog.push(`[Button:] Successfully added file "${filename}" to the current directory.\n\n $ `);
                 };
                 reader.onerror = (error) => {
                     alert(`generateTerminalCore: button_to_add_local_file: error reading the file "${file.name}", ${error}.`);
