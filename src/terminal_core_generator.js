@@ -486,30 +486,41 @@ function generateTerminalCore() {
             link.click();
             URL.revokeObjectURL(url);
         },
-        button_to_import_filesystem_json: () => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'application/json';
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;  // user cancelled
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    try {
-                        // TODO 2: Use the JSON file to restore the terminal file system.
-                        const fsObj = JSON.parse(evt.target.result);
-
-                    } catch (e) {
-                        alert(`generateTerminalCore: button_to_import_filesystem_json: Error converting JSON: ${e}.`);
-                    }
-                };
-                reader.readAsText(file);
-            };
-            input.click();
-        },
-        button_to_export_filesystem_json: () => {
-            const fsJSON = JSON.stringify(fsRoot);
-        },
+        // button_to_import_filesystem_json: () => {
+        //     const input = document.createElement('input');
+        //     input.type = 'file';
+        //     input.accept = 'application/json';
+        //     input.onchange = (e) => {
+        //         const file = e.target.files[0];
+        //         if (!file) return;  // user cancelled
+        //         const reader = new FileReader();
+        //         reader.onload = (evt) => {
+        //             try {
+        //                 // TODO: Use the JSON file to restore the terminal file system.
+        //                 const fsObj = JSON.parse(evt.target.result);
+        //
+        //             } catch (error) {
+        //                 alert(`generateTerminalCore: button_to_import_filesystem_json: Error importing filesystem: ${error}.`);
+        //             }
+        //         };
+        //         reader.readAsText(file);
+        //     };
+        //     input.click();
+        // },
+        // button_to_export_filesystem_json: () => {
+        //     try {
+        //         const fsJSON = JSON.stringify(fsRoot);
+        //         const url = URL.createObjectURL(new Blob([fsJSON], {type: 'text/plain'}));
+        //         const date = new Date();
+        //         const link = document.createElement('a');
+        //         link.href = url;
+        //         link.download = `terminal_log @ ${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`; // the filename the user will get
+        //         link.click();
+        //         URL.revokeObjectURL(url);
+        //     } catch (error) {
+        //         alert(`generateTerminalCore: button_to_export_filesystem_json: Error exporting filesystem: ${error}.`);
+        //     }
+        // },
 
         /*
         *  Other Dangerous Ports, better not to Release!!!

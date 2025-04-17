@@ -1,8 +1,6 @@
 let
     button_to_save_terminal_file_system_to_indexDB = undefined,
-    button_to_download_terminal_log = undefined,
-    button_to_import_filesystem_json = undefined,
-    button_to_export_filesystem_json = undefined;
+    button_to_download_terminal_log = undefined;
 
 document.addEventListener('DOMContentLoaded', () => {
     const terminalCore = generateTerminalCore();
@@ -10,8 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set Up Button Functions Linking
     button_to_save_terminal_file_system_to_indexDB = terminalCore.button_to_save_terminal_file_system_to_indexDB;
     button_to_download_terminal_log = terminalCore.button_to_download_terminal_log;
-    button_to_import_filesystem_json = terminalCore.button_to_import_filesystem_json;
-    button_to_export_filesystem_json = terminalCore.button_to_export_filesystem_json;
 
     // Finished
     terminalCore.getSupportedCommands()['help'] = {
