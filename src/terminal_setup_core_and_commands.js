@@ -207,10 +207,31 @@ document.addEventListener('DOMContentLoaded', () => {
         description: ''
     };
 
-// terminalCore.getSupportedCommands()['edit'] = {
-//     executable: (parameters) => {
-//         //
-//     },
-//     description: ''
-// };
+    terminalCore.getSupportedCommands()['edit'] = {
+        executable: (parameters) => {
+            //
+        },
+        description: ''
+    };
+
+    terminalCore.getSupportedCommands()['ADDITIONAL COMMAND ONE'] = {
+        executable: (parameters) => {
+            //
+        },
+        description: ''
+    };
+
+    terminalCore.getSupportedCommands()['ADDITIONAL COMMAND TWO'] = {
+        executable: (parameters) => {
+            //
+        },
+        description: ''
+    };
+
+    terminalCore.getSupportedCommands()['ADDITIONAL COMMAND TWO'] = {
+        executable: (parameters) => {
+            //
+        },
+        description: ''
+    };
 });
