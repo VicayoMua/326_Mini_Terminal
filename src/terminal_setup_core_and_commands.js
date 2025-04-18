@@ -200,8 +200,12 @@ document.addEventListener('DOMContentLoaded', () => {
         description: ''
     };
 
+    terminalCore.getSupportedCommands()['cp'] = {
+        executable: (parameters) => {
 
-});
+        },
+        description: ''
+    };
 
 // terminalCore.getSupportedCommands()['edit'] = {
 //     executable: (parameters) => {
@@ -209,3 +213,4 @@ document.addEventListener('DOMContentLoaded', () => {
 //     },
 //     description: ''
 // };
+});
