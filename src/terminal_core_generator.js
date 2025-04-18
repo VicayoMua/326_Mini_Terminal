@@ -537,10 +537,11 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
             });
         },
         button_to_download_terminal_log: () => {
-            const current_log = terminalLog.reduce((acc, elem) => acc + elem, '');
-            const url = URL.createObjectURL(new Blob([current_log], {type: 'text/plain'}));
-            const date = new Date();
-            const link = document.createElement('a');
+            const
+                full_current_log = terminalLog.reduce((acc, elem) => acc + elem, ''),
+                url = URL.createObjectURL(new Blob([full_current_log], {type: 'text/plain'})),
+                date = new Date(),
+                link = document.createElement('a');
             link.href = url;
             link.download = `terminal_log @ ${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`; // the filename the user will get
             link.click();
@@ -553,7 +554,6 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
             input.onchange = (event) => {
                 const file = event.target.files[0];
                 if (!file) return;   // user hit “cancel”
-
                 const reader = new FileReader();
                 reader.onload = (evt) => {
                     const
@@ -561,9 +561,8 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                         date = new Date();
                     let
                         filename = file.name;
-                    while (currentTerminalFolderPointer.haveFile(filename)) {
+                    while (currentTerminalFolderPointer.haveFile(filename))
                         filename = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} __ ` + filename;
-                    }
                     currentTerminalFolderPointer.changeFileContent(filename, fileContent);
                     terminal.write(`[Button:] Successfully added file "${filename}" to the current directory.\n\n\r $ `);
                     terminalLog.push(`[Button:] Successfully added file "${filename}" to the current directory.\n\n $ `);
