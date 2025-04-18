@@ -111,7 +111,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 case 1: { // print the folder info of given path
                     try {
-
+                        let path = parameters[0];
+                        if (path[0] === '/') { // begin with '/', so the path is from the root
+                            // The path is from the root, so we need a new_pointer!
+                            path = path.slice(1); // take off the "/"
+                            const tempFolderPointer = terminalCore.getNewFolderPointer();
+                            tempFolderPointer.gotoSubpath(path);
+                            terminalCore.printToWindow(`${tempFolderPointer.getContentListAsString()}`, false, true);
+                        } else { // the path is not from the root
+                            if (path[0] === '.' && path[1] === '/') { // begin with './'
+                                path = path.slice(2);
+                            }
+                            const tempFolderPointer = terminalCore.getCurrentFolderPointer().duplicate();
+                            tempFolderPointer.gotoSubpath(path);
+                            terminalCore.printToWindow(`${tempFolderPointer.getContentListAsString()}`, false, true);
+                        }
                     } catch (error) {
                         terminalCore.printToWindow(`${error}`, false, true);
                     }
