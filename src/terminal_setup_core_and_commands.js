@@ -228,10 +228,35 @@ document.addEventListener('DOMContentLoaded', () => {
         description: ''
     };
 
-    terminalCore.getSupportedCommands()['ADDITIONAL COMMAND TWO'] = {
+    terminalCore.getSupportedCommands()['ADDITIONAL COMMAND THREE'] = {
         executable: (parameters) => {
             //
         },
         description: ''
     };
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
