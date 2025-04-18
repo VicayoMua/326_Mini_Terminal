@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 }
                 default: {
-                    terminalCore.printToWindow(`666Wrong grammar!\nUsage: ls [folder_path]`, false, true);
+                    terminalCore.printToWindow(`Wrong grammar!\nUsage: ls [folder_path]`, false, true);
                 }
             }
         },
