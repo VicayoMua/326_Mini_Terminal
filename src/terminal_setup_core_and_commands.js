@@ -93,10 +93,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Finished
     terminalCore.getSupportedCommands()['echo'] = {
         executable: (parameters) => {
-            terminalCore.printToWindow(`"${parameters.reduce((acc, elem, index) => {
-                if (index === 0) return elem;
-                return `${acc} ${elem}`;
-            }, '')}"`, false, true);
+            terminalCore.printToWindow(
+                `"${
+                    parameters.reduce(
+                        (acc, elem, index) => {
+                            if (index === 0) return elem;
+                            return `${acc} ${elem}`;
+                        },
+                        ''
+                    )
+                }"`,
+                false, true
+            );
         },
         description: 'Simply print all the parameters -- with quotation marks [\"] added at the beginning and the end.\n Usage: echo [parameter_sequence]',
     };
@@ -172,18 +180,21 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Make a new directory.\nUsage: mkdir folder_name/folder_path'
     };
 
-    terminalCore.getSupportedCommands()['touch'] = {
-        executable: (parameters) => {
-            //
-        },
-        description: ''
-    };
-
     terminalCore.getSupportedCommands()['pwd'] = {
-        executable: (parameters) => {
-
+        executable: (_) => {
+            terminalCore.printToWindow(
+                terminalCore.getCurrentFolderPointer().getFullPath(),
+                false, true
+            );
         },
         description: 'Print the current full path.'
+    };
+
+    terminalCore.getSupportedCommands()['touch'] = {
+        executable: (parameters) => {
+
+        },
+        description: ''
     };
 
     terminalCore.getSupportedCommands()['cd'] = {

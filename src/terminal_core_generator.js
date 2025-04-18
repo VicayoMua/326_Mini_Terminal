@@ -138,6 +138,8 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                 }
                 return contents.length === 0 ? 'No file or folder existing here...' : contents;
             },
+            getFullPath: () => currentFullPathStack.length === 0 ? '/' :
+                currentFullPathStack.reduce((acc, elem) => `${acc}/${elem}`, ''),
             getSubfolderNames: () => {
                 return Object.keys(currentFolder.subfolders);
             },
@@ -185,8 +187,6 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                 currentFolder = currentFolder.parentFolder;
                 currentFullPathStack.pop();
             },
-            getFullPath: () => currentFullPathStack.length === 0 ? '/' :
-                currentFullPathStack.reduce((acc, elem) => `${acc}/${elem}`, ''),
 
             /*
             *  Directory File Controllers
