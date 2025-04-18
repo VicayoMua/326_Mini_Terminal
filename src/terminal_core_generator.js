@@ -137,18 +137,22 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                 currentFullPathStack.push(subfolderName);
             },
             gotoSubpath: (subpath) => {
-                if (!isLegalPathNameInFileSystem(subpath))
+                if (!isLegalPathNameInFileSystem(subpath) || subpath[0] === "/")
                     throw new Error(`Subpath name is illegal`);
-                let is_first_time = true;
-                for (const subfolderName of subpath.split('/')) {
-                    if (subfolderName.length === 0 && !is_first_time)
-                        throw new Error(`Subfolder names cannot be empty strings`);
-                    if (currentFolder.subfolders[subfolderName] === undefined)
+                // Temporary Update
+                let temp_currentFolder = currentFolder;
+                const subfolderNames = subpath.split('/');
+                for (const subfolderName of subfolderNames) {
+                    if (!isLegalKeyNameInFileSystem(subfolderName))
+                        throw new Error(`Subpath name is illegal`);
+                    if (temp_currentFolder.subfolders[subfolderName] === undefined)
                         throw new Error(`Folder ${subfolderName} not found`);
-                    currentFolder = currentFolder.subfolders[subfolderName];
-                    currentFullPathStack.push(subfolderName);
-                    is_first_time = false;
+                    temp_currentFolder = temp_currentFolder.subfolders[subfolderName];
                 }
+                // Apply Long-term Update
+                currentFolder = temp_currentFolder;
+                for (const subfolderName of subfolderNames)
+                    currentFullPathStack.push(subfolderName);
             },
             gotoParentFolder: () => {
                 currentFolder = currentFolder.parentFolder;
@@ -205,18 +209,26 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                 };
             },
             createSubpath: (subpath) => {
-                // if (subpath.length === 0)
-                //     throw new Error(`Subpaths cannot be empty strings`);
-                // let is_first_time = true;
-                // for (const subfolderName of subpath.split('/')) {
-                //     if (subfolderName.length === 0 && !is_first_time)
-                //         throw new Error(`Subfolder names cannot be empty strings`);
-                //     if (currentFolder.subfolders[subfolderName] === undefined)
-                //         throw new Error(`Folder ${subfolderName} not found`);
-                //     currentFolder = currentFolder.subfolders[subfolderName];
-                //     currentFullPathStack.push(subfolderName);
-                //     is_first_time = false;
-                // }
+                if (!isLegalPathNameInFileSystem(subpath) || subpath[0] === "/")
+                    throw new Error(`Subpath name is illegal`);
+                const subfolderNames = subpath.split('/');
+                // Verify the subpath name in details
+                for (const subfolderName of subfolderNames) {
+                    if (!isLegalKeyNameInFileSystem(subfolderName))
+                        throw new Error(`Subpath name is illegal`);
+                }
+                let temp_currentFolder = currentFolder;
+                for (const subfolderName of subfolderNames) {
+                    if (temp_currentFolder.subfolders[subfolderName] === undefined) {
+                        // Create new subfolder
+                        temp_currentFolder.subfolders[subfolderName] = {
+                            parentFolder: temp_currentFolder,
+                            subfolders: {},
+                            files: {}
+                        };
+                    }
+                    temp_currentFolder = temp_currentFolder.subfolders[subfolderName];
+                }
             },
             renameExistingSubfolder: (oldSubfolderName, newSubfolderName) => {
                 if (!isLegalKeyNameInFileSystem(oldSubfolderName) || !isLegalKeyNameInFileSystem(newSubfolderName))
