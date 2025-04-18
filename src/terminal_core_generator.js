@@ -95,16 +95,19 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
     })();
 
     // Tool to Create Folder Pointer (File Browser)
-    function createTerminalFolderPointer(oldCurrentFolder = undefined, oldCurrentFullPathStack = undefined) {
+    function createTerminalFolderPointer(
+        duplicationOfOldCurrentFolder = undefined,
+        duplicationOfOldCurrentFullPathStack = undefined
+    ) {
         let
             currentFolder = undefined,
             currentFullPathStack = undefined;
-        if (oldCurrentFolder === undefined || oldCurrentFullPathStack === undefined) { // old information is not complete
+        if (duplicationOfOldCurrentFolder === undefined || duplicationOfOldCurrentFullPathStack === undefined) { // old information is not complete
             currentFolder = fsRoot;
             currentFullPathStack = [];
         } else { // old information is complete
-            currentFolder = oldCurrentFolder;
-            currentFullPathStack = oldCurrentFullPathStack;
+            currentFolder = duplicationOfOldCurrentFolder;
+            currentFullPathStack = duplicationOfOldCurrentFullPathStack;
         }
 
         return {
