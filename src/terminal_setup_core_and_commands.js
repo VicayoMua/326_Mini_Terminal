@@ -111,9 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 case 1: { // print the folder info of given path
                     try {
-                        const newFolderPointer = terminalCore.getNewFolderPointer();
-                        newFolderPointer.gotoSubpath(parameters[0]);
-                        terminalCore.printToWindow(`${newFolderPointer.getContentListAsString()}`, false, true);
+
                     } catch (error) {
                         terminalCore.printToWindow(`${error}`, false, true);
                     }
