@@ -9,8 +9,14 @@
 * */
 
 const
-    isLegalKeyNameInFileSystem = (x) => /^(?!\.{1,2}$)[^\/\0]{1,255}$/.test(x),
-    isLegalPathNameInFileSystem = (x) => /^(?!\.{1,2}$)[^\0]{1,255}$/.test(x);
+    isLegalKeyNameInFileSystem = (() => {
+        const reg = /^(?!\.{1,2}$)[^\/\0]{1,255}$/;
+        return (x) => reg.test(x);
+    })(),
+    isLegalPathNameInFileSystem = (() => {
+        const reg = /^(?!\.{1,2}$)[^\0]{1,255}$/;
+        return (x) => reg.test(x);
+    })();
 
 function generateTerminalCore(terminal, htmlElem_terminalContainer) {
     // Put Terminal Window to Webpage Container
