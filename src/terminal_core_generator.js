@@ -55,9 +55,8 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
     };
     fsRoot.parentFolder = fsRoot;
 
-    let terminalFSDB = undefined;
-
     // Set Up <terminalFSDB> and try to restore old <fsRoot>
+    let terminalFSDB = undefined;
     (() => {
         // Open (or create) the IndexedDB database called "TerminalFSDB" with version 1
         const dbRequest = indexedDB.open("TerminalFSDB", 1);
@@ -94,7 +93,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
         };
     })();
 
-    // Tool to Create Folder Pointer (File Browser)
+    // Function to Create Folder Pointer (File Browser)
     function createTerminalFolderPointer(
         duplicationOfOldCurrentFolder = undefined,
         duplicationOfOldCurrentFullPathStack = undefined
@@ -296,11 +295,20 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
             },
             description: 'Say "Hello World!"'
         },
-
         // A lot of other commands are going to be added in the future (in .js files)!
     };
 
-    // Initialize Command Handling
+    // Initialize Current Keyboard Listener
+    let currentTerminalKeyboardListener = undefined;
+
+    // Function to Set New Keyboard Listener
+    function setNewTerminalKeyboardListener(keyboard_listening_callback) {
+        if (currentTerminalKeyboardListener !== undefined)
+            currentTerminalKeyboardListener.dispose();
+        currentTerminalKeyboardListener = terminal.onData(keyboard_listening_callback);
+    }
+
+    // Initialize Command Buffer & Handler
     const commandHandler = (() => {
         let commandBuffer = []; // command buffer: char[]
 
@@ -371,17 +379,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
         }
     })();
 
-    // Initialize Current Keyboard Listener
-    let currentTerminalKeyboardListener = undefined;
-
-    // Set New Keyboard Listener
-    function setNewTerminalKeyboardListener(keyboard_listening_callback) {
-        if (currentTerminalKeyboardListener !== undefined)
-            currentTerminalKeyboardListener.dispose();
-        currentTerminalKeyboardListener = terminal.onData(keyboard_listening_callback);
-    }
-
-    // Initialize Default Terminal Window's Listening to Keyboard Input
+    // Function to Initialize Default Terminal Window's Listening to Keyboard Input
     function setDefaultTerminalKeyboardListener() {
         setNewTerminalKeyboardListener((s) => {
             for (const char of s) {
@@ -459,14 +457,14 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
         });
     }
 
+    // Initialize Default Terminal Window's Listening to Keyboard Input
     setDefaultTerminalKeyboardListener();
-
 
     // Initialize Terminal Window Display
     terminal.write(` $ `);
     terminalLog.push(` $ `);
 
-    // Finish Setting Up The Terminal Environment!!!
+    // Securely Release the Terminal APIs
     return {
         /*
         *  Terminal Output Ports
