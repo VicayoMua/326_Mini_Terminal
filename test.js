@@ -23,4 +23,4 @@
 // console.log(isValidFilename("a/b"));        // false (contains '/')
 // console.log(isValidFilename("nul\u0000ok")); // false (contains NUL)
 
-console.log("12344"[0]);
+// console.log("12344"[0]);

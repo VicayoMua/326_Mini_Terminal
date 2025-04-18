@@ -112,11 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 1: { // print the folder info of given path
                     try {
                         const newFolderPointer = terminalCore.getNewFolderPointer();
-                        newFolderPointer.gotoRoot();
                         newFolderPointer.gotoSubpath(parameters[0]);
                         terminalCore.printToWindow(`${newFolderPointer.getContentListAsString()}`, false, true);
-                    } catch (e) {
-                        terminalCore.printToWindow(`${e}`, false, true);
+                    } catch (error) {
+                        terminalCore.printToWindow(`${error}`, false, true);
                     }
                     break;
                 }
@@ -132,7 +131,20 @@ document.addEventListener('DOMContentLoaded', () => {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 1: {
+                    let path = parameters[0];
+                    try {
+                        if (path[0] === '/') { // begin with '/'
+                            // The path is from the root, so we need a new_pointer!
+                            path = path.slice(1); // take off the "/"
 
+                        } else if (path[0] === '.' && path[1] === '/') { // begin with './'
+
+                        } else {
+
+                        }
+                    } catch (error) {
+                        terminalCore.printToWindow(`${error}`, false, true);
+                    }
                     break;
                 }
                 default: {

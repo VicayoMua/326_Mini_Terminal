@@ -137,6 +137,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                 currentFullPathStack.push(subfolderName);
             },
             gotoSubpath: (subpath) => {
+                // NOTE: `./` is not allowed!!!
                 if (!isLegalPathNameInFileSystem(subpath) || subpath[0] === "/")
                     throw new Error(`Subpath name is illegal`);
                 // Temporary Update
@@ -209,6 +210,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                 };
             },
             createSubpath: (subpath) => {
+                // NOTE: `./` is not allowed!!!
                 if (!isLegalPathNameInFileSystem(subpath) || subpath[0] === "/")
                     throw new Error(`Subpath name is illegal`);
                 const subfolderNames = subpath.split('/');
