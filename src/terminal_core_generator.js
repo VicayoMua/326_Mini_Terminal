@@ -128,6 +128,8 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                     contents += 'Folders:' + folderNames.reduce((acc, elem) =>
                         `${acc}\n            ${elem}`, '');
                 }
+                if (folderNames.length > 0 && fileNames.length > 0)
+                    contents += '\n';
                 if (fileNames.length > 0) {
                     contents += 'Files:' + fileNames.reduce((acc, elem) =>
                         `${acc}\n            ${elem}`, '');

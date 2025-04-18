@@ -139,21 +139,26 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'List all the folders and files.\nUsage: ls [folder_path]'
     };
 
+    // Finished
     terminalCore.getSupportedCommands()['mkdir'] = {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 1: {
-                    let path = parameters[0];
                     try {
-                        if (path[0] === '/') { // begin with '/'
+                        let path = parameters[0];
+                        if (path[0] === '/') { // begin with '/', so the path is from the root
                             // The path is from the root, so we need a new_pointer!
                             path = path.slice(1); // take off the "/"
-
-                        } else if (path[0] === '.' && path[1] === '/') { // begin with './'
-
-                        } else {
-
+                            const tempFolderPointer = terminalCore.getNewFolderPointer();
+                            tempFolderPointer.createSubpath(path);
+                        } else { // the path is not from the root
+                            if (path[0] === '.' && path[1] === '/') { // begin with './'
+                                path = path.slice(2);
+                            }
+                            const tempFolderPointer = terminalCore.getCurrentFolderPointer().duplicate();
+                            tempFolderPointer.createSubpath(path);
                         }
+                        terminalCore.printToWindow(`Success!`, false, true);
                     } catch (error) {
                         terminalCore.printToWindow(`${error}`, false, true);
                     }
@@ -170,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
     terminalCore.getSupportedCommands()['touch'] = {
         executable: (parameters) => {
             //
-
         },
         description: ''
     };
