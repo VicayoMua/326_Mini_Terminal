@@ -180,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Make a new directory.\nUsage: mkdir folder_name/folder_path'
     };
 
+    // Finished
     terminalCore.getSupportedCommands()['pwd'] = {
         executable: (_) => {
             terminalCore.printToWindow(

@@ -18,14 +18,14 @@ const
         return (x) => reg.test(x);
     })();
 
-function generateTerminalCore(terminal, htmlElem_terminalContainer) {
+function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
     // Put Terminal Window to Webpage Container
-    terminal.open(htmlElem_terminalContainer);
+    xtermObj.open(htmlElem_terminalContainer);
 
     // const isWebglEnabled = (() => {
     //     try {
     //         const webgl = new window.WebglAddon.WebglAddon(); // Load the WebGL Addon
-    //         terminal.loadAddon(webgl); // Add the WebGL Addon to terminal frame
+    //         xtermObj.loadAddon(webgl); // Add the WebGL Addon to xtermObj frame
     //         return true;
     //     } catch (e) {
     //         console.warn('WebGL addon threw an exception during load', e);
@@ -37,8 +37,8 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
     const isFitEnabled = (() => {
         try {
             const fitAddon = new window.FitAddon.FitAddon(); // Load the Fit Addon
-            terminal.loadAddon(fitAddon); // Add the Fit Addon to terminal frame
-            fitAddon.fit(); // Fit the terminal to the container
+            xtermObj.loadAddon(fitAddon); // Add the Fit Addon to xtermObj frame
+            fitAddon.fit(); // Fit the xtermObj to the container
             return true;
         } catch (e) {
             console.warn('Fit addon threw an exception during load', e);
@@ -75,7 +75,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
             const store = terminalFSDB.transaction(["TerminalFSStore"], "readonly")
                 .objectStore("TerminalFSStore");
 
-            // Use the get() method to read the terminal file system
+            // Use the get() method to read the xtermObj file system
             const getRequest = store.get("terminal_file_system");
 
             // Listen for the success event for the get request
@@ -290,7 +290,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
         // Built-in Command
         hello: {
             executable: (_) => {
-                terminal.write("Hello World!");
+                xtermObj.write("Hello World!");
                 terminalLog.push("Hello World!");
             },
             description: 'Say "Hello World!"'
@@ -305,7 +305,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
     function setNewTerminalKeyboardListener(keyboard_listening_callback) {
         if (currentTerminalKeyboardListener !== undefined)
             currentTerminalKeyboardListener.dispose();
-        currentTerminalKeyboardListener = terminal.onData(keyboard_listening_callback);
+        currentTerminalKeyboardListener = xtermObj.onData(keyboard_listening_callback);
     }
 
     // Initialize Command Buffer & Handler
@@ -398,18 +398,18 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                     // }
                     case '\u0003': { // Ctrl+C
                         commandHandler.clear();
-                        terminal.write('^C\n\n\r $ ');
+                        xtermObj.write('^C\n\n\r $ ');
                         terminalLog.push('^C\n\n $ ');
                         break;
                     }
                     case '\u000C': { // Ctrl+L
                         commandHandler.clear();
-                        terminal.write(`\x1b[2J\x1b[H $ `);
+                        xtermObj.write(`\x1b[2J\x1b[H $ `);
                         terminalLog.push(' $ ');
                         break;
                     }
                     case '\r': { // Enter
-                        terminal.write('\n\r   ');
+                        xtermObj.write('\n\r   ');
                         terminalLog.push('\n   ');
                         {
                             const [statusCode, commandName] = commandHandler.execute();
@@ -419,12 +419,12 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                                     break;
                                 }
                                 case 1: {
-                                    terminal.write(`${commandName}: command not found`);
+                                    xtermObj.write(`${commandName}: command not found`);
                                     terminalLog.push(`${commandName}: command not found`);
                                     break;
                                 }
                                 case 2: {
-                                    terminal.write(`${commandName}: command failed due to uncaught errors`);
+                                    xtermObj.write(`${commandName}: command failed due to uncaught errors`);
                                     terminalLog.push(`${commandName}: command failed due to uncaught errors`);
                                     break;
                                 }
@@ -433,14 +433,14 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                             }
                         }
                         commandHandler.clear();
-                        terminal.write('\n\n\r $ ');
+                        xtermObj.write('\n\n\r $ ');
                         terminalLog.push('\n\n $ ');
                         break;
                     }
                     case '\u007F': { // Backspace
                         const success = commandHandler.removeChar();
                         if (success) {
-                            terminal.write('\b \b');
+                            xtermObj.write('\b \b');
                             terminalLog.pop(); // because commandHandler.removeChar() is success!!
                         }
                         break;
@@ -448,7 +448,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                     default: { // Other keys
                         if (char >= String.fromCharCode(0x20) && char <= String.fromCharCode(0x7E) || char >= '\u00a0') {
                             commandHandler.addChar(char);
-                            terminal.write(char);
+                            xtermObj.write(char);
                             terminalLog.push(char);
                         }
                     }
@@ -461,7 +461,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
     setDefaultTerminalKeyboardListener();
 
     // Initialize Terminal Window Display
-    terminal.write(` $ `);
+    xtermObj.write(` $ `);
     terminalLog.push(` $ `);
 
     // Securely Release the Terminal APIs
@@ -473,9 +473,9 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
             if (if_print_to_log)
                 terminalLog.push(sentence);
             if (if_print_raw_to_window) {
-                terminal.write(sentence); // leave <sentence> as it was
+                xtermObj.write(sentence); // leave <sentence> as it was
             } else {
-                terminal.write(sentence.replaceAll('\n', '\n\r   ')); // replace all '\n' in <sentence> with '\n\r   '
+                xtermObj.write(sentence.replaceAll('\n', '\n\r   ')); // replace all '\n' in <sentence> with '\n\r   '
             }
         },
 
@@ -520,7 +520,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
             const store = terminalFSDB.transaction(["TerminalFSStore"], "readwrite")
                 .objectStore("TerminalFSStore");
 
-            // Use the put() method to insert or update the terminal file system
+            // Use the put() method to insert or update the xtermObj file system
             const putRequest = store.put({
                 id: "terminal_file_system",
                 data: fsRoot
@@ -564,7 +564,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
                     while (currentTerminalFolderPointer.haveFile(filename))
                         filename = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} __ ` + filename;
                     currentTerminalFolderPointer.changeFileContent(filename, fileContent);
-                    terminal.write(`[Button:] Successfully added file "${filename}" to the current directory.\n\n\r $ `);
+                    xtermObj.write(`[Button:] Successfully added file "${filename}" to the current directory.\n\n\r $ `);
                     terminalLog.push(`[Button:] Successfully added file "${filename}" to the current directory.\n\n $ `);
                 };
                 reader.onerror = (error) => {
@@ -584,7 +584,7 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
         //         const reader = new FileReader();
         //         reader.onload = (evt) => {
         //             try {
-        //                 // TODO: Use the JSON file to restore the terminal file system.
+        //                 // TODO: Use the JSON file to restore the xtermObj file system.
         //                 const fsObj = JSON.parse(evt.target.result);
         //
         //             } catch (error) {
@@ -613,6 +613,6 @@ function generateTerminalCore(terminal, htmlElem_terminalContainer) {
         /*
         *  Other Dangerous Ports, better not to Release!!!
         * */
-        // getXTermObject: () => terminal, // avoid using this for a maintainable code structure and better performance!!!
+        // getXTermObject: () => xtermObj, // avoid using this for a maintainable code structure and better performance!!!
     };
 }
