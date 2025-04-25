@@ -193,7 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     terminalCore.getSupportedCommands()['touch'] = {
         executable: (parameters) => {
+            switch (parameters.length) {
 
+            }
         },
         description: ''
     };
@@ -226,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: ''
     };
 
-    terminalCore.getSupportedCommands()['ADDITIONAL COMMAND ONE'] = {
+    terminalCore.getSupportedCommands()['wget'] = {
         executable: (parameters) => {
             //
         },
