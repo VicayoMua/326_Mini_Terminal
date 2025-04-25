@@ -183,6 +183,24 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                 for (const subfolderName of subfolderNames)
                     currentFullPathStack.push(subfolderName);
             },
+            gotoPathFromRoot: (path) => {
+                // NOTE: `/` is not allowed!!!
+                if (!isLegalPathNameInFileSystem(path) || path[0] === "/")
+                    throw new Error(`Subpath name is illegal`);
+                // Temporary Update
+                let temp_currentFolder = fsRoot;
+                const subfolderNames = path.split('/');
+                for (const subfolderName of subfolderNames) {
+                    if (!isLegalKeyNameInFileSystem(subfolderName))
+                        throw new Error(`Subpath name is illegal`);
+                    if (temp_currentFolder.subfolders[subfolderName] === undefined)
+                        throw new Error(`Folder ${subfolderName} not found`);
+                    temp_currentFolder = temp_currentFolder.subfolders[subfolderName];
+                }
+                // Apply Long-term Update
+                currentFolder = temp_currentFolder;
+                currentFullPathStack = subfolderNames;
+            },
             gotoParentFolder: () => {
                 currentFolder = currentFolder.parentFolder;
                 currentFullPathStack.pop();

@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     terminalCore.getSupportedCommands()['echo'] = {
         executable: (parameters) => {
             terminalCore.printToWindow(
-                `"${
+                `'${
                     parameters.reduce(
                         (acc, elem, index) => {
                             if (index === 0) return elem;
@@ -102,11 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                         ''
                     )
-                }"`,
+                }'`,
                 false, true
             );
         },
-        description: 'Simply print all the parameters -- with quotation marks [\"] added at the beginning and the end.\n Usage: echo [parameter_sequence]',
+        description: 'Simply print all the parameters -- with quotation marks [\'] added at the beginning and the end.\n Usage: echo [parameter_sequence]',
     };
 
     // Finished
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         let path = parameters[0];
                         if (path[0] === '/') { // begin with '/', so the path is from the root
                             // The path is from the root, so we need a new_pointer!
-                            path = path.slice(1); // take off the "/"
+                            path = path.slice(1); // take off the '/'
                             const tempFolderPointer = terminalCore.getNewFolderPointer();
                             tempFolderPointer.gotoSubpath(path);
                             terminalCore.printToWindow(`${tempFolderPointer.getContentListAsString()}`, false, true);
@@ -156,15 +156,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         let path = parameters[0];
                         if (path[0] === '/') { // begin with '/', so the path is from the root
                             // The path is from the root, so we need a new_pointer!
-                            path = path.slice(1); // take off the "/"
-                            const tempFolderPointer = terminalCore.getNewFolderPointer();
-                            tempFolderPointer.createSubpath(path);
+                            path = path.slice(1); // take off the '/'
+                            terminalCore.getNewFolderPointer().createSubpath(path);
                         } else { // the path is not from the root
                             if (path[0] === '.' && path[1] === '/') { // begin with './'
                                 path = path.slice(2);
                             }
-                            const tempFolderPointer = terminalCore.getCurrentFolderPointer().duplicate();
-                            tempFolderPointer.createSubpath(path);
+                            terminalCore.getCurrentFolderPointer().createSubpath(path);
                         }
                         terminalCore.printToWindow(`Success!`, false, true);
                     } catch (error) {
@@ -214,9 +212,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     terminalCore.getSupportedCommands()['cd'] = {
         executable: (parameters) => {
-
+            switch (parameters.length) {
+                case 1: {
+                    try {
+                        let path = parameters[0];
+                        const fp = terminalCore.getCurrentFolderPointer();
+                        if (path === '/') { // goto root
+                            fp.gotoRoot();
+                        } else if (path === '.' || path === './') {
+                            // do nothing !!!!
+                        } else if (path === '..' || path === '../') { // goto parent
+                            fp.gotoParentFolder();
+                        } else { // goto some path
+                            if (path[0] === '/') { // the path is from the root
+                                path = path.slice(1);
+                                fp.gotoPathFromRoot(path);
+                            } else { // the path is from the current folder
+                                if (path[0] === '.' && path[1] === '/') {
+                                    path = path.slice(2);
+                                }
+                                fp.gotoSubpath(path);
+                            }
+                        }
+                        terminalCore.printToWindow(`Success!`, false, true);
+                    } catch (error) {
+                        terminalCore.printToWindow(`${error}`, false, true);
+                    }
+                    break;
+                }
+                default: {
+                    terminalCore.printToWindow(`Wrong grammar!\nUsage: cd folder_name/folder_path`, false, true);
+                }
+            }
         },
-        description: 'Goto the given path.'
+        description: 'Goto the given folder.\nUsage: cd folder_name/folder_path'
     };
 
     terminalCore.getSupportedCommands()['rename'] = {
