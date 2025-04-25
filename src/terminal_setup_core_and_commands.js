@@ -191,6 +191,32 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Print the current full path.'
     };
 
+    terminalCore.getSupportedCommands()['ping'] = {
+        executable: (parameters) => {
+            if (parameters.length === 0) {
+                terminalCore.printToWindow(`Usage: ping [hostname]`, false, true);
+                return;
+            }
+    
+            const fullCommand = `ping ${parameters.join(" ")}`;
+            terminalCore.printToWindow(`Running: ${fullCommand}\n`, false, true);
+    
+            fetch('/api/run', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: fullCommand })
+            })
+            .then(res => res.text())
+            .then(output => {
+                terminalCore.printToWindow(output, false, true);
+            })
+            .catch(err => {
+                terminalCore.printToWindow(`Error executing ping: ${err}`, false, true);
+            });
+        },
+        description: 'Ping a domain or IP address.\nUsage: ping [hostname]'
+    };
+    
     terminalCore.getSupportedCommands()['touch'] = {
         executable: (parameters) => {
 
