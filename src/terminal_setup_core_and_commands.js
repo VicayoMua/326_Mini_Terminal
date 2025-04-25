@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const fp = terminalCore.getCurrentFolderPointer();
                         if (path === '/') { // goto root
                             fp.gotoRoot();
-                        } else if (path === '.' || path === './') {
+                        } else if (path === '.' || path === './') { // goto current
                             // do nothing !!!!
                         } else if (path === '..' || path === '../') { // goto parent
                             fp.gotoParentFolder();
