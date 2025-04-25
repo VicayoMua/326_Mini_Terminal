@@ -183,6 +183,24 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                 for (const subfolderName of subfolderNames)
                     currentFullPathStack.push(subfolderName);
             },
+            gotoPathFromRoot: (path) => {
+                // NOTE: `/` is not allowed!!!
+                if (!isLegalPathNameInFileSystem(path) || path[0] === "/")
+                    throw new Error(`Subpath name is illegal`);
+                // Temporary Update
+                let temp_currentFolder = fsRoot;
+                const subfolderNames = path.split('/');
+                for (const subfolderName of subfolderNames) {
+                    if (!isLegalKeyNameInFileSystem(subfolderName))
+                        throw new Error(`Subpath name is illegal`);
+                    if (temp_currentFolder.subfolders[subfolderName] === undefined)
+                        throw new Error(`Folder ${subfolderName} not found`);
+                    temp_currentFolder = temp_currentFolder.subfolders[subfolderName];
+                }
+                // Apply Long-term Update
+                currentFolder = temp_currentFolder;
+                currentFullPathStack = subfolderNames;
+            },
             gotoParentFolder: () => {
                 currentFolder = currentFolder.parentFolder;
                 currentFullPathStack.pop();
@@ -202,6 +220,13 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                 if (!isLegalKeyNameInFileSystem(fileName))
                     throw new Error(`File name is illegal`);
                 currentFolder.files[fileName] = newContent;
+            },
+            createNewFile: (fileName) => {
+                if (!isLegalKeyNameInFileSystem(fileName))
+                    throw new Error(`File name is illegal`);
+                if (currentFolder.files[fileName] !== undefined)
+                    throw new Error(`File ${fileName} is already existing`);
+                currentFolder.files[fileName] = "";
             },
             renameExistingFile: (oldFileName, newFileName) => {
                 if (!isLegalKeyNameInFileSystem(oldFileName) || !isLegalKeyNameInFileSystem(newFileName))
@@ -224,7 +249,7 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
             /*
             *  Directory Subfolder Controllers
             * */
-            createSubfolder: (newSubfolderName) => {
+            createSubfolder: (newSubfolderName, gotoNewFolder = false) => {
                 if (!isLegalKeyNameInFileSystem(newSubfolderName))
                     throw new Error(`Subfolder name is illegal`);
                 if (currentFolder.subfolders[newSubfolderName] !== undefined)
@@ -234,8 +259,11 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                     subfolders: {},
                     files: {}
                 };
+                if (gotoNewFolder === true){
+                    currentFolder = currentFolder.subfolders[newSubfolderName];
+                }
             },
-            createSubpath: (subpath) => {
+            createSubpath: (subpath, gotoNewFolder = false) => {
                 // NOTE: `./` is not allowed!!!
                 if (!isLegalPathNameInFileSystem(subpath) || subpath[0] === "/")
                     throw new Error(`Subpath name is illegal`);
@@ -256,6 +284,9 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                         };
                     }
                     temp_currentFolder = temp_currentFolder.subfolders[subfolderName];
+                }
+                if (gotoNewFolder === true){
+                    currentFolder = temp_currentFolder;
                 }
             },
             renameExistingSubfolder: (oldSubfolderName, newSubfolderName) => {
