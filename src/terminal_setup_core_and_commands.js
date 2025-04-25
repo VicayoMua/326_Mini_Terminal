@@ -398,6 +398,22 @@ terminalCore.getSupportedCommands()['files'] = {
           break;
         }
   
+        case 'update': {
+          // files update <filename> <new content...>
+          if (rest.length < 2) {
+            terminalCore.printToWindow('Usage: files update <path> <content>\n', false, true);
+            return;
+          }
+          const [ path, ...txt ] = rest;
+          try {
+            fp.changeFileContent(path, txt.join(' '));
+            terminalCore.printToWindow(`Updated ${path}\n`, false, true);
+          } catch (e) {
+            terminalCore.printToWindow(`files update failed: ${e.message}\n`, false, true);
+          }
+          break;
+        }
+  
         
       }
     },
