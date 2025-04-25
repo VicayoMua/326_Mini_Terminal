@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const fullCommand = `ping ${parameters.join(" ")}`;
             terminalCore.printToWindow(`Running: ${fullCommand}\n`, false, true);
     
-            fetch('/api/run', {
+            fetch('http://localhost:3000/api/run', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ command: fullCommand })
