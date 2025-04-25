@@ -429,14 +429,37 @@ terminalCore.getSupportedCommands()['files'] = {
           break;
         }
   
-        
+        case 'rename': {
+          // files rename <oldName> <newName>
+          if (rest.length !== 2) {
+            terminalCore.printToWindow('Usage: files rename <old> <new>\n', false, true);
+            return;
+          }
+          try {
+            fp.renameExistingFile(rest[0], rest[1]);
+            terminalCore.printToWindow(`Renamed ${rest[0]} → ${rest[1]}\n`, false, true);
+          } catch (e) {
+            terminalCore.printToWindow(`files rename failed: ${e.message}\n`, false, true);
+          }
+          break;
+        }
+  
+        default:
+          terminalCore.printToWindow(
+            'Usage: files <list|read|create|update|delete|rename> [args]\n',
+            false, true
+          );
       }
     },
     description:
       'Virtual-FS CRUD operations:\n' +
       '  files list\n' +
-      '  files read <path>\n '
-  };
+      '  files read <path>\n' +
+      '  files create <path> [content]\n' +
+      '  files update <path> <content>\n' +
+      '  files delete <path>\n' +
+      '  files rename <old> <new>'
+  };  
   
 });
 
