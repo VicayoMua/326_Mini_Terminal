@@ -348,12 +348,47 @@ terminalCore.getSupportedCommands()['curl'] = {
 
   
 
-    terminalCore.getSupportedCommands()['ADDITIONAL COMMAND THREE'] = {
-        executable: (parameters) => {
-            //
-        },
-        description: ''
-    };
+terminalCore.getSupportedCommands()['files'] = {
+    executable: (params) => {
+      const fp = terminalCore.getCurrentFolderPointer();
+      const [ action, ...rest ] = params;
+  
+      switch (action) {
+        case 'list': {
+          // show folders and files in current dir
+          const folders = fp.getSubfolderNames();
+          const files   = fp.getFileNames();
+          terminalCore.printToWindow(
+            `Folders:\n  ${folders.join('\n  ')}\n\n` +
+            `Files:\n  ${files.join('\n  ')}\n`,
+            false, true
+          );
+          break;
+        }
+  
+        case 'read': {
+          // files read <filename>
+          if (rest.length !== 1) {
+            terminalCore.printToWindow('Usage: files read <path>\n', false, true);
+            return;
+          }
+          try {
+            const content = fp.getFileContent(rest[0]);
+            terminalCore.printToWindow(content + '\n', false, true);
+          } catch (e) {
+            terminalCore.printToWindow(`files read failed: ${e.message}\n`, false, true);
+          }
+          break;
+        }
+  
+      }
+    },
+    description:
+      'Virtual-FS CRUD operations:\n' +
+      '  files list\n' +
+      '  files read <path>\n '
+  };
+  
 });
 
 
