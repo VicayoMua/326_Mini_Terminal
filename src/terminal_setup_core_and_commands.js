@@ -414,6 +414,21 @@ terminalCore.getSupportedCommands()['files'] = {
           break;
         }
   
+        case 'delete': {
+          // files delete <filename>
+          if (rest.length !== 1) {
+            terminalCore.printToWindow('Usage: files delete <path>\n', false, true);
+            return;
+          }
+          try {
+            fp.deleteFile(rest[0]);
+            terminalCore.printToWindow(`Deleted ${rest[0]}\n`, false, true);
+          } catch (e) {
+            terminalCore.printToWindow(`files delete failed: ${e.message}\n`, false, true);
+          }
+          break;
+        }
+  
         
       }
     },
