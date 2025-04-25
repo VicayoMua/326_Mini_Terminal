@@ -381,6 +381,24 @@ terminalCore.getSupportedCommands()['files'] = {
           break;
         }
   
+        case 'create': {
+          // files create <filename> [initial content...]
+          if (rest.length < 1) {
+            terminalCore.printToWindow('Usage: files create <path> [content]\n', false, true);
+            return;
+          }
+          const [ path, ...txt ] = rest;
+          try {
+            fp.createNewFile(path);
+            if (txt.length) fp.changeFileContent(path, txt.join(' '));
+            terminalCore.printToWindow(`Created ${path}\n`, false, true);
+          } catch (e) {
+            terminalCore.printToWindow(`files create failed: ${e.message}\n`, false, true);
+          }
+          break;
+        }
+  
+        
       }
     },
     description:
