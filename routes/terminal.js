@@ -1,3 +1,4 @@
+const fetch = require("node-fetch");
 const express = require('express');
 const router = express.Router();
 const { exec } = require('child_process');
@@ -22,4 +23,28 @@ router.post('/run', (req, res) => {
     });
 });
 
+// routes/terminal.js
+
+router.get('/proxy', async (req, res) => {
+    const target = req.query.url;
+    if (!target) return res.status(400).json({error:'Missing ?url='});
+    try {
+      const upstream = await fetch(target);
+      res.status(upstream.status);
+  
+      upstream.headers.forEach((v,k) => {
+        if (k.toLowerCase() !== 'content-type') {
+          res.setHeader(k, v);
+        }
+      });
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+
+      const body = await upstream.text();
+      res.send(body);
+    } catch (err) {
+      res.status(502).send(`Proxy error: ${err.message}`);
+    }
+  });
+  
+  
 module.exports = router;
