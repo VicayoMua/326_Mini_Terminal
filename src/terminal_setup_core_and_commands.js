@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
     
-            const fullCommand = `ping ${parameters.join(" ")}`;
+            const fullCommand = `ping -c 4 ${parameters.join(" ")}`;
             terminalCore.printToWindow(`Running: ${fullCommand}\n`, false, true);
     
             fetch('http://localhost:3000/api/run', {
