@@ -11,6 +11,10 @@ router.post('/run', (req, res) => {
     }
 
     exec(command, { timeout: 5000 }, (error, stdout, stderr) => {
+        console.log('[PING DEBUG] Command:', command);
+        console.log('[PING DEBUG] Error:', error);
+        console.log('[PING DEBUG] stderr:', stderr);
+        console.log('[PING DEBUG] stdout:', stdout);
         if (error) {
             return res.status(500).send(stderr || 'Execution error');
         }
