@@ -191,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Print the current full path.'
     };
 
+    // Finished
     terminalCore.getSupportedCommands()['touch'] = {
         executable: (parameters) => {
             switch (parameters.length) {
@@ -208,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         },
-        description: ''
+        description: 'Make a new file in the current directory.\nUsage: touch file_name'
     };
 
     terminalCore.getSupportedCommands()['cd'] = {
