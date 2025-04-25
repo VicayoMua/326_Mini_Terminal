@@ -203,6 +203,13 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                     throw new Error(`File name is illegal`);
                 currentFolder.files[fileName] = newContent;
             },
+            createNewFile: (fileName) => {
+                if (!isLegalKeyNameInFileSystem(fileName))
+                    throw new Error(`File name is illegal`);
+                if (currentFolder.files[fileName] !== undefined)
+                    throw new Error(`File ${fileName} is already existing`);
+                currentFolder.files[fileName] = "";
+            },
             renameExistingFile: (oldFileName, newFileName) => {
                 if (!isLegalKeyNameInFileSystem(oldFileName) || !isLegalKeyNameInFileSystem(newFileName))
                     throw new Error(`File name is illegal`);
@@ -224,7 +231,7 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
             /*
             *  Directory Subfolder Controllers
             * */
-            createSubfolder: (newSubfolderName) => {
+            createSubfolder: (newSubfolderName, gotoNewFolder = false) => {
                 if (!isLegalKeyNameInFileSystem(newSubfolderName))
                     throw new Error(`Subfolder name is illegal`);
                 if (currentFolder.subfolders[newSubfolderName] !== undefined)
@@ -234,8 +241,11 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                     subfolders: {},
                     files: {}
                 };
+                if (gotoNewFolder === true){
+                    currentFolder = currentFolder.subfolders[newSubfolderName];
+                }
             },
-            createSubpath: (subpath) => {
+            createSubpath: (subpath, gotoNewFolder = false) => {
                 // NOTE: `./` is not allowed!!!
                 if (!isLegalPathNameInFileSystem(subpath) || subpath[0] === "/")
                     throw new Error(`Subpath name is illegal`);
@@ -256,6 +266,9 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                         };
                     }
                     temp_currentFolder = temp_currentFolder.subfolders[subfolderName];
+                }
+                if (gotoNewFolder === true){
+                    currentFolder = temp_currentFolder;
                 }
             },
             renameExistingSubfolder: (oldSubfolderName, newSubfolderName) => {

@@ -195,11 +195,16 @@ document.addEventListener('DOMContentLoaded', () => {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 1: {
-
+                    try {
+                        terminalCore.getCurrentFolderPointer().createNewFile(parameters[0]);
+                        terminalCore.printToWindow(`Success!`, false, true);
+                    } catch (error) {
+                        terminalCore.printToWindow(`${error}`, false, true);
+                    }
                     break;
                 }
                 default: {
-                    terminalCore.printToWindow(`Wrong grammar!\nUsage: touch file_name/file_path`, false, true);
+                    terminalCore.printToWindow(`Wrong grammar!\nUsage: touch file_name`, false, true);
                 }
             }
         },
