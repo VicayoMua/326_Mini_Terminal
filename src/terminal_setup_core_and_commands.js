@@ -194,7 +194,13 @@ document.addEventListener('DOMContentLoaded', () => {
     terminalCore.getSupportedCommands()['touch'] = {
         executable: (parameters) => {
             switch (parameters.length) {
+                case 1: {
 
+                    break;
+                }
+                default: {
+                    terminalCore.printToWindow(`Wrong grammar!\nUsage: touch file_name/file_path`, false, true);
+                }
             }
         },
         description: ''
