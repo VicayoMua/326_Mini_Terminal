@@ -581,8 +581,8 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                         date = new Date();
                     let
                         filename = file.name;
-                    while (currentTerminalFolderPointer.haveFile(filename))
-                        filename = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} __ ` + filename;
+                    if (currentTerminalFolderPointer.haveFile(filename))
+                        filename = `${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}_${filename}`;
                     currentTerminalFolderPointer.changeFileContent(filename, fileContent);
                     xtermObj.write(`[Button:] Successfully added file "${filename}" to the current directory.\n\n\r $ `);
                     terminalLog.push(`[Button:] Successfully added file "${filename}" to the current directory.\n\n $ `);

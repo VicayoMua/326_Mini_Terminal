@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Simply print all the parameters -- with quotation marks [\'] added at the beginning and the end.\n Usage: echo [parameter_sequence]',
     };
 
-    // Finished
+    // Update Needed
     terminalCore.getSupportedCommands()['ls'] = {
         executable: (parameters) => {
             switch (parameters.length) {
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'List all the folders and files.\nUsage: ls [folder_path]'
     };
 
-    // Finished
+    // Update Needed
     terminalCore.getSupportedCommands()['mkdir'] = {
         executable: (parameters) => {
             switch (parameters.length) {
@@ -210,6 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Make a new file in the current directory.\nUsage: touch file_name'
     };
 
+    // Update Needed
     terminalCore.getSupportedCommands()['cd'] = {
         executable: (parameters) => {
             switch (parameters.length) {
@@ -271,9 +272,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     terminalCore.getSupportedCommands()['wget'] = {
         executable: (parameters) => {
-            //
+            switch (parameters.length) {
+                case 1: {
+                    const url = parameters[0];
+                    // Example URL: https://static.vecteezy.com/system/resources/previews/036/333/113/large_2x/monarch-beautiful-butterflygraphy-beautiful-butterfly-on-flower-macrography-beautyful-nature-photo.jpg
+                    try {
+                        fetch(url)
+                            .then((response) => {
+                                if (!response.ok) {
+                                    throw new Error(`Could not find ${parameters[0]}`);
+                                }
+                                return response.text();
+                            })
+                            .then((text) => {
+                                const
+                                    date = new Date(),
+                                    filename = `wget_${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`;
+                                terminalCore.getCurrentFolderPointer().changeFileContent(
+                                    filename,
+                                    text
+                                );
+                                terminalCore.printToWindow(`Success!`, false, true);
+                            });
+                    } catch (error) {
+                        terminalCore.printToWindow(`${error}`, false, true);
+                    }
+                    break;
+                }
+                default: {
+                    terminalCore.printToWindow(`Wrong grammar!\nUsage: wget html_link`, false, true);
+                }
+            }
         },
-        description: ''
+        description: 'Download file from html link.\nUsage: wget html_link'
     };
 
     terminalCore.getSupportedCommands()['ping'] = {
