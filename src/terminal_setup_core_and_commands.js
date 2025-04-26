@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         description: 'Print the current full path.'
     };
-  
+
     // Finished
     terminalCore.getSupportedCommands()['touch'] = {
         executable: (parameters) => {
@@ -275,78 +275,77 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         description: ''
     };
-  
+
     terminalCore.getSupportedCommands()['ping'] = {
         executable: (parameters) => {
             if (parameters.length === 0) {
                 terminalCore.printToWindow(`Usage: ping [hostname]`, false, true);
                 return;
             }
-    
+
             const fullCommand = `ping -c 4 ${parameters.join(" ")}`;
             terminalCore.printToWindow(`Running: ${fullCommand}\n`, false, true);
-    
+
             fetch('http://localhost:3000/api/run', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ command: fullCommand })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({command: fullCommand})
             })
-            .then(res => res.text())
-            .then(output => {
-                terminalCore.printToWindow(output, false, true);
-            })
-            .catch(err => {
-                terminalCore.printToWindow(`Error executing ping: ${err}`, false, true);
-            });
+                .then(res => res.text())
+                .then(output => {
+                    terminalCore.printToWindow(output, false, true);
+                })
+                .catch(err => {
+                    terminalCore.printToWindow(`Error executing ping: ${err}`, false, true);
+                });
         },
         description: 'Ping a domain or IP address.\nUsage: ping [hostname]'
     };
 
-terminalCore.getSupportedCommands()['curl'] = {
-  executable: (params) => {
-    // Validate
-    if (params.length !== 1) {
-      terminalCore.printToWindow("Usage: curl <url>\n", false, true);
-      return;
-    }
-    // Pull the URL from params
-    const url = params[0];
+    terminalCore.getSupportedCommands()['curl'] = {
+        executable: (params) => {
+            // Validate
+            if (params.length !== 1) {
+                terminalCore.printToWindow("Usage: curl <url>\n", false, true);
+                return;
+            }
+            // Pull the URL from params
+            const url = params[0];
 
-    // Print a fetch banner
-    terminalCore.printToWindow(`Fetching ${url} …\n`, false, true);
+            // Print a fetch banner
+            terminalCore.printToWindow(`Fetching ${url} …\n`, false, true);
 
-    fetch(`http://localhost:3000/api/proxy?url=${encodeURIComponent(url)}`)
-      .then(res => {
-        // 5) Print status + headers
-        terminalCore.printToWindow(
-          `$ HTTP ${res.status} ${res.statusText}` +
-          [...res.headers.entries()]
-            .map(([k, v]) => `\n${k}: ${v}`)
-            .join('') +
-          `\n\n`,
-          false,
-          true
-        );
-        // Return the body text
-        return res.text();
-      })
-      .then(body => {
-        // Print the HTML snippet
-        const snippet = body.slice(0, 1000);
-        terminalCore.printToWindow(
-          snippet + (body.length > 1000 ? "\n...[truncated]\n" : "\n"),
-          false,
-          true
-        );
-      })
-      .catch(err => {
-        terminalCore.printToWindow(`curl failed: ${err.message}\n`, false, true);
-      });
-  },
-  description: "Fetch a URL via your server proxy and show status, headers & a 1 000-char body snippet"
-};
+            fetch(`http://localhost:3000/api/proxy?url=${encodeURIComponent(url)}`)
+                .then(res => {
+                    // 5) Print status + headers
+                    terminalCore.printToWindow(
+                        `$ HTTP ${res.status} ${res.statusText}` +
+                        [...res.headers.entries()]
+                            .map(([k, v]) => `\n${k}: ${v}`)
+                            .join('') +
+                        `\n\n`,
+                        false,
+                        true
+                    );
+                    // Return the body text
+                    return res.text();
+                })
+                .then(body => {
+                    // Print the HTML snippet
+                    const snippet = body.slice(0, 1000);
+                    terminalCore.printToWindow(
+                        snippet + (body.length > 1000 ? "\n...[truncated]\n" : "\n"),
+                        false,
+                        true
+                    );
+                })
+                .catch(err => {
+                    terminalCore.printToWindow(`curl failed: ${err.message}\n`, false, true);
+                });
+        },
+        description: "Fetch a URL via your server proxy and show status, headers & a 1 000-char body snippet"
+    };
 
-  
 
     terminalCore.getSupportedCommands()['ADDITIONAL COMMAND THREE'] = {
         executable: (parameters) => {
