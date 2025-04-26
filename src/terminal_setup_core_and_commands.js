@@ -347,12 +347,119 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    terminalCore.getSupportedCommands()['ADDITIONAL COMMAND THREE'] = {
-        executable: (parameters) => {
-            //
-        },
-        description: ''
-    };
+terminalCore.getSupportedCommands()['files'] = {
+    executable: (params) => {
+      const fp = terminalCore.getCurrentFolderPointer();
+      const [ action, ...rest ] = params;
+  
+      switch (action) {
+        case 'list': {
+          // show folders and files in current dir
+          const folders = fp.getSubfolderNames();
+          const files   = fp.getFileNames();
+          terminalCore.printToWindow(
+            `Folders:\n  ${folders.join('\n  ')}\n\n` +
+            `Files:\n  ${files.join('\n  ')}\n`,
+            false, true
+          );
+          break;
+        }
+  
+        case 'read': {
+          // files read <filename>
+          if (rest.length !== 1) {
+            terminalCore.printToWindow('Usage: files read <path>\n', false, true);
+            return;
+          }
+          try {
+            const content = fp.getFileContent(rest[0]);
+            terminalCore.printToWindow(content + '\n', false, true);
+          } catch (e) {
+            terminalCore.printToWindow(`files read failed: ${e.message}\n`, false, true);
+          }
+          break;
+        }
+  
+        case 'create': {
+          // files create <filename> [initial content...]
+          if (rest.length < 1) {
+            terminalCore.printToWindow('Usage: files create <path> [content]\n', false, true);
+            return;
+          }
+          const [ path, ...txt ] = rest;
+          try {
+            fp.createNewFile(path);
+            if (txt.length) fp.changeFileContent(path, txt.join(' '));
+            terminalCore.printToWindow(`Created ${path}\n`, false, true);
+          } catch (e) {
+            terminalCore.printToWindow(`files create failed: ${e.message}\n`, false, true);
+          }
+          break;
+        }
+  
+        case 'update': {
+          // files update <filename> <new content...>
+          if (rest.length < 2) {
+            terminalCore.printToWindow('Usage: files update <path> <content>\n', false, true);
+            return;
+          }
+          const [ path, ...txt ] = rest;
+          try {
+            fp.changeFileContent(path, txt.join(' '));
+            terminalCore.printToWindow(`Updated ${path}\n`, false, true);
+          } catch (e) {
+            terminalCore.printToWindow(`files update failed: ${e.message}\n`, false, true);
+          }
+          break;
+        }
+  
+        case 'delete': {
+          // files delete <filename>
+          if (rest.length !== 1) {
+            terminalCore.printToWindow('Usage: files delete <path>\n', false, true);
+            return;
+          }
+          try {
+            fp.deleteFile(rest[0]);
+            terminalCore.printToWindow(`Deleted ${rest[0]}\n`, false, true);
+          } catch (e) {
+            terminalCore.printToWindow(`files delete failed: ${e.message}\n`, false, true);
+          }
+          break;
+        }
+  
+        case 'rename': {
+          // files rename <oldName> <newName>
+          if (rest.length !== 2) {
+            terminalCore.printToWindow('Usage: files rename <old> <new>\n', false, true);
+            return;
+          }
+          try {
+            fp.renameExistingFile(rest[0], rest[1]);
+            terminalCore.printToWindow(`Renamed ${rest[0]} → ${rest[1]}\n`, false, true);
+          } catch (e) {
+            terminalCore.printToWindow(`files rename failed: ${e.message}\n`, false, true);
+          }
+          break;
+        }
+  
+        default:
+          terminalCore.printToWindow(
+            'Usage: files <list|read|create|update|delete|rename> [args]\n',
+            false, true
+          );
+      }
+    },
+    description:
+      'Virtual-FS CRUD operations:\n' +
+      '  files list\n' +
+      '  files read <path>\n' +
+      '  files create <path> [content]\n' +
+      '  files update <path> <content>\n' +
+      '  files delete <path>\n' +
+      '  files rename <old> <new>'
+  };  
+  
 });
 
 
