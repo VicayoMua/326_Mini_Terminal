@@ -55,67 +55,56 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
     };
     fsRoot.parentFolder = fsRoot;
 
-    // Set Up <terminalFSDB> and try to restore old <fsRoot>
-    let terminalFSDB = undefined;
-    (() => {
-        // Open (or create) the IndexedDB database called "TerminalFSDB" with version 1
-        const dbRequest = indexedDB.open("TerminalFSDB", 1);
-        // Listen for the 'upgradeneeded' event to create the object store if necessary
-        dbRequest.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            // Create the object store "TerminalFSStore" with "id" as the key path, if it doesn't exist
-            if (!db.objectStoreNames.contains("TerminalfSStore")) {
-                db.createObjectStore("TerminalFSStore", {keyPath: "id"});
-            }
-        };
-        dbRequest.onsuccess = (event) => {
-            terminalFSDB = event.target.result;
-
-            // Start a read-only transaction for the object store
-            const store = terminalFSDB.transaction(["TerminalFSStore"], "readonly")
-                .objectStore("TerminalFSStore");
-
-            // Use the get() method to read the xtermObj file system
-            const getRequest = store.get("terminal_file_system");
-
-            // Listen for the success event for the get request
-            getRequest.addEventListener("success", (event) => {
-                const result = event.target.result; // result: {id: ..., data: ...}
-                if (result !== undefined && result.data["keyCheck"] === "TERMINAL FS ROOT") {
-                    fsRoot = result;
-                    console.log(`Terminal file system restored successfully.`);
-                }
-            });
-        };
-
-        dbRequest.onerror = (event) => {
-            alert(`generateTerminalCore: Error opening IndexedDB: ${event.target.error}.`);
-        };
-    })();
+    // // Set Up <terminalFSDB> and try to restore old <fsRoot>
+    // let terminalFSDB = undefined;
+    // (() => {
+    //     // Open (or create) the IndexedDB database called "TerminalFSDB" with version 1
+    //     const dbRequest = indexedDB.open("TerminalFSDB", 1);
+    //     // Listen for the 'upgradeneeded' event to create the object store if necessary
+    //     dbRequest.onupgradeneeded = (event) => {
+    //         const db = event.target.result;
+    //         // Create the object store "TerminalFSStore" with "id" as the key path, if it doesn't exist
+    //         if (!db.objectStoreNames.contains("TerminalfSStore")) {
+    //             db.createObjectStore("TerminalFSStore", {keyPath: "id"});
+    //         }
+    //     };
+    //     dbRequest.onsuccess = (event) => {
+    //         terminalFSDB = event.target.result;
+    //
+    //         // Start a read-only transaction for the object store
+    //         const store = terminalFSDB.transaction(["TerminalFSStore"], "readonly")
+    //             .objectStore("TerminalFSStore");
+    //
+    //         // Use the get() method to read the xtermObj file system
+    //         const getRequest = store.get("terminal_file_system");
+    //
+    //         // Listen for the success event for the get request
+    //         getRequest.addEventListener("success", (event) => {
+    //             const result = event.target.result; // result: {id: ..., data: ...}
+    //             if (result !== undefined && result.data["keyCheck"] === "TERMINAL FS ROOT") {
+    //                 fsRoot = result;
+    //                 console.log(`Terminal file system restored successfully.`);
+    //             }
+    //         });
+    //     };
+    //
+    //     dbRequest.onerror = (event) => {
+    //         alert(`generateTerminalCore: Error opening IndexedDB: ${event.target.error}.`);
+    //     };
+    // })();
 
     // Function to Create Folder Pointer (File Browser)
     function createTerminalFolderPointer(
-        duplicationOfOldCurrentFolder = undefined,
-        duplicationOfOldCurrentFullPathStack = undefined
+        currentFolder = fsRoot,
+        currentFullPathStack = []
     ) {
-        let
-            currentFolder = undefined,
-            currentFullPathStack = undefined;
-        if (duplicationOfOldCurrentFolder === undefined || duplicationOfOldCurrentFullPathStack === undefined) { // old information is not complete
-            currentFolder = fsRoot;
-            currentFullPathStack = [];
-        } else { // old information is complete
-            currentFolder = duplicationOfOldCurrentFolder;
-            currentFullPathStack = duplicationOfOldCurrentFullPathStack;
-        }
-
         return {
             /*
             *  Duplication
             * */
             duplicate: () => createTerminalFolderPointer(
-                currentFolder, // simple copy of pointer
-                currentFullPathStack.map(x => x) // deep copy of array
+                currentFolder, // shallow copy of pointer
+                currentFullPathStack.map(x => x) // deep copy of array of strings
             ),
 
             /*
@@ -259,7 +248,7 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                     subfolders: {},
                     files: {}
                 };
-                if (gotoNewFolder === true){
+                if (gotoNewFolder === true) {
                     currentFolder = currentFolder.subfolders[newSubfolderName];
                 }
             },
@@ -285,7 +274,7 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
                     }
                     temp_currentFolder = temp_currentFolder.subfolders[subfolderName];
                 }
-                if (gotoNewFolder === true){
+                if (gotoNewFolder === true) {
                     currentFolder = temp_currentFolder;
                 }
             },
