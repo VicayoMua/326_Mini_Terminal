@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fsRoot
     );
 
-    // Set Up Button Functions Linking
+    // Set Up Button Functions Links
     button_to_save_terminal_file_system_to_indexDB = terminalCore.button_to_save_terminal_file_system_to_indexDB;
     button_to_download_terminal_log = terminalCore.button_to_download_terminal_log;
     button_to_add_local_file = terminalCore.button_to_add_local_file;
