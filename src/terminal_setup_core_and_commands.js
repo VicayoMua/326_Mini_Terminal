@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize Supported Commands
     const supportedCommands = {};
 
-    // Set Up Terminal Core Services
-    const terminalCore = generateTerminalCore(
+    // Set Up Current Terminal Core Services
+    let currentTerminalCore = generateTerminalCore(
         new window.Terminal({
             fontFamily: '"Fira Code", monospace',
             cursorBlink: true,
@@ -52,14 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set Up Button Functions Links
     // button_to_open_another_terminal_window = ;
-    button_to_save_terminal_file_system_to_indexDB = terminalCore.button_to_save_terminal_file_system_to_indexDB;
-    button_to_download_terminal_log = terminalCore.button_to_download_terminal_log;
-    button_to_add_local_file = terminalCore.button_to_add_local_file;
+    button_to_save_terminal_file_system_to_indexDB = currentTerminalCore.button_to_save_terminal_file_system_to_indexDB;
+    button_to_download_terminal_log = currentTerminalCore.button_to_download_terminal_log;
+    button_to_add_local_file = currentTerminalCore.button_to_add_local_file;
 
     // Finished
     supportedCommands['hello'] = {
         executable: (_) => {
-            terminalCore.printToWindow('Hello World!', false, true);
+            currentTerminalCore.printToWindow('Hello World!', false, true);
         },
         description: 'Say "Hello World!"'
     };
@@ -67,9 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Finished
     supportedCommands['help'] = {
         executable: (_) => {
-            terminalCore.printToWindow(
+            currentTerminalCore.printToWindow(
                 `Supported commands are: ${
-                    Object.keys(terminalCore.getSupportedCommands()).reduce(
+                    Object.keys(currentTerminalCore.getSupportedCommands()).reduce(
                         (acc, elem, index) => {
                             if (index === 0) return `${elem}`;
                             return `${acc}, ${elem}`;
@@ -91,15 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 1: {
                     const
                         commandName = parameters[0],
-                        commandObject = terminalCore.getSupportedCommands()[commandName];
+                        commandObject = currentTerminalCore.getSupportedCommands()[commandName];
                     if (commandObject === undefined) {
-                        terminalCore.printToWindow(
+                        currentTerminalCore.printToWindow(
                             `The command "${commandName}" is not supported!`,
                             true,
                             true
                         );
                     } else {
-                        terminalCore.printToWindow(
+                        currentTerminalCore.printToWindow(
                             `Description of ${commandName}: \n\n${commandObject.description}`,
                             false,
                             true
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 }
                 default: {
-                    terminalCore.printToWindow(`Wrong grammar!\nUsage: man [command_name]`, false, true);
+                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: man [command_name]`, false, true);
                 }
             }
         },
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Finished
     supportedCommands['echo'] = {
         executable: (parameters) => {
-            terminalCore.printToWindow(
+            currentTerminalCore.printToWindow(
                 `'${
                     parameters.reduce(
                         (acc, elem, index) => {
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 0: { // print current folder info
-                    terminalCore.printToWindow(`${terminalCore.getCurrentFolderPointer().getContentListAsString()}`, false, true);
+                    currentTerminalCore.printToWindow(`${currentTerminalCore.getCurrentFolderPointer().getContentListAsString()}`, false, true);
                     break;
                 }
                 case 1: { // print the folder info of given path
@@ -148,24 +148,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (path[0] === '/') { // begin with '/', so the path is from the root
                             // The path is from the root, so we need a new_pointer!
                             path = path.slice(1); // take off the '/'
-                            const tempFolderPointer = terminalCore.getNewFolderPointer();
+                            const tempFolderPointer = currentTerminalCore.getNewFolderPointer();
                             tempFolderPointer.gotoSubpath(path);
-                            terminalCore.printToWindow(`${tempFolderPointer.getContentListAsString()}`, false, true);
+                            currentTerminalCore.printToWindow(`${tempFolderPointer.getContentListAsString()}`, false, true);
                         } else { // the path is not from the root
                             if (path[0] === '.' && path[1] === '/') { // begin with './'
                                 path = path.slice(2);
                             }
-                            const tempFolderPointer = terminalCore.getCurrentFolderPointer().duplicate();
+                            const tempFolderPointer = currentTerminalCore.getCurrentFolderPointer().duplicate();
                             tempFolderPointer.gotoSubpath(path);
-                            terminalCore.printToWindow(`${tempFolderPointer.getContentListAsString()}`, false, true);
+                            currentTerminalCore.printToWindow(`${tempFolderPointer.getContentListAsString()}`, false, true);
                         }
                     } catch (error) {
-                        terminalCore.printToWindow(`${error}`, false, true);
+                        currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
                     break;
                 }
                 default: {
-                    terminalCore.printToWindow(`Wrong grammar!\nUsage: ls [folder_path]`, false, true);
+                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: ls [folder_path]`, false, true);
                 }
             }
         },
@@ -182,21 +182,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (path[0] === '/') { // begin with '/', so the path is from the root
                             // The path is from the root, so we need a new_pointer!
                             path = path.slice(1); // take off the '/'
-                            terminalCore.getNewFolderPointer().createSubpath(path);
+                            currentTerminalCore.getNewFolderPointer().createSubpath(path);
                         } else { // the path is not from the root
                             if (path[0] === '.' && path[1] === '/') { // begin with './'
                                 path = path.slice(2);
                             }
-                            terminalCore.getCurrentFolderPointer().createSubpath(path);
+                            currentTerminalCore.getCurrentFolderPointer().createSubpath(path);
                         }
-                        terminalCore.printToWindow(`Success!`, false, true);
+                        currentTerminalCore.printToWindow(`Success!`, false, true);
                     } catch (error) {
-                        terminalCore.printToWindow(`${error}`, false, true);
+                        currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
                     break;
                 }
                 default: {
-                    terminalCore.printToWindow(`Wrong grammar!\nUsage: mkdir folder_name/folder_path`, false, true);
+                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: mkdir folder_name/folder_path`, false, true);
                 }
             }
         },
@@ -206,8 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Finished
     supportedCommands['pwd'] = {
         executable: (_) => {
-            terminalCore.printToWindow(
-                terminalCore.getCurrentFolderPointer().getFullPath(),
+            currentTerminalCore.printToWindow(
+                currentTerminalCore.getCurrentFolderPointer().getFullPath(),
                 false, true
             );
         },
@@ -220,15 +220,15 @@ document.addEventListener('DOMContentLoaded', () => {
             switch (parameters.length) {
                 case 1: {
                     try {
-                        terminalCore.getCurrentFolderPointer().createNewFile(parameters[0]);
-                        terminalCore.printToWindow(`Success!`, false, true);
+                        currentTerminalCore.getCurrentFolderPointer().createNewFile(parameters[0]);
+                        currentTerminalCore.printToWindow(`Success!`, false, true);
                     } catch (error) {
-                        terminalCore.printToWindow(`${error}`, false, true);
+                        currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
                     break;
                 }
                 default: {
-                    terminalCore.printToWindow(`Wrong grammar!\nUsage: touch file_name`, false, true);
+                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: touch file_name`, false, true);
                 }
             }
         },
@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 1: {
                     try {
                         let path = parameters[0];
-                        const fp = terminalCore.getCurrentFolderPointer();
+                        const fp = currentTerminalCore.getCurrentFolderPointer();
                         if (path === '/') { // goto root
                             fp.gotoRoot();
                         } else if (path === '.' || path === './') { // goto current
@@ -260,14 +260,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 fp.gotoSubpath(path);
                             }
                         }
-                        terminalCore.printToWindow(`Success!`, false, true);
+                        currentTerminalCore.printToWindow(`Success!`, false, true);
                     } catch (error) {
-                        terminalCore.printToWindow(`${error}`, false, true);
+                        currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
                     break;
                 }
                 default: {
-                    terminalCore.printToWindow(`Wrong grammar!\nUsage: cd folder_name/folder_path`, false, true);
+                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: cd folder_name/folder_path`, false, true);
                 }
             }
         },
@@ -313,19 +313,19 @@ document.addEventListener('DOMContentLoaded', () => {
                                 const
                                     date = new Date(),
                                     filename = `wget_${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`;
-                                terminalCore.getCurrentFolderPointer().changeFileContent(
+                                currentTerminalCore.getCurrentFolderPointer().changeFileContent(
                                     filename,
                                     text
                                 );
-                                terminalCore.printToWindow(`Success!`, false, true);
+                                currentTerminalCore.printToWindow(`Success!`, false, true);
                             });
                     } catch (error) {
-                        terminalCore.printToWindow(`${error}`, false, true);
+                        currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
                     break;
                 }
                 default: {
-                    terminalCore.printToWindow(`Wrong grammar!\nUsage: wget html_link`, false, true);
+                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: wget html_link`, false, true);
                 }
             }
         },
@@ -335,12 +335,12 @@ document.addEventListener('DOMContentLoaded', () => {
     supportedCommands['ping'] = {
         executable: (parameters) => {
             if (parameters.length === 0) {
-                terminalCore.printToWindow(`Usage: ping [hostname]`, false, true);
+                currentTerminalCore.printToWindow(`Usage: ping [hostname]`, false, true);
                 return;
             }
 
             const fullCommand = `ping -c 4 ${parameters.join(" ")}`;
-            terminalCore.printToWindow(`Running: ${fullCommand}\n`, false, true);
+            currentTerminalCore.printToWindow(`Running: ${fullCommand}\n`, false, true);
 
             fetch('http://localhost:3000/api/run', {
                 method: 'POST',
@@ -349,10 +349,10 @@ document.addEventListener('DOMContentLoaded', () => {
             })
                 .then(res => res.text())
                 .then(output => {
-                    terminalCore.printToWindow(output, false, true);
+                    currentTerminalCore.printToWindow(output, false, true);
                 })
                 .catch(err => {
-                    terminalCore.printToWindow(`Error executing ping: ${err}`, false, true);
+                    currentTerminalCore.printToWindow(`Error executing ping: ${err}`, false, true);
                 });
         },
         description: 'Ping a domain or IP address.\nUsage: ping [hostname]'
@@ -362,19 +362,19 @@ document.addEventListener('DOMContentLoaded', () => {
         executable: (params) => {
             // Validate
             if (params.length !== 1) {
-                terminalCore.printToWindow("Usage: curl <url>\n", false, true);
+                currentTerminalCore.printToWindow("Usage: curl <url>\n", false, true);
                 return;
             }
             // Pull the URL from params
             const url = params[0];
 
             // Print a fetch banner
-            terminalCore.printToWindow(`Fetching ${url} …\n`, false, true);
+            currentTerminalCore.printToWindow(`Fetching ${url} …\n`, false, true);
 
             fetch(`http://localhost:3000/api/proxy?url=${encodeURIComponent(url)}`)
                 .then(res => {
                     // 5) Print status + headers
-                    terminalCore.printToWindow(
+                    currentTerminalCore.printToWindow(
                         `$ HTTP ${res.status} ${res.statusText}` +
                         [...res.headers.entries()]
                             .map(([k, v]) => `\n${k}: ${v}`)
@@ -389,14 +389,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(body => {
                     // Print the HTML snippet
                     const snippet = body.slice(0, 1000);
-                    terminalCore.printToWindow(
+                    currentTerminalCore.printToWindow(
                         snippet + (body.length > 1000 ? "\n...[truncated]\n" : "\n"),
                         false,
                         true
                     );
                 })
                 .catch(err => {
-                    terminalCore.printToWindow(`curl failed: ${err.message}\n`, false, true);
+                    currentTerminalCore.printToWindow(`curl failed: ${err.message}\n`, false, true);
                 });
         },
         description: "Fetch a URL via your server proxy and show status, headers & a 1 000-char body snippet"
@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     supportedCommands['files'] = {
         executable: (params) => {
-            const fp = terminalCore.getCurrentFolderPointer();
+            const fp = currentTerminalCore.getCurrentFolderPointer();
             const [action, ...rest] = params;
 
             switch (action) {
@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // show folders and files in current dir
                     const folders = fp.getSubfolderNames();
                     const files = fp.getFileNames();
-                    terminalCore.printToWindow(
+                    currentTerminalCore.printToWindow(
                         `Folders:\n  ${folders.join('\n  ')}\n\n` +
                         `Files:\n  ${files.join('\n  ')}\n`,
                         false, true
@@ -423,14 +423,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'read': {
                     // files read <filename>
                     if (rest.length !== 1) {
-                        terminalCore.printToWindow('Usage: files read <path>\n', false, true);
+                        currentTerminalCore.printToWindow('Usage: files read <path>\n', false, true);
                         return;
                     }
                     try {
                         const content = fp.getFileContent(rest[0]);
-                        terminalCore.printToWindow(content + '\n', false, true);
+                        currentTerminalCore.printToWindow(content + '\n', false, true);
                     } catch (e) {
-                        terminalCore.printToWindow(`files read failed: ${e.message}\n`, false, true);
+                        currentTerminalCore.printToWindow(`files read failed: ${e.message}\n`, false, true);
                     }
                     break;
                 }
@@ -438,16 +438,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'create': {
                     // files create <filename> [initial content...]
                     if (rest.length < 1) {
-                        terminalCore.printToWindow('Usage: files create <path> [content]\n', false, true);
+                        currentTerminalCore.printToWindow('Usage: files create <path> [content]\n', false, true);
                         return;
                     }
                     const [path, ...txt] = rest;
                     try {
                         fp.createNewFile(path);
                         if (txt.length) fp.changeFileContent(path, txt.join(' '));
-                        terminalCore.printToWindow(`Created ${path}\n`, false, true);
+                        currentTerminalCore.printToWindow(`Created ${path}\n`, false, true);
                     } catch (e) {
-                        terminalCore.printToWindow(`files create failed: ${e.message}\n`, false, true);
+                        currentTerminalCore.printToWindow(`files create failed: ${e.message}\n`, false, true);
                     }
                     break;
                 }
@@ -455,15 +455,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'update': {
                     // files update <filename> <new content...>
                     if (rest.length < 2) {
-                        terminalCore.printToWindow('Usage: files update <path> <content>\n', false, true);
+                        currentTerminalCore.printToWindow('Usage: files update <path> <content>\n', false, true);
                         return;
                     }
                     const [path, ...txt] = rest;
                     try {
                         fp.changeFileContent(path, txt.join(' '));
-                        terminalCore.printToWindow(`Updated ${path}\n`, false, true);
+                        currentTerminalCore.printToWindow(`Updated ${path}\n`, false, true);
                     } catch (e) {
-                        terminalCore.printToWindow(`files update failed: ${e.message}\n`, false, true);
+                        currentTerminalCore.printToWindow(`files update failed: ${e.message}\n`, false, true);
                     }
                     break;
                 }
@@ -471,14 +471,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'delete': {
                     // files delete <filename>
                     if (rest.length !== 1) {
-                        terminalCore.printToWindow('Usage: files delete <path>\n', false, true);
+                        currentTerminalCore.printToWindow('Usage: files delete <path>\n', false, true);
                         return;
                     }
                     try {
                         fp.deleteFile(rest[0]);
-                        terminalCore.printToWindow(`Deleted ${rest[0]}\n`, false, true);
+                        currentTerminalCore.printToWindow(`Deleted ${rest[0]}\n`, false, true);
                     } catch (e) {
-                        terminalCore.printToWindow(`files delete failed: ${e.message}\n`, false, true);
+                        currentTerminalCore.printToWindow(`files delete failed: ${e.message}\n`, false, true);
                     }
                     break;
                 }
@@ -486,20 +486,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'rename': {
                     // files rename <oldName> <newName>
                     if (rest.length !== 2) {
-                        terminalCore.printToWindow('Usage: files rename <old> <new>\n', false, true);
+                        currentTerminalCore.printToWindow('Usage: files rename <old> <new>\n', false, true);
                         return;
                     }
                     try {
                         fp.renameExistingFile(rest[0], rest[1]);
-                        terminalCore.printToWindow(`Renamed ${rest[0]} → ${rest[1]}\n`, false, true);
+                        currentTerminalCore.printToWindow(`Renamed ${rest[0]} → ${rest[1]}\n`, false, true);
                     } catch (e) {
-                        terminalCore.printToWindow(`files rename failed: ${e.message}\n`, false, true);
+                        currentTerminalCore.printToWindow(`files rename failed: ${e.message}\n`, false, true);
                     }
                     break;
                 }
 
                 default:
-                    terminalCore.printToWindow(
+                    currentTerminalCore.printToWindow(
                         'Usage: files <list|read|create|update|delete|rename> [args]\n',
                         false, true
                     );
