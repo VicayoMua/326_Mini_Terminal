@@ -252,7 +252,7 @@ const
         return (x) => reg.test(x);
     })();
 
-function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot) {
+function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supportedCommands) {
     // Put Terminal Window to Webpage Container
     xtermObj.open(htmlElem_terminalContainer);
 
@@ -285,19 +285,6 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot) {
 
     // Create Terminal Log Array
     let terminalLog = [];
-
-    // Initialize Supported Commands
-    const supportedCommands = {
-        // Built-in Command
-        hello: {
-            executable: (_) => {
-                xtermObj.write("Hello World!");
-                terminalLog.push("Hello World!");
-            },
-            description: 'Say "Hello World!"'
-        },
-        // A lot of other commands are going to be added in the future (in .js files)!
-    };
 
     // Initialize Current Keyboard Listener
     let currentTerminalKeyboardListener = undefined;
@@ -497,11 +484,6 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot) {
         * */
         getCurrentFolderPointer: () => currentTerminalFolderPointer,
         getNewFolderPointer: () => new TerminalFolderPointer(fsRoot),
-
-        /*
-        *  Terminal Command Controllers
-        * */
-        getSupportedCommands: () => supportedCommands,
 
         /*
         *  Terminal Built-in Button Ports

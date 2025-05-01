@@ -1,17 +1,21 @@
 let
+    button_to_open_another_terminal_window = undefined,
     button_to_save_terminal_file_system_to_indexDB = undefined,
     button_to_download_terminal_log = undefined,
     button_to_add_local_file = undefined;
 
 document.addEventListener('DOMContentLoaded', () => {
     // Create File System Root
-    let fsRoot = { // FolderObject
+    const fsRoot = { // FolderObject
         keyCheck: "TERMINAL FS ROOT",
         parentFolder: undefined, // FolderObject
         subfolders: {}, // subfolderName : folderObject
         files: {} // fileName : fileContents
     };
     fsRoot.parentFolder = fsRoot;
+
+    // Initialize Supported Commands
+    const supportedCommands = {};
 
     // Set Up Terminal Core Services
     const terminalCore = generateTerminalCore(
@@ -42,16 +46,26 @@ document.addEventListener('DOMContentLoaded', () => {
             },
         }),
         document.getElementById('terminal-container'),
-        fsRoot
+        fsRoot,
+        supportedCommands
     );
 
     // Set Up Button Functions Links
+    // button_to_open_another_terminal_window = ;
     button_to_save_terminal_file_system_to_indexDB = terminalCore.button_to_save_terminal_file_system_to_indexDB;
     button_to_download_terminal_log = terminalCore.button_to_download_terminal_log;
     button_to_add_local_file = terminalCore.button_to_add_local_file;
 
     // Finished
-    terminalCore.getSupportedCommands()['help'] = {
+    supportedCommands['hello'] = {
+        executable: (_) => {
+            terminalCore.printToWindow('Hello World!', false, true);
+        },
+        description: 'Say "Hello World!"'
+    };
+
+    // Finished
+    supportedCommands['help'] = {
         executable: (_) => {
             terminalCore.printToWindow(
                 `Supported commands are: ${
@@ -71,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Finished
-    terminalCore.getSupportedCommands()['man'] = {
+    supportedCommands['man'] = {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 1: {
@@ -102,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Finished
-    terminalCore.getSupportedCommands()['echo'] = {
+    supportedCommands['echo'] = {
         executable: (parameters) => {
             terminalCore.printToWindow(
                 `'${
@@ -121,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Update Needed
-    terminalCore.getSupportedCommands()['ls'] = {
+    supportedCommands['ls'] = {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 0: { // print current folder info
@@ -159,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Update Needed
-    terminalCore.getSupportedCommands()['mkdir'] = {
+    supportedCommands['mkdir'] = {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 1: {
@@ -190,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Finished
-    terminalCore.getSupportedCommands()['pwd'] = {
+    supportedCommands['pwd'] = {
         executable: (_) => {
             terminalCore.printToWindow(
                 terminalCore.getCurrentFolderPointer().getFullPath(),
@@ -201,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Finished
-    terminalCore.getSupportedCommands()['touch'] = {
+    supportedCommands['touch'] = {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 1: {
@@ -222,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Update Needed
-    terminalCore.getSupportedCommands()['cd'] = {
+    supportedCommands['cd'] = {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 1: {
@@ -260,28 +274,28 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Goto the given folder.\nUsage: cd folder_name/folder_path'
     };
 
-    terminalCore.getSupportedCommands()['rename'] = {
+    supportedCommands['rename'] = {
         executable: (parameters) => {
 
         },
         description: ''
     };
 
-    terminalCore.getSupportedCommands()['cp'] = {
+    supportedCommands['cp'] = {
         executable: (parameters) => {
 
         },
         description: ''
     };
 
-    terminalCore.getSupportedCommands()['edit'] = {
+    supportedCommands['edit'] = {
         executable: (parameters) => {
             //
         },
         description: ''
     };
 
-    terminalCore.getSupportedCommands()['wget'] = {
+    supportedCommands['wget'] = {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 1: {
@@ -318,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Download file from html link.\nUsage: wget html_link'
     };
 
-    terminalCore.getSupportedCommands()['ping'] = {
+    supportedCommands['ping'] = {
         executable: (parameters) => {
             if (parameters.length === 0) {
                 terminalCore.printToWindow(`Usage: ping [hostname]`, false, true);
@@ -344,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Ping a domain or IP address.\nUsage: ping [hostname]'
     };
 
-    terminalCore.getSupportedCommands()['curl'] = {
+    supportedCommands['curl'] = {
         executable: (params) => {
             // Validate
             if (params.length !== 1) {
@@ -388,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: "Fetch a URL via your server proxy and show status, headers & a 1 000-char body snippet"
     };
 
-    terminalCore.getSupportedCommands()['files'] = {
+    supportedCommands['files'] = {
         executable: (params) => {
             const fp = terminalCore.getCurrentFolderPointer();
             const [action, ...rest] = params;

@@ -48,22 +48,27 @@
     </script>
 
     <nav class="view-navigation">
+<!--        <button type="button"-->
+<!--                onmouseover="this.style.textDecoration='underline'"-->
+<!--                onmouseout="this.style.textDecoration='none'"-->
+<!--                onclick="alert('<About> Button clicked!')"> About-->
+<!--        </button>-->
         <button
                 type="button"
                 onmouseover="this.style.textDecoration='underline'"
                 onmouseout="this.style.textDecoration='none'"
-                onclick="alert('<Settings> Button clicked!')"> Settings
-        </button>
-        <button type="button"
-                onmouseover="this.style.textDecoration='underline'"
-                onmouseout="this.style.textDecoration='none'"
-                onclick="alert('<About> Button clicked!')"> About
+                onclick="alert('<Settings> Button clicked!')"> { Window #1 }
         </button>
     </nav>
 
     <div class="terminal-container" id="terminal-container"></div>
 
     <div class="additional-buttons">
+        <button
+                type="button"
+                onclick="button_to_open_another_terminal_window()">
+            Open Another Terminal Window
+        </button>
         <button
                 type="button"
                 onclick="button_to_save_terminal_file_system_to_indexDB()">
