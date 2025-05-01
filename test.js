@@ -8,19 +8,41 @@
 
 
 
-// const validFilenameRegex = /^(?!\.{1,2}$)[^\/\0]{1,255}$/;
-//
-// // Usage:
-// function isValidFilename(name) {
-//     return validFilenameRegex.test(name);
-// }
-//
-// console.log(isValidFilename("foo.txt"));    // true
-// console.log(isValidFilename("my_folder"));  // true
-// console.log(isValidFilename(".\\"));           // false (empty)
-// console.log(isValidFilename("."));          // false
-// console.log(isValidFilename("..."));         // false
-// console.log(isValidFilename("a/b"));        // false (contains '/')
-// console.log(isValidFilename("nul\u0000ok")); // false (contains NUL)
 
-// console.log("12344"[0]);
+// // Set Up <terminalFSDB> and try to restore old <fsRoot>
+// let terminalFSDB = undefined;
+// (() => {
+//     // Open (or create) the IndexedDB database called "TerminalFSDB" with version 1
+//     const dbRequest = indexedDB.open("TerminalFSDB", 1);
+//     // Listen for the 'upgradeneeded' event to create the object store if necessary
+//     dbRequest.onupgradeneeded = (event) => {
+//         const db = event.target.result;
+//         // Create the object store "TerminalFSStore" with "id" as the key path, if it doesn't exist
+//         if (!db.objectStoreNames.contains("TerminalfSStore")) {
+//             db.createObjectStore("TerminalFSStore", {keyPath: "id"});
+//         }
+//     };
+//     dbRequest.onsuccess = (event) => {
+//         terminalFSDB = event.target.result;
+//
+//         // Start a read-only transaction for the object store
+//         const store = terminalFSDB.transaction(["TerminalFSStore"], "readonly")
+//             .objectStore("TerminalFSStore");
+//
+//         // Use the get() method to read the xtermObj file system
+//         const getRequest = store.get("terminal_file_system");
+//
+//         // Listen for the success event for the get request
+//         getRequest.addEventListener("success", (event) => {
+//             const result = event.target.result; // result: {id: ..., data: ...}
+//             if (result !== undefined && result.data["keyCheck"] === "TERMINAL FS ROOT") {
+//                 fsRoot = result;
+//                 console.log(`Terminal file system restored successfully.`);
+//             }
+//         });
+//     };
+//
+//     dbRequest.onerror = (event) => {
+//         alert(`generateTerminalCore: Error opening IndexedDB: ${event.target.error}.`);
+//     };
+// })();

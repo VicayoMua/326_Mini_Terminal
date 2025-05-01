@@ -4,6 +4,16 @@ let
     button_to_add_local_file = undefined;
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Create File System Root
+    let fsRoot = { // FolderObject
+        keyCheck: "TERMINAL FS ROOT",
+        parentFolder: undefined, // FolderObject
+        subfolders: {}, // subfolderName : folderObject
+        files: {} // fileName : fileContents
+    };
+    fsRoot.parentFolder = fsRoot;
+
+    // Set Up Terminal Core Services
     const terminalCore = generateTerminalCore(
         new window.Terminal({
             fontFamily: '"Fira Code", monospace',
@@ -31,7 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 brightWhite: '#eff0eb'
             },
         }),
-        document.getElementById('terminal-container')
+        document.getElementById('terminal-container'),
+        fsRoot
     );
 
     // Set Up Button Functions Linking
