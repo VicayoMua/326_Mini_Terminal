@@ -17,44 +17,114 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize Supported Commands
     const supportedCommands = {};
 
+    const terminalCores = [
+        generateTerminalCore(
+            new window.Terminal({
+                fontFamily: '"Fira Code", monospace',
+                cursorBlink: true,
+                allowProposedApi: true,
+                theme: {
+                    foreground: '#f1f1f0',
+                    background: 'black',
+                    selection: '#97979b33',
+                    black: '#282a36',
+                    brightBlack: '#686868',
+                    red: '#ff5c57',
+                    brightRed: '#ff5c57',
+                    green: '#5af78e',
+                    brightGreen: '#5af78e',
+                    yellow: '#f3f99d',
+                    brightYellow: '#f3f99d',
+                    blue: '#57c7ff',
+                    brightBlue: '#57c7ff',
+                    magenta: '#ff6ac1',
+                    brightMagenta: '#ff6ac1',
+                    cyan: '#9aedfe',
+                    brightCyan: '#9aedfe',
+                    white: '#f1f1f0',
+                    brightWhite: '#eff0eb'
+                },
+            }),
+            document.getElementById('terminal-window-1'),
+            fsRoot,
+            supportedCommands
+        )
+    ];
+
     // Set Up Current Terminal Core Services
-    let currentTerminalCore = generateTerminalCore(
-        new window.Terminal({
-            fontFamily: '"Fira Code", monospace',
-            cursorBlink: true,
-            allowProposedApi: true,
-            theme: {
-                foreground: '#f1f1f0',
-                background: 'black',
-                selection: '#97979b33',
-                black: '#282a36',
-                brightBlack: '#686868',
-                red: '#ff5c57',
-                brightRed: '#ff5c57',
-                green: '#5af78e',
-                brightGreen: '#5af78e',
-                yellow: '#f3f99d',
-                brightYellow: '#f3f99d',
-                blue: '#57c7ff',
-                brightBlue: '#57c7ff',
-                magenta: '#ff6ac1',
-                brightMagenta: '#ff6ac1',
-                cyan: '#9aedfe',
-                brightCyan: '#9aedfe',
-                white: '#f1f1f0',
-                brightWhite: '#eff0eb'
-            },
-        }),
-        document.getElementById('terminal-container'),
-        fsRoot,
-        supportedCommands
-    );
+    let currentTerminalCore = terminalCores[0];
 
     // Set Up Button Functions Links
-    // button_to_open_another_terminal_window = ;
-    button_to_save_terminal_file_system_to_indexDB = currentTerminalCore.button_to_save_terminal_file_system_to_indexDB;
-    button_to_download_terminal_log = currentTerminalCore.button_to_download_terminal_log;
-    button_to_add_local_file = currentTerminalCore.button_to_add_local_file;
+    button_to_open_another_terminal_window = () => {
+
+    };
+
+    button_to_save_terminal_file_system_to_indexDB = () => {
+        if (terminalFSDB === undefined) {
+            alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error for undefined terminalFSDB.`);
+            return;
+        }
+
+        // // Start a read-write transaction for the object store
+        // const store = terminalFSDB.transaction(["TerminalFSStore"], "readwrite")
+        //     .objectStore("TerminalFSStore");
+        //
+        // // Use the put() method to insert or update the xtermObj file system
+        // const putRequest = store.put({
+        //     id: "terminal_file_system",
+        //     data: fsRoot
+        // });
+        //
+        // // Listen for the success event for the put request
+        // putRequest.addEventListener("success", () => {
+        //     alert(`Terminal file system saved successfully.`);
+        // });
+        //
+        // // Listen for errors during the put operation
+        // putRequest.addEventListener("error", event => {
+        //     alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error saving terminal file system: ${event.target.error}.`);
+        // });
+    };
+
+    button_to_download_terminal_log = () => {
+        const
+            full_current_log = terminalLog.reduce((acc, elem) => acc + elem, ''),
+            url = URL.createObjectURL(new Blob([full_current_log], {type: 'text/plain'})),
+            date = new Date(),
+            link = document.createElement('a');
+        link.href = url;
+        link.download = `terminal_log @ ${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`; // the filename the user will get
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+
+    button_to_add_local_file = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '';
+        input.onchange = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;   // user hit “cancel”
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                const
+                    fileContent = evt.target.result,  // the file’s text content
+                    date = new Date();
+                let
+                    filename = file.name;
+                if (currentTerminalFolderPointer.haveFile(filename))
+                    filename = `${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}_${filename}`;
+                currentTerminalFolderPointer.changeFileContent(filename, fileContent);
+                xtermObj.write(`[Button:] Successfully added file "${filename}" to the current directory.\n\n\r $ `);
+                terminalLog.push(`[Button:] Successfully added file "${filename}" to the current directory.\n\n $ `);
+            };
+            reader.onerror = (error) => {
+                alert(`generateTerminalCore: button_to_add_local_file: error reading the file "${file.name}", ${error}.`);
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    };
 
     // Finished
     supportedCommands['hello'] = {
