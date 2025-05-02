@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             windowCount++;
             const divNewTerminalHTMLDivElement = document.createElement('div');
+            divNewTerminalHTMLDivElement.setAttribute('class', 'terminal-window');
             divNewTerminalHTMLDivElement.setAttribute('id', `terminal-window-${windowCount}`);
             divNewTerminalHTMLDivElement.style.display = 'none';
             divTerminalContainer.appendChild(divNewTerminalHTMLDivElement);
