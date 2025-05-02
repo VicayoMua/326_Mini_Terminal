@@ -101,9 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 50);
             });
             navViewNavigation.appendChild(buttonNewTerminalViewNavigation);
-            if (currentTerminalCore === null) {
+            if (currentTerminalCore === null) // if the terminal window is <Window #1>
                 buttonNewTerminalViewNavigation.click();
-            }
         };
     })();
 
