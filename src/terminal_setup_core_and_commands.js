@@ -1,6 +1,6 @@
 let
-    button_to_open_another_terminal_window = undefined,
-    button_to_save_terminal_file_system_to_indexDB = undefined,
+    button_to_open_new_terminal_window = undefined,
+    // button_to_save_terminal_file_system_to_indexDB = undefined,
     button_to_download_terminal_log = undefined,
     button_to_add_local_file = undefined;
 
@@ -17,77 +17,113 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize Supported Commands
     const supportedCommands = {};
 
-    const terminalCores = [
-        generateTerminalCore(
-            new window.Terminal({
-                fontFamily: '"Fira Code", monospace',
-                cursorBlink: true,
-                allowProposedApi: true,
-                theme: {
-                    foreground: '#f1f1f0',
-                    background: 'black',
-                    selection: '#97979b33',
-                    black: '#282a36',
-                    brightBlack: '#686868',
-                    red: '#ff5c57',
-                    brightRed: '#ff5c57',
-                    green: '#5af78e',
-                    brightGreen: '#5af78e',
-                    yellow: '#f3f99d',
-                    brightYellow: '#f3f99d',
-                    blue: '#57c7ff',
-                    brightBlue: '#57c7ff',
-                    magenta: '#ff6ac1',
-                    brightMagenta: '#ff6ac1',
-                    cyan: '#9aedfe',
-                    brightCyan: '#9aedfe',
-                    white: '#f1f1f0',
-                    brightWhite: '#eff0eb'
-                },
-            }),
-            document.getElementById('terminal-window-1'),
-            fsRoot,
-            supportedCommands
-        )
-    ];
+    const terminalHTMLDivElements = [];
 
     // Set Up Current Terminal Core Services
-    let currentTerminalCore = terminalCores[0];
+    let currentTerminalCore = null;
 
     // Set Up System Time Object
     const date = new Date();
 
     // Set Up Button Functions Links
-    button_to_open_another_terminal_window = () => {
+    button_to_open_new_terminal_window = (() => {
+        const divTerminalContainer = document.getElementById('terminal-container');
+        const navViewNavigation = document.getElementById('view-navigation');
+        let windowCount = 0;
+        return () => {
+            if (windowCount === 8){
+                alert('You can open at most 8 terminal windows.');
+                return;
+            }
+            windowCount++;
+            const divNewTerminalHTMLDivElement = document.createElement('div');
+            divNewTerminalHTMLDivElement.setAttribute('id', `terminal-window-${windowCount}`);
+            divNewTerminalHTMLDivElement.style.display = 'none';
+            divTerminalContainer.appendChild(divNewTerminalHTMLDivElement);
+            terminalHTMLDivElements.push(divNewTerminalHTMLDivElement);
+            const newTerminalCore = generateTerminalCore(
+                new window.Terminal({
+                    fontFamily: '"Fira Code", monospace',
+                    cursorBlink: true,
+                    allowProposedApi: true,
+                    theme: {
+                        foreground: '#f1f1f0',
+                        background: 'black',
+                        selection: '#97979b33',
+                        black: '#282a36',
+                        brightBlack: '#686868',
+                        red: '#ff5c57',
+                        brightRed: '#ff5c57',
+                        green: '#5af78e',
+                        brightGreen: '#5af78e',
+                        yellow: '#f3f99d',
+                        brightYellow: '#f3f99d',
+                        blue: '#57c7ff',
+                        brightBlue: '#57c7ff',
+                        magenta: '#ff6ac1',
+                        brightMagenta: '#ff6ac1',
+                        cyan: '#9aedfe',
+                        brightCyan: '#9aedfe',
+                        white: '#f1f1f0',
+                        brightWhite: '#eff0eb'
+                    },
+                }),
+                divNewTerminalHTMLDivElement,
+                fsRoot,
+                supportedCommands
+            );
+            const buttonNewTerminalViewNavigation = document.createElement('button');
+            buttonNewTerminalViewNavigation.type = 'button';
+            buttonNewTerminalViewNavigation.textContent = `{ Window #${windowCount} }`;
+            buttonNewTerminalViewNavigation.addEventListener('mouseover', () => {
+                buttonNewTerminalViewNavigation.style.textDecoration = 'underline';
+            });
+            buttonNewTerminalViewNavigation.addEventListener('mouseout', () => {
+                buttonNewTerminalViewNavigation.style.textDecoration = 'none';
+            });
+            buttonNewTerminalViewNavigation.addEventListener('click', () => {
+                for (const div of terminalHTMLDivElements)
+                    div.style.display = 'none';
+                divNewTerminalHTMLDivElement.style.display = 'block';
+                currentTerminalCore = newTerminalCore;
+            });
+            navViewNavigation.appendChild(buttonNewTerminalViewNavigation);
+            if (currentTerminalCore === null) {
+                divNewTerminalHTMLDivElement.style.display = 'block';
+                currentTerminalCore = newTerminalCore;
+            }
+        };
+    })();
 
-    };
+    // Automatically open one terminal window
+    button_to_open_new_terminal_window();
 
-    button_to_save_terminal_file_system_to_indexDB = () => {
-        if (terminalFSDB === undefined) {
-            alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error for undefined terminalFSDB.`);
-            return;
-        }
-
-        // // Start a read-write transaction for the object store
-        // const store = terminalFSDB.transaction(["TerminalFSStore"], "readwrite")
-        //     .objectStore("TerminalFSStore");
-        //
-        // // Use the put() method to insert or update the xtermObj file system
-        // const putRequest = store.put({
-        //     id: "terminal_file_system",
-        //     data: fsRoot
-        // });
-        //
-        // // Listen for the success event for the put request
-        // putRequest.addEventListener("success", () => {
-        //     alert(`Terminal file system saved successfully.`);
-        // });
-        //
-        // // Listen for errors during the put operation
-        // putRequest.addEventListener("error", event => {
-        //     alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error saving terminal file system: ${event.target.error}.`);
-        // });
-    };
+    // button_to_save_terminal_file_system_to_indexDB = () => {
+    //     if (terminalFSDB === undefined) {
+    //         alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error for undefined terminalFSDB.`);
+    //         return;
+    //     }
+    //
+    //     // // Start a read-write transaction for the object store
+    //     // const store = terminalFSDB.transaction(["TerminalFSStore"], "readwrite")
+    //     //     .objectStore("TerminalFSStore");
+    //     //
+    //     // // Use the put() method to insert or update the xtermObj file system
+    //     // const putRequest = store.put({
+    //     //     id: "terminal_file_system",
+    //     //     data: fsRoot
+    //     // });
+    //     //
+    //     // // Listen for the success event for the put request
+    //     // putRequest.addEventListener("success", () => {
+    //     //     alert(`Terminal file system saved successfully.`);
+    //     // });
+    //     //
+    //     // // Listen for errors during the put operation
+    //     // putRequest.addEventListener("error", event => {
+    //     //     alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error saving terminal file system: ${event.target.error}.`);
+    //     // });
+    // };
 
     button_to_download_terminal_log = () => {
         const
@@ -251,13 +287,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             // The path is from the root, so we need a new_pointer!
                             path = path.slice(1); // take off the '/'
                             currentTerminalCore.getNewFolderPointer().createSubpath(path);
+                            currentTerminalCore.printToWindow(`Successfully created a path (${path}).`, false, true);
                         } else { // the path is not from the root
                             if (path[0] === '.' && path[1] === '/') { // begin with './'
                                 path = path.slice(2);
                             }
                             currentTerminalCore.getCurrentFolderPointer().createSubpath(path);
+                            currentTerminalCore.printToWindow(`Successfully created a path (./${path}).`, false, true);
                         }
-                        currentTerminalCore.printToWindow(`Success!`, false, true);
                     } catch (error) {
                         currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
@@ -289,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 1: {
                     try {
                         currentTerminalCore.getCurrentFolderPointer().createNewFile(parameters[0]);
-                        currentTerminalCore.printToWindow(`Success!`, false, true);
+                        currentTerminalCore.printToWindow(`Successfully create a file (${parameters[0]}).`, false, true);
                     } catch (error) {
                         currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
@@ -328,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 fp.gotoSubpath(path);
                             }
                         }
-                        currentTerminalCore.printToWindow(`Success!`, false, true);
+                        currentTerminalCore.printToWindow(`Successfully went to the folder (${path}).`, false, true);
                     } catch (error) {
                         currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
