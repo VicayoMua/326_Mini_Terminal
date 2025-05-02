@@ -268,14 +268,14 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
     // })();
 
     // Enabled Fit Addons
-    const fitAddon = (() => {
+    const fitAddon = (() => { // every fit-addon can be subcribed to exactly ONE XTerm object!!!
         try {
             const fitAddon = new window.FitAddon.FitAddon(); // Load the Fit Addon
             xtermObj.loadAddon(fitAddon); // Add the Fit Addon to xtermObj frame
             fitAddon.fit(); // Fit the xtermObj to the container
             return fitAddon;
         } catch (error) {
-            console.warn('Fit addon threw an exception during load', error);
+            alert(`Failed to load the fit-addon (${error})`);
             return null;
         }
     })();
