@@ -1,6 +1,5 @@
 let
     button_to_open_new_terminal_window = undefined,
-    // button_to_save_terminal_file_system_to_indexDB = undefined,
     button_to_download_terminal_log = undefined,
     button_to_add_local_file = undefined;
 
@@ -97,33 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Automatically open one terminal window
     button_to_open_new_terminal_window();
-
-    // button_to_save_terminal_file_system_to_indexDB = () => {
-    //     if (terminalFSDB === undefined) {
-    //         alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error for undefined terminalFSDB.`);
-    //         return;
-    //     }
-    //
-    //     // // Start a read-write transaction for the object store
-    //     // const store = terminalFSDB.transaction(["TerminalFSStore"], "readwrite")
-    //     //     .objectStore("TerminalFSStore");
-    //     //
-    //     // // Use the put() method to insert or update the xtermObj file system
-    //     // const putRequest = store.put({
-    //     //     id: "terminal_file_system",
-    //     //     data: fsRoot
-    //     // });
-    //     //
-    //     // // Listen for the success event for the put request
-    //     // putRequest.addEventListener("success", () => {
-    //     //     alert(`Terminal file system saved successfully.`);
-    //     // });
-    //     //
-    //     // // Listen for errors during the put operation
-    //     // putRequest.addEventListener("error", event => {
-    //     //     alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error saving terminal file system: ${event.target.error}.`);
-    //     // });
-    // };
 
     button_to_download_terminal_log = () => {
         const
