@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const navViewNavigation = document.getElementById('view-navigation');
         let windowCount = 0;
         return () => {
-            if (windowCount === 8){
+            if (windowCount === 8) {
                 alert('You can open at most 8 terminal windows.');
                 return;
             }
@@ -81,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 buttonNewTerminalViewNavigation.style.textDecoration = 'none';
             });
             buttonNewTerminalViewNavigation.addEventListener('click', () => {
+                if (currentTerminalCore === newTerminalCore)
+                    return; // redundant clicking on the same button
                 for (const div of terminalHTMLDivElements)
                     div.style.display = 'none';
                 divNewTerminalHTMLDivElement.style.display = 'block';
