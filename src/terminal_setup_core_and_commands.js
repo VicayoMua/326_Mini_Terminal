@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         executable: (_) => {
             currentTerminalCore.printToWindow(
                 `Supported commands are: ${
-                    Object.keys(currentTerminalCore.getSupportedCommands()).reduce(
+                    Object.keys(supportedCommands).reduce(
                         (acc, elem, index) => {
                             if (index === 0) return `${elem}`;
                             return `${acc}, ${elem}`;
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 1: {
                     const
                         commandName = parameters[0],
-                        commandObject = currentTerminalCore.getSupportedCommands()[commandName];
+                        commandObject = supportedCommands[commandName];
                     if (commandObject === undefined) {
                         currentTerminalCore.printToWindow(
                             `The command "${commandName}" is not supported!`,
