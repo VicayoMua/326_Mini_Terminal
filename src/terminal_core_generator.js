@@ -272,7 +272,6 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
         try {
             const fitAddon = new window.FitAddon.FitAddon(); // Load the Fit Addon
             xtermObj.loadAddon(fitAddon); // Add the Fit Addon to xtermObj frame
-            fitAddon.fit(); // Fit the xtermObj to the container
             return fitAddon;
         } catch (error) {
             alert(`Failed to load the fit-addon (${error})`);

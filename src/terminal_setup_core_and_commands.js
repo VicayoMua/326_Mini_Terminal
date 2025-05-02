@@ -89,17 +89,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 buttonNewTerminalViewNavigation.style.textDecoration = 'none';
             });
             buttonNewTerminalViewNavigation.addEventListener('click', () => {
-                if (currentTerminalCore === newTerminalCore)
-                    return; // redundant clicking on the same button
-                for (const div of terminalHTMLDivElements)
-                    div.style.display = 'none';
-                divNewTerminalHTMLDivElement.style.display = 'block';
-                currentTerminalCore = newTerminalCore;
+                if (currentTerminalCore !== newTerminalCore) { // view switching needed
+                    for (const div of terminalHTMLDivElements)
+                        div.style.display = 'none';
+                    divNewTerminalHTMLDivElement.style.display = 'block';
+                    currentTerminalCore = newTerminalCore;
+                }
+                setTimeout(() => {
+                    const fitAddon = newTerminalCore.getFitAddon(); // has to be newTerminalCore since 10ms waiting race
+                    if (fitAddon !== null) fitAddon.fit();
+                }, 50);
             });
             navViewNavigation.appendChild(buttonNewTerminalViewNavigation);
             if (currentTerminalCore === null) {
-                divNewTerminalHTMLDivElement.style.display = 'block';
-                currentTerminalCore = newTerminalCore;
+                buttonNewTerminalViewNavigation.click();
             }
         };
     })();
