@@ -363,6 +363,7 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
             commandInputBuffer = [];
         }
     };
+
     // Function to Initialize Default Terminal Window's Listening to Keyboard Input
     function setDefaultTerminalKeyboardListener() {
         setNewTerminalKeyboardListener((s) => {
@@ -478,6 +479,7 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
         *  Terminal Status/Content Getters
         * */
         // getIsFitEnabled: () => isFitEnabled,
+        getTerminalLogString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
 
         /*
         *  Terminal File System Ports

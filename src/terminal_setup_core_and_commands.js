@@ -54,6 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set Up Current Terminal Core Services
     let currentTerminalCore = terminalCores[0];
 
+    // Set Up System Time Object
+    const date = new Date();
+
     // Set Up Button Functions Links
     button_to_open_another_terminal_window = () => {
 
@@ -88,9 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     button_to_download_terminal_log = () => {
         const
-            full_current_log = terminalLog.reduce((acc, elem) => acc + elem, ''),
-            url = URL.createObjectURL(new Blob([full_current_log], {type: 'text/plain'})),
-            date = new Date(),
+            url = URL.createObjectURL(new Blob([currentTerminalCore.getTerminalLogString()], {type: 'text/plain'})),
             link = document.createElement('a');
         link.href = url;
         link.download = `terminal_log @ ${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`; // the filename the user will get
@@ -107,16 +108,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!file) return;   // user hit “cancel”
             const reader = new FileReader();
             reader.onload = (evt) => {
-                const
-                    fileContent = evt.target.result,  // the file’s text content
-                    date = new Date();
-                let
-                    filename = file.name;
-                if (currentTerminalFolderPointer.haveFile(filename))
+                const fileContent = evt.target.result;  // the file’s text content
+                const cfp = currentTerminalCore.getCurrentFolderPointer();
+                let filename = file.name;
+                if (cfp.haveFile(filename))
                     filename = `${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}_${filename}`;
-                currentTerminalFolderPointer.changeFileContent(filename, fileContent);
-                xtermObj.write(`[Button:] Successfully added file "${filename}" to the current directory.\n\n\r $ `);
-                terminalLog.push(`[Button:] Successfully added file "${filename}" to the current directory.\n\n $ `);
+                cfp.changeFileContent(filename, fileContent);
+                alert(`Successfully added file "${filename}" to the current directory (${cfp.getFullPath()}).`);
             };
             reader.onerror = (error) => {
                 alert(`generateTerminalCore: button_to_add_local_file: error reading the file "${file.name}", ${error}.`);
