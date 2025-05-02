@@ -8,6 +8,16 @@
 * **************************************************************************************************************
 * */
 
+const
+    isLegalKeyNameInFileSystem = (() => {
+        const reg = /^(?!\.{1,2}$)[^\/\0]{1,255}$/;
+        return (x) => reg.test(x);
+    })(),
+    isLegalPathNameInFileSystem = (() => {
+        const reg = /^(?!\.{1,2}$)[^\0]{1,255}$/;
+        return (x) => reg.test(x);
+    })();
+
 class TerminalFolderPointer {
     #fsRoot;
     #currentFolder;
@@ -242,16 +252,6 @@ class TerminalFolderPointer {
 
 }
 
-const
-    isLegalKeyNameInFileSystem = (() => {
-        const reg = /^(?!\.{1,2}$)[^\/\0]{1,255}$/;
-        return (x) => reg.test(x);
-    })(),
-    isLegalPathNameInFileSystem = (() => {
-        const reg = /^(?!\.{1,2}$)[^\0]{1,255}$/;
-        return (x) => reg.test(x);
-    })();
-
 function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supportedCommands) {
     // Put Terminal Window to Webpage Container
     xtermObj.open(htmlElem_terminalContainer);
@@ -463,6 +463,7 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
             }
         },
 
+
         /*
         *  Terminal Keyboard Listener Controllers
         * */
@@ -473,6 +474,7 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
             setNewTerminalKeyboardListener(keyboard_listener_callback);
         },
         getCurrentKeyboardListener: () => currentTerminalKeyboardListener,
+
 
         /*
         *  Terminal Status/Content Getters

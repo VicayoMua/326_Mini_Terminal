@@ -3,6 +3,9 @@ let
     button_to_download_terminal_log = undefined,
     button_to_add_local_file = undefined;
 
+// Set Up System Time Object
+const date = new Date();
+
 document.addEventListener('DOMContentLoaded', () => {
     // Create File System Root
     const fsRoot = { // FolderObject
@@ -20,9 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set Up Current Terminal Core Services
     let currentTerminalCore = null;
-
-    // Set Up System Time Object
-    const date = new Date();
 
     // Set Up Button Functions Links
     button_to_open_new_terminal_window = (() => {
