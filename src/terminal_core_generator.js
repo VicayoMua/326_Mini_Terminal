@@ -268,15 +268,15 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
     // })();
 
     // Enabled Fit Addons
-    const isFitEnabled = (() => {
+    const fitAddon = (() => {
         try {
             const fitAddon = new window.FitAddon.FitAddon(); // Load the Fit Addon
             xtermObj.loadAddon(fitAddon); // Add the Fit Addon to xtermObj frame
             fitAddon.fit(); // Fit the xtermObj to the container
-            return true;
-        } catch (e) {
-            console.warn('Fit addon threw an exception during load', e);
-            return false;
+            return fitAddon;
+        } catch (error) {
+            console.warn('Fit addon threw an exception during load', error);
+            return null;
         }
     })();
 
@@ -478,8 +478,9 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
         /*
         *  Terminal Status/Content Getters
         * */
-        // getIsFitEnabled: () => isFitEnabled,
+        getFitAddon: () => fitAddon,
         getTerminalLogString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
+
 
         /*
         *  Terminal File System Ports
