@@ -55,43 +55,95 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
     };
     fsRoot.parentFolder = fsRoot;
 
-    // Set Up <terminalFSDB> and try to restore old <fsRoot>
-    let terminalFSDB = undefined;
-    (() => {
-        // Open (or create) the IndexedDB database called "TerminalFSDB" with version 1
-        const dbRequest = indexedDB.open("TerminalFSDB", 1);
-        // Listen for the 'upgradeneeded' event to create the object store if necessary
-        dbRequest.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            // Create the object store "TerminalFSStore" with "id" as the key path, if it doesn't exist
-            if (!db.objectStoreNames.contains("TerminalfSStore")) {
-                db.createObjectStore("TerminalFSStore", {keyPath: "id"});
+
+        // ── serialize fsRoot into a pure JSON tree ──
+        function exportFS(folder) {
+            const out = { keyCheck: folder.keyCheck, files: {}, subfolders: {} };
+            // copy files
+            for (const [fname, content] of Object.entries(folder.files)) {
+                out.files[fname] = content;
             }
-        };
-        dbRequest.onsuccess = (event) => {
-            terminalFSDB = event.target.result;
+            // recurse into subfolders
+            for (const [dname, sub] of Object.entries(folder.subfolders)) {
+                out.subfolders[dname] = exportFS(sub);
+            }
+            return out;
+        }
+    
+        // ── rebuild FolderObject tree from JSON ──
+        function importFS(obj, parent = null) {
+            const folder = { keyCheck: obj.keyCheck, parentFolder: undefined, subfolders: {}, files: {} };
+            // copy files
+            for (const [fname, content] of Object.entries(obj.files)) {
+                folder.files[fname] = content;
+            }
+            // recurse into subfolders
+            for (const [dname, subJSON] of Object.entries(obj.subfolders)) {
+                folder.subfolders[dname] = importFS(subJSON, folder);
+            }
+            // set parent pointer (self for root)
+            folder.parentFolder = parent || folder;
+            return folder;
+        }
+    
 
-            // Start a read-only transaction for the object store
-            const store = terminalFSDB.transaction(["TerminalFSStore"], "readonly")
-                .objectStore("TerminalFSStore");
+    // Set Up <terminalFSDB> and try to restore old <fsRoot>
+    // let terminalFSDB = undefined;
+    // (() => {
+    //     // Open (or create) the IndexedDB database called "TerminalFSDB" with version 1
+    //     const dbRequest = indexedDB.open("TerminalFSDB", 1);
+    //     // Listen for the 'upgradeneeded' event to create the object store if necessary
+    //     dbRequest.onupgradeneeded = (event) => {
+    //         const db = event.target.result;
+    //         // Create the object store "TerminalFSStore" with "id" as the key path, if it doesn't exist
+    //         if (!db.objectStoreNames.contains("TerminalfSStore")) {
+    //             db.createObjectStore("TerminalFSStore", {keyPath: "id"});
+    //         }
+    //     };
+    //     dbRequest.onsuccess = (event) => {
+    //         terminalFSDB = event.target.result;
 
-            // Use the get() method to read the xtermObj file system
-            const getRequest = store.get("terminal_file_system");
+    //         // Start a read-only transaction for the object store
+    //         const store = terminalFSDB.transaction(["TerminalFSStore"], "readonly")
+    //             .objectStore("TerminalFSStore");
 
-            // Listen for the success event for the get request
-            getRequest.addEventListener("success", (event) => {
-                const result = event.target.result; // result: {id: ..., data: ...}
-                if (result !== undefined && result.data["keyCheck"] === "TERMINAL FS ROOT") {
-                    fsRoot = result;
-                    console.log(`Terminal file system restored successfully.`);
-                }
-            });
-        };
+    //         // Use the get() method to read the xtermObj file system
+    //         const getRequest = store.get("terminal_file_system");
 
-        dbRequest.onerror = (event) => {
-            alert(`generateTerminalCore: Error opening IndexedDB: ${event.target.error}.`);
-        };
-    })();
+    //         // Listen for the success event for the get request
+    //         getRequest.addEventListener("success", (event) => {
+    //             const result = event.target.result; // result: {id: ..., data: ...}
+    //             if (result !== undefined && result.data["keyCheck"] === "TERMINAL FS ROOT") {
+    //                 fsRoot = result;
+    //                 console.log(`Terminal file system restored successfully.`);
+    //             }
+    //         });
+    //     };
+
+    //     dbRequest.onerror = (event) => {
+    //         alert(`generateTerminalCore: Error opening IndexedDB: ${event.target.error}.`);
+    //     };
+    // })();
+
+
+
+    // ── Load FS from server instead of IndexedDB ──
+(async () => {
+    try {
+      const resp = await fetch('http://localhost:3000/api/fs/load');
+      const json = await resp.json();
+      if (json && json.keyCheck === 'TERMINAL FS ROOT') {
+        fsRoot = importFS(json);
+        // reset your folder pointer to the new root
+        currentTerminalFolderPointer.gotoRoot();
+        console.log('Terminal FS loaded from server');
+    }
+  } catch (e) {
+    console.warn('Could not load FS from server', e);
+  }
+  })();
+  
+
 
     // Function to Create Folder Pointer (File Browser)
     function createTerminalFolderPointer(
@@ -541,32 +593,48 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
         /*
         *  Terminal Built-in Button Ports
         * */
+        // button_to_save_terminal_file_system_to_indexDB: () => {
+        //     if (terminalFSDB === undefined) {
+        //         alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error for undefined terminalFSDB.`);
+        //         return;
+        //     }
+
+        //     // Start a read-write transaction for the object store
+        //     const store = terminalFSDB.transaction(["TerminalFSStore"], "readwrite")
+        //         .objectStore("TerminalFSStore");
+
+        //     // Use the put() method to insert or update the xtermObj file system
+        //     const putRequest = store.put({
+        //         id: "terminal_file_system",
+        //         data: fsRoot
+        //     });
+
+        //     // Listen for the success event for the put request
+        //     putRequest.addEventListener("success", () => {
+        //         console.log(`Terminal file system saved successfully.`);
+        //     });
+
+        //     // Listen for errors during the put operation
+        //     putRequest.addEventListener("error", event => {
+        //         alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error saving terminal file system: ${event.target.error}.`);
+        //     });
+        // },
         button_to_save_terminal_file_system_to_indexDB: () => {
-            if (terminalFSDB === undefined) {
-                alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error for undefined terminalFSDB.`);
-                return;
-            }
-
-            // Start a read-write transaction for the object store
-            const store = terminalFSDB.transaction(["TerminalFSStore"], "readwrite")
-                .objectStore("TerminalFSStore");
-
-            // Use the put() method to insert or update the xtermObj file system
-            const putRequest = store.put({
-                id: "terminal_file_system",
-                data: fsRoot
+            // ── POST the FS tree to our new endpoint ──
+            fetch('http://localhost:3000/api/fs/save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(exportFS(fsRoot))
+            })
+            .then(res => {
+              if (!res.ok) throw new Error('Save failed');
+              console.log('Terminal FS saved to server');
+            })
+            .catch(err => {
+              alert(`Error saving terminal FS: ${err}`);
             });
-
-            // Listen for the success event for the put request
-            putRequest.addEventListener("success", () => {
-                console.log(`Terminal file system saved successfully.`);
-            });
-
-            // Listen for errors during the put operation
-            putRequest.addEventListener("error", event => {
-                alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error saving terminal file system: ${event.target.error}.`);
-            });
-        },
+          },
+          
         button_to_download_terminal_log: () => {
             const
                 full_current_log = terminalLog.reduce((acc, elem) => acc + elem, ''),
