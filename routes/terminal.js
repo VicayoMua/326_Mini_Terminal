@@ -3,6 +3,22 @@ const express = require('express');
 const router = express.Router();
 const { exec } = require('child_process');
 
+// ── add these 5 lines immediately below your existing requires ──
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: './database.sqlite',
+  logging: false
+});
+
+const FSState = sequelize.define('FSState', {
+  id:   { type: DataTypes.STRING, primaryKey: true },
+  data: { type: DataTypes.TEXT    }
+});
+// ensure the table exists
+sequelize.sync();
+
+
 router.post('/run', (req, res) => {
     const { command } = req.body;
 
@@ -47,4 +63,31 @@ router.get('/proxy', async (req, res) => {
   });
   
   
+
+// load the saved FS‑tree from SQLite
+router.get('/fs/load', async (req, res) => {
+  try {
+    const rec = await FSState.findByPk('terminal_file_system');
+    res.json(rec ? JSON.parse(rec.data) : null);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+});
+
+// save the current FS‑tree into SQLite
+router.post('/fs/save', async (req, res) => {
+  try {
+    await FSState.upsert({
+      id:   'terminal_file_system',
+      data: JSON.stringify(req.body)
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+});
+
+
 module.exports = router;
