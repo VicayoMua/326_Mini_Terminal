@@ -114,17 +114,17 @@ class TerminalFolderPointer {
         this.#currentFullPathStack.push(subfolderName);
     }
 
-    // gotoSubpath(subpath) {
-    // }
-    //
-    // gotoPathFromRoot(path) {
-    // }
-
     gotoParentFolder() {
         this.#currentFolderObject = this.#currentFolderObject.parentFolder;
         if (this.#currentFullPathStack.length > 0)
             this.#currentFullPathStack.pop();
     }
+
+    // gotoSubpath(subpath) {
+    // }
+    //
+    // gotoPathFromRoot(path) {
+    // }
 
     gotoPath(path) {
         if (path.length === 0) return;
@@ -218,6 +218,9 @@ class TerminalFolderPointer {
             this.#currentFullPathStack.push(newSubfolderName);
         }
     }
+
+    // createSubpath(subpath, gotoNewFolder = false) {
+    // }
 
     createPath(path, gotoNewFolder = false) {
         if (path.length === 0) return;
