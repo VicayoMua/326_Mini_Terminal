@@ -1,5 +1,6 @@
 let
     button_to_open_new_terminal_window = undefined,
+    button_to_save_terminal_fs = undefined,
     button_to_download_terminal_log = undefined,
     button_to_add_local_file = undefined;
 
@@ -37,7 +38,7 @@ function buildFolder(folder, data) {
   }
 }
 
-// import the saved state back into your in‑memory root
+// import the saved state back into in‑memory root
 function importFS(root, state) {
   buildFolder(root, state.fs);
 }
@@ -139,6 +140,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Automatically open one terminal window
     button_to_open_new_terminal_window();
+
+    // Save FS button handler
+    button_to_save_terminal_fs = () => {
+        const cmd = supportedCommands['save'];
+        if (cmd && typeof cmd.executable === 'function') {
+            cmd.executable();
+        } else {
+            console.error('Save command not found');
+        }
+    };
+
 
     button_to_download_terminal_log = () => {
         const
