@@ -54,6 +54,31 @@ app.get('/api/fs/load', async (req, res) => {
   }
 });
 
+// server.js (near the top, right after you instantiate `sequelize`)
+(async () => {
+  try {
+    // 1) Check the connection
+    await sequelize.authenticate();
+    console.log('Sequelize connection OK');
+
+    // 2) Sync & inspect the tables
+    await sequelize.sync();  
+    console.log('Models synced to the DB');
+
+    // 3) List all tables in the SQLite file
+    const tables = await sequelize.getQueryInterface().showAllTables();
+    console.log('Tables in SQLite:', tables);
+
+    // 4) (Optional) Run a quick find to prove the FSState model exists
+    const rows = await FSState.findAll();
+    console.log(`🗄️  FSStates table has ${rows.length} rows`);
+  } catch (err) {
+    console.error('Sequelize setup error:', err);
+    process.exit(1);
+  }
+})();
+
+
 // — Start Server after syncing DB —
 const PORT = process.env.PORT || 3000;
 (async () => {
