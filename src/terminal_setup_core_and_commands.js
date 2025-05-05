@@ -187,10 +187,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (cfp.haveFile(filename))
                     filename = `${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}_${filename}`;
                 cfp.changeFileContent(filename, fileContent);
-                alert(`Successfully added file "${filename}" to the current directory (${cfp.getFullPath()}).`);
+                alert(`Successfully added file '${filename}' to the current directory (${cfp.getFullPath()}).`);
             };
             reader.onerror = (error) => {
-                alert(`generateTerminalCore: button_to_add_local_file: error reading the file "${file.name}", ${error}.`);
+                alert(`generateTerminalCore: button_to_add_local_file: error reading the file '${file.name}', ${error}.`);
             };
             reader.readAsText(file);
         };
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
         executable: (_) => {
             currentTerminalCore.printToWindow('Hello World!', false, true);
         },
-        description: 'Say "Hello World!"'
+        description: `Say 'Hello World!'`
     };
 
     // Finished
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                         null
                     )
-                }.\nFor more details, please use the command "man [command_name]".`,
+                }.\nFor more details, please use the command 'man [command_name]'.`,
                 false,
                 true
             );
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         commandObject = supportedCommands[commandName];
                     if (commandObject === undefined) {
                         currentTerminalCore.printToWindow(
-                            `The command "${commandName}" is not supported!`,
+                            `The command '${commandName}' is not supported!`,
                             true,
                             true
                         );
@@ -491,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const fullCommand = `ping -c 4 ${parameters.join(" ")}`;
+            const fullCommand = `ping -c 4 ${parameters.join(' ')}`;
             currentTerminalCore.printToWindow(`Running: ${fullCommand}\n`, false, true);
 
             fetch('http://localhost:3000/api/run', {
@@ -514,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
         executable: (params) => {
             // Validate
             if (params.length !== 1) {
-                currentTerminalCore.printToWindow("Usage: curl <url>\n", false, true);
+                currentTerminalCore.printToWindow('Usage: curl <url>\n', false, true);
                 return;
             }
             // Pull the URL from params
@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Print the HTML snippet
                     const snippet = body.slice(0, 1000);
                     currentTerminalCore.printToWindow(
-                        snippet + (body.length > 1000 ? "\n...[truncated]\n" : "\n"),
+                        snippet + (body.length > 1000 ? '\n...[truncated]\n' : '\n'),
                         false,
                         true
                     );
@@ -551,7 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentTerminalCore.printToWindow(`curl failed: ${err.message}\n`, false, true);
                 });
         },
-        description: "Fetch a URL via your server proxy and show status, headers & a 1 000-char body snippet"
+        description: 'Fetch a URL via your server proxy and show status, headers & a 1 000-char body snippet'
     };
 
     supportedCommands['files'] = {
