@@ -129,7 +129,7 @@ class TerminalFolderPointer {
     gotoPath(path) {
         if (path.length === 0) return;
         if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
-            path += './' + path;
+            path = './' + path;
         const pathStack = path.split('/');
         let firstEmptyFolderName = true;
         const tempFolderPointer = this.duplicate();
@@ -225,7 +225,7 @@ class TerminalFolderPointer {
     createPath(path, gotoNewFolder = false) {
         if (path.length === 0) return;
         if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
-            path += './' + path;
+            path = './' + path;
         const pathStack = path.split('/');
         let firstEmptyFolderName = true;
         // check the availability of path for creation
@@ -237,7 +237,9 @@ class TerminalFolderPointer {
                     firstEmptyFolderName = false;
                     break;
                 }
-                case '.':
+                case '.': {
+                    break;
+                }
                 case '..': {
                     break;
                 }

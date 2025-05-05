@@ -41,12 +41,17 @@ function importFS(root, state) {
     buildFolder(root, state.fs);
 }
 
+let _root = null;
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const
         fsRoot = generateRootDirectory(), // Initialize File System Root
         supportedCommands = {}, // Initialize Supported Commands
         terminalHTMLDivElements = [];
+
+    // testing
+    _root = fsRoot;
 
     // ── Load persisted FS on startup ──
     (async () => {
@@ -280,31 +285,20 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Simply print all the parameters -- with quotation marks [\'] added at the beginning and the end.\n Usage: echo [parameter_sequence]',
     };
 
-    // Update Needed
+    // Finished
     supportedCommands['ls'] = {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 0: { // print current folder info
-                    currentTerminalCore.printToWindow(`${currentTerminalCore.getCurrentFolderPointer().getContentListAsString()}`, false, true);
+                    const cfp = currentTerminalCore.getCurrentFolderPointer();
+                    currentTerminalCore.printToWindow(`${cfp.getContentListAsString()}`, false, true);
                     break;
                 }
                 case 1: { // print the folder info of given path
                     try {
-                        let path = parameters[0];
-                        if (path[0] === '/') { // begin with '/', so the path is from the root
-                            // The path is from the root, so we need a new_pointer!
-                            path = path.slice(1); // take off the '/'
-                            const tempFolderPointer = currentTerminalCore.getNewFolderPointer();
-                            tempFolderPointer.gotoSubpath(path);
-                            currentTerminalCore.printToWindow(`${tempFolderPointer.getContentListAsString()}`, false, true);
-                        } else { // the path is not from the root
-                            if (path[0] === '.' && path[1] === '/') { // begin with './'
-                                path = path.slice(2);
-                            }
-                            const tempFolderPointer = currentTerminalCore.getCurrentFolderPointer().duplicate();
-                            tempFolderPointer.gotoSubpath(path);
-                            currentTerminalCore.printToWindow(`${tempFolderPointer.getContentListAsString()}`, false, true);
-                        }
+                        const tfp = currentTerminalCore.getCurrentFolderPointer().duplicate();
+                        tfp.gotoPath(parameters[0]);
+                        currentTerminalCore.printToWindow(`${tfp.getContentListAsString()}`, false, true);
                     } catch (error) {
                         currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
@@ -324,19 +318,9 @@ document.addEventListener('DOMContentLoaded', () => {
             switch (parameters.length) {
                 case 1: {
                     try {
-                        let path = parameters[0];
-                        if (path[0] === '/') { // begin with '/', so the path is from the root
-                            // The path is from the root, so we need a new_pointer!
-                            path = path.slice(1); // take off the '/'
-                            currentTerminalCore.getNewFolderPointer().createSubpath(path);
-                            currentTerminalCore.printToWindow(`Successfully created a path (${path}).`, false, true);
-                        } else { // the path is not from the root
-                            if (path[0] === '.' && path[1] === '/') { // begin with './'
-                                path = path.slice(2);
-                            }
-                            currentTerminalCore.getCurrentFolderPointer().createSubpath(path);
-                            currentTerminalCore.printToWindow(`Successfully created a path (./${path}).`, false, true);
-                        }
+                        const cfp = currentTerminalCore.getCurrentFolderPointer();
+                        cfp.createPath(parameters[0]);
+                        currentTerminalCore.printToWindow(`Successfully created the directory.`, false, true);
                     } catch (error) {
                         currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
