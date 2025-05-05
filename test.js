@@ -6,8 +6,23 @@
 * **************************************************************************************************************
 * */
 
+async function ds() {
+    const l = [1];
+    for (let i = 0; i < 10000000000; i++) {
+        l[0] = i;
+    }
+    console.log("finish inside");
+    return l;
+}
 
+function does(){
+    (async () => {
+        const r = await ds();
+        console.log("finish outside");
+    })();
+}
 
+does();
 
 // // Set Up <terminalFSDB> and try to restore old <fsRoot>
 // let terminalFSDB = undefined;
@@ -46,10 +61,6 @@
 //         alert(`generateTerminalCore: Error opening IndexedDB: ${event.target.error}.`);
 //     };
 // })();
-
-
-
-
 
 
 /*
