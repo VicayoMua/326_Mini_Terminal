@@ -23,8 +23,8 @@
     <script src="src/terminal_core_generator.js"></script>
     <script src="src/terminal_setup_core_and_commands.js"></script>
 
-    <!-- Multi-View Switching -->
-    <script src="src/multi_view.js"></script>
+<!--    &lt;!&ndash; Multi-View Switching &ndash;&gt;-->
+<!--    <script src="src/multi_view.js"></script>-->
 
 </head>
 
@@ -47,27 +47,24 @@
         })();
     </script>
 
-    <nav class="view-navigation">
-        <button
-                type="button"
-                onmouseover="this.style.textDecoration='underline'"
-                onmouseout="this.style.textDecoration='none'"
-                onclick="alert('<Settings> Button clicked!')"> Settings
-        </button>
-        <button type="button"
-                onmouseover="this.style.textDecoration='underline'"
-                onmouseout="this.style.textDecoration='none'"
-                onclick="alert('<About> Button clicked!')"> About
-        </button>
+    <nav class="view-navigation" id="view-navigation">
+<!--        <button-->
+<!--                type="button"-->
+<!--                onmouseover="this.style.textDecoration='underline'"-->
+<!--                onmouseout="this.style.textDecoration='none'"-->
+<!--                onclick="alert('<Window #1> Button clicked!')"> { Window #1 }-->
+<!--        </button>-->
     </nav>
 
-    <div class="terminal-container" id="terminal-container"></div>
+    <div class="terminal-container" id="terminal-container">
+<!--        <div class="terminal-window" id="terminal-window-1" style="display:block"></div>-->
+    </div>
 
     <div class="additional-buttons">
         <button
                 type="button"
-                onclick="button_to_save_terminal_file_system_to_indexDB()">
-            Save Terminal File System (IndexDB)
+                onclick="button_to_open_new_terminal_window()">
+            Open New Terminal Window
         </button>
         <button
                 type="button"
@@ -111,8 +108,9 @@
         6 - cd,
         7 - rename,
         8 - cp,
-        9 - wget
-        10 - ping
+        9 - rm
+        10 - wget
+        11 - ping
 
     Challenging:
         1 - "edit" command,
