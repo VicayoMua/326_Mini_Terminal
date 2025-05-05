@@ -41,7 +41,7 @@ function importFS(root, state) {
     buildFolder(root, state.fs);
 }
 
-let _root = null;
+// let _root = null;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         terminalHTMLDivElements = [];
 
     // testing
-    _root = fsRoot;
+    // _root = fsRoot;
 
     // ── Load persisted FS on startup ──
     (async () => {
@@ -366,32 +366,15 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Make a new file in the current directory.\nUsage: touch file_name'
     };
 
-    // Update Needed
+    // Finished
     supportedCommands['cd'] = {
         executable: (parameters) => {
             switch (parameters.length) {
                 case 1: {
                     try {
-                        let path = parameters[0];
-                        const fp = currentTerminalCore.getCurrentFolderPointer();
-                        if (path === '/') { // goto root
-                            fp.gotoRoot();
-                        } else if (path === '.' || path === './') { // goto current
-                            // do nothing !!!!
-                        } else if (path === '..' || path === '../') { // goto parent
-                            fp.gotoParentFolder();
-                        } else { // goto some path
-                            if (path[0] === '/') { // the path is from the root
-                                path = path.slice(1);
-                                fp.gotoPathFromRoot(path);
-                            } else { // the path is from the current folder
-                                if (path[0] === '.' && path[1] === '/') {
-                                    path = path.slice(2);
-                                }
-                                fp.gotoSubpath(path);
-                            }
-                        }
-                        currentTerminalCore.printToWindow(`Successfully went to the folder (${path}).`, false, true);
+                        const cfp = currentTerminalCore.getCurrentFolderPointer();
+                        cfp.gotoPath(parameters[0]);
+                        currentTerminalCore.printToWindow(`Successfully went to the directory.`, false, true);
                     } catch (error) {
                         currentTerminalCore.printToWindow(`${error}`, false, true);
                     }

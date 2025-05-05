@@ -131,6 +131,7 @@ class TerminalFolderPointer {
         if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
             path = './' + path;
         const pathStack = path.split('/');
+        if (pathStack[pathStack.length - 1] === '') delete pathStack[pathStack.length - 1];
         let firstEmptyFolderName = true;
         const tempFolderPointer = this.duplicate();
         for (const folderName of pathStack) {
@@ -227,6 +228,7 @@ class TerminalFolderPointer {
         if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
             path = './' + path;
         const pathStack = path.split('/');
+        if (pathStack[pathStack.length - 1] === '') delete pathStack[pathStack.length - 1];
         let firstEmptyFolderName = true;
         // check the availability of path for creation
         for (const folderName of pathStack) {
@@ -267,12 +269,15 @@ class TerminalFolderPointer {
                     break;
                 }
                 default: {
-                    tempFolderPointer.createSubfolder(folderName, true);
+                    if (tempFolderPointer.#currentFolderObject.subfolders[folderName] === undefined)
+                        tempFolderPointer.#currentFolderObject.subfolders[folderName] = generateSubfolderOf(tempFolderPointer.#currentFolderObject);
+                    tempFolderPointer.#currentFolderObject = tempFolderPointer.#currentFolderObject.subfolders[folderName];
+                    tempFolderPointer.#currentFullPathStack.push(folderName);
                     break;
                 }
             }
         }
-        if (gotoNewFolder === true){
+        if (gotoNewFolder === true) {
             this.#currentFolderObject = tempFolderPointer.#currentFolderObject;
             this.#currentFullPathStack = tempFolderPointer.#currentFullPathStack;
         }
