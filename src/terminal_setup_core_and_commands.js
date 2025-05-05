@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         input.click();
     };
->>>>>>> 09ebb98a68a2f54457b4deb02e5f751055223725
 
     // Finished
     supportedCommands['hello'] = {
