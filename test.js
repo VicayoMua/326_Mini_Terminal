@@ -6,23 +6,33 @@
 * **************************************************************************************************************
 * */
 
-async function ds() {
-    const l = [1];
-    for (let i = 0; i < 10000000000; i++) {
-        l[0] = i;
-    }
-    console.log("finish inside");
-    return l;
-}
+// async function ds() {
+//     const l = [1];
+//     for (let i = 0; i < 10000000000; i++) {
+//         l[0] = i;
+//     }
+//     console.log("finish inside");
+//     return l;
+// }
+//
+// function does(){
+//     (async () => {
+//         const r = await ds();
+//         console.log("finish outside");
+//     })();
+// }
 
-function does(){
-    (async () => {
-        const r = await ds();
-        console.log("finish outside");
-    })();
-}
+// does();
 
-does();
+// function exportFS(root, cwd) {
+//     return {
+//         fs: root,
+//         cwd
+//     };
+// }
+//
+// const a = exportFS(101,102);
+// console.log(a.cwd);
 
 // // Set Up <terminalFSDB> and try to restore old <fsRoot>
 // let terminalFSDB = undefined;

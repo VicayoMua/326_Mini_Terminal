@@ -7,44 +7,39 @@ let
 // Set Up System Time Object
 const date = new Date();
 
-// --- paste this at the very top of terminal_setup_core_and_commands.js ---
-
-// serialize a FolderObject tree into plain JS objects
-function serializeFolder(folder) {
-    return {
-        files: {...folder.files},
-        subfolders: Object.fromEntries(
-            Object.entries(folder.subfolders)
-                .map(([name, sub]) => [name, serializeFolder(sub)])
-        )
-    };
-}
-
 // export the full FS tree plus cwd
 function exportFS(root, cwd) {
+    // serialize a FolderObject tree into plain JS objects
+    function serializeFolder(folder) {
+        return {
+            files: {...folder.files},
+            subfolders: Object.fromEntries(
+                Object.entries(folder.subfolders)
+                    .map(([name, sub]) => [name, serializeFolder(sub)])
+            )
+        };
+    }
+
     return {
         fs: serializeFolder(root),
-        cwd
+        cwd: cwd
     };
-}
-
-// recursively rebuild a FolderObject tree from plain data
-function buildFolder(folder, data) {
-    folder.files = {...data.files};
-    folder.subfolders = {};
-    for (const [name, subData] of Object.entries(data.subfolders)) {
-        folder.subfolders[name] = {parentFolder: folder, subfolders: {}, files: {}};
-        buildFolder(folder.subfolders[name], subData);
-    }
 }
 
 // import the saved state back into in‑memory root
 function importFS(root, state) {
+    // recursively rebuild a FolderObject tree from plain data
+    function buildFolder(folder, data) {
+        folder.files = {...data.files};
+        folder.subfolders = {};
+        for (const [name, subData] of Object.entries(data.subfolders)) {
+            folder.subfolders[name] = {parentFolder: folder, subfolders: {}, files: {}};
+            buildFolder(folder.subfolders[name], subData);
+        }
+    }
+
     buildFolder(root, state.fs);
 }
-
-// --- end of paste ---
-
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -56,12 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Load persisted FS on startup ──
     (async () => {
         try {
-            const resp  = await fetch('http://localhost:3000/api/fs/load');
+            const resp = await fetch('http://localhost:3000/api/fs/load');
             const state = await resp.json();
             if (state && state.fs) {
                 // clear out the root in place
                 fsRoot.subfolders = {};
-                fsRoot.files      = {};
+                fsRoot.files = {};
                 // rebuild the FolderObject tree
                 importFS(fsRoot, state);
                 // reset pointer and cwd
