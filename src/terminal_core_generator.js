@@ -12,10 +12,6 @@ const
     isLegalKeyNameInFileSystem = (() => {
         const reg = /^(?!\.{1,2}$)[^\/\0]{1,255}$/;
         return (x) => reg.test(x);
-    })(),
-    isLegalPathNameInFileSystem = (() => {
-        const reg = /^(?!\.{1,2}$)[^\0]{1,255}$/;
-        return (x) => reg.test(x);
     })();
 
 function generateRootDirectory() {
@@ -29,14 +25,22 @@ function generateRootDirectory() {
     return fsRoot;
 }
 
+function generateSubfolderOf(currentFolderObject) {
+    return {
+        parentFolder: currentFolderObject,
+        subfolders: {},
+        files: {}
+    };
+}
+
 class TerminalFolderPointer {
     #fsRoot;
-    #currentFolder;
+    #currentFolderObject;
     #currentFullPathStack;
 
-    constructor(fsRoot, currentFolder = fsRoot, currentFullPathStack = []) {
+    constructor(fsRoot, currentFolderObject = fsRoot, currentFullPathStack = []) {
         this.#fsRoot = fsRoot;
-        this.#currentFolder = currentFolder;
+        this.#currentFolderObject = currentFolderObject;
         this.#currentFullPathStack = currentFullPathStack;
     }
 
@@ -45,7 +49,8 @@ class TerminalFolderPointer {
     * */
     duplicate() {
         return new TerminalFolderPointer(
-            this.#currentFolder, // shallow copy of pointer
+            this.#fsRoot, // shallow copy of pointer
+            this.#currentFolderObject, // shallow copy of pointer
             this.#currentFullPathStack.map(x => x) // deep copy of array of strings
         )
     }
@@ -56,8 +61,8 @@ class TerminalFolderPointer {
     getContentListAsString() {
         let contents = '';
         const
-            folderNames = Object.keys(this.#currentFolder.subfolders),
-            fileNames = Object.keys(this.#currentFolder.files);
+            folderNames = Object.keys(this.#currentFolderObject.subfolders),
+            fileNames = Object.keys(this.#currentFolderObject.files);
         if (folderNames.length > 0) {
             contents += 'Folders:' + folderNames.reduce((acc, elem) =>
                 `${acc}\n            ${elem}`, '');
@@ -77,80 +82,82 @@ class TerminalFolderPointer {
     }
 
     getSubfolderNames() {
-        return Object.keys(this.#currentFolder.subfolders);
+        return Object.keys(this.#currentFolderObject.subfolders);
     }
 
     getFileNames() {
-        return Object.keys(this.#currentFolder.files);
+        return Object.keys(this.#currentFolderObject.files);
     }
 
     haveFile(fileName) {
-        return (isLegalKeyNameInFileSystem(fileName) && this.#currentFolder.files[fileName] !== undefined);
+        return (isLegalKeyNameInFileSystem(fileName) && this.#currentFolderObject.files[fileName] !== undefined);
     }
 
     haveSubfolder(subfolderName) {
-        return (isLegalKeyNameInFileSystem(subfolderName) && this.#currentFolder.subfolders[subfolderName] !== undefined);
+        return (isLegalKeyNameInFileSystem(subfolderName) && this.#currentFolderObject.subfolders[subfolderName] !== undefined);
     }
 
     /*
     *  Directory Pointer Controllers
     * */
     gotoRoot() {
-        this.#currentFolder = this.#fsRoot;
+        this.#currentFolderObject = this.#fsRoot;
         this.#currentFullPathStack = [];
     }
 
     gotoSubfolder(subfolderName) {
         if (!isLegalKeyNameInFileSystem(subfolderName))
             throw new Error(`Subfolder name is illegal`);
-        if (this.#currentFolder.subfolders[subfolderName] === undefined)
+        if (this.#currentFolderObject.subfolders[subfolderName] === undefined)
             throw new Error(`Folder ${subfolderName} not found`);
-        this.#currentFolder = this.#currentFolder.subfolders[subfolderName];
+        this.#currentFolderObject = this.#currentFolderObject.subfolders[subfolderName];
         this.#currentFullPathStack.push(subfolderName);
     }
 
-    gotoSubpath(subpath) {
-        // NOTE: `./` is not allowed!!!
-        if (!isLegalPathNameInFileSystem(subpath) || subpath[0] === "/")
-            throw new Error(`Subpath name is illegal`);
-        // Temporary Update
-        let temp_currentFolder = this.#currentFolder;
-        const subfolderNames = subpath.split('/');
-        for (const subfolderName of subfolderNames) {
-            if (!isLegalKeyNameInFileSystem(subfolderName))
-                throw new Error(`Subpath name is illegal`);
-            if (temp_currentFolder.subfolders[subfolderName] === undefined)
-                throw new Error(`Folder ${subfolderName} not found`);
-            temp_currentFolder = temp_currentFolder.subfolders[subfolderName];
-        }
-        // Apply Long-term Update
-        this.#currentFolder = temp_currentFolder;
-        for (const subfolderName of subfolderNames)
-            this.#currentFullPathStack.push(subfolderName);
-    }
-
-    gotoPathFromRoot(path) {
-        // NOTE: `/` is not allowed!!!
-        if (!isLegalPathNameInFileSystem(path) || path[0] === "/")
-            throw new Error(`Subpath name is illegal`);
-        // Temporary Update
-        let temp_currentFolder = this.#fsRoot;
-        const subfolderNames = path.split('/');
-        for (const subfolderName of subfolderNames) {
-            if (!isLegalKeyNameInFileSystem(subfolderName))
-                throw new Error(`Subpath name is illegal`);
-            if (temp_currentFolder.subfolders[subfolderName] === undefined)
-                throw new Error(`Folder ${subfolderName} not found`);
-            temp_currentFolder = temp_currentFolder.subfolders[subfolderName];
-        }
-        // Apply Long-term Update
-        this.#currentFolder = temp_currentFolder;
-        this.#currentFullPathStack = subfolderNames;
-    }
+    // gotoSubpath(subpath) {
+    // }
+    //
+    // gotoPathFromRoot(path) {
+    // }
 
     gotoParentFolder() {
-        this.#currentFolder = this.#currentFolder.parentFolder;
-        this.#currentFullPathStack.pop();
+        this.#currentFolderObject = this.#currentFolderObject.parentFolder;
+        if (this.#currentFullPathStack.length > 0)
+            this.#currentFullPathStack.pop();
+    }
+
+    gotoPath(path) {
+        if (path.length === 0) return;
+        if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
+            path += './' + path;
+        const pathStack = path.split('/');
+        let firstEmptyFolderName = true;
+        const tempFolderPointer = this.duplicate();
+        for (const folderName of pathStack) {
+            switch (folderName) {
+                case '': {
+                    if (!firstEmptyFolderName)
+                        throw new Error(`Path name is illegal`);
+                    tempFolderPointer.gotoRoot();
+                    firstEmptyFolderName = false;
+                    break;
+                }
+                case '.': {
+                    // do nothing (goto the current folder)
+                    break;
+                }
+                case '..': {
+                    tempFolderPointer.gotoParentFolder();
+                    break;
+                }
+                default: {
+                    tempFolderPointer.gotoSubfolder(folderName);
+                    break;
+                }
+            }
+        }
+        this.#currentFolderObject = tempFolderPointer.#currentFolderObject;
+        this.#currentFullPathStack = tempFolderPointer.#currentFullPathStack;
     }
 
     /*
@@ -159,42 +166,42 @@ class TerminalFolderPointer {
     getFileContent(fileName) {
         if (!isLegalKeyNameInFileSystem(fileName))
             throw new Error(`File name is illegal`);
-        if (this.#currentFolder.files[fileName] === undefined)
+        if (this.#currentFolderObject.files[fileName] === undefined)
             throw new Error(`File ${fileName} not found`);
-        return this.#currentFolder.files[fileName];
+        return this.#currentFolderObject.files[fileName];
     }
 
     changeFileContent(fileName, newContent) {
         if (!isLegalKeyNameInFileSystem(fileName))
             throw new Error(`File name is illegal`);
-        this.#currentFolder.files[fileName] = newContent;
+        this.#currentFolderObject.files[fileName] = newContent;
     }
 
     createNewFile(fileName) {
         if (!isLegalKeyNameInFileSystem(fileName))
             throw new Error(`File name is illegal`);
-        if (this.#currentFolder.files[fileName] !== undefined)
+        if (this.#currentFolderObject.files[fileName] !== undefined)
             throw new Error(`File ${fileName} is already existing`);
-        this.#currentFolder.files[fileName] = "";
+        this.#currentFolderObject.files[fileName] = "";
     }
 
     renameExistingFile(oldFileName, newFileName) {
         if (!isLegalKeyNameInFileSystem(oldFileName) || !isLegalKeyNameInFileSystem(newFileName))
             throw new Error(`File name is illegal`);
-        if (this.#currentFolder.files[oldFileName] === undefined)
+        if (this.#currentFolderObject.files[oldFileName] === undefined)
             throw new Error(`File ${oldFileName} not found`);
-        if (this.#currentFolder.files[newFileName] !== undefined)
+        if (this.#currentFolderObject.files[newFileName] !== undefined)
             throw new Error(`File ${newFileName} already exists`);
-        this.#currentFolder.files[newFileName] = this.#currentFolder.files[oldFileName];
-        delete this.#currentFolder.files[oldFileName];
+        this.#currentFolderObject.files[newFileName] = this.#currentFolderObject.files[oldFileName];
+        delete this.#currentFolderObject.files[oldFileName];
     }
 
     deleteFile(fileName) {
         if (!isLegalKeyNameInFileSystem(fileName))
             throw new Error(`File name is illegal`);
-        if (this.#currentFolder.files[fileName] === undefined)
+        if (this.#currentFolderObject.files[fileName] === undefined)
             throw new Error(`File ${fileName} not found.`);
-        delete this.#currentFolder.files[fileName];
+        delete this.#currentFolderObject.files[fileName];
     }
 
     /*
@@ -203,62 +210,86 @@ class TerminalFolderPointer {
     createSubfolder(newSubfolderName, gotoNewFolder = false) {
         if (!isLegalKeyNameInFileSystem(newSubfolderName))
             throw new Error(`Subfolder name is illegal`);
-        if (this.#currentFolder.subfolders[newSubfolderName] !== undefined)
+        if (this.#currentFolderObject.subfolders[newSubfolderName] !== undefined)
             throw new Error(`Folder ${newSubfolderName} already exists`);
-        this.#currentFolder.subfolders[newSubfolderName] = {
-            parentFolder: this.#currentFolder,
-            subfolders: {},
-            files: {}
-        };
+        this.#currentFolderObject.subfolders[newSubfolderName] = generateSubfolderOf(this.#currentFolderObject);
         if (gotoNewFolder === true) {
-            this.#currentFolder = this.#currentFolder.subfolders[newSubfolderName];
+            this.#currentFolderObject = this.#currentFolderObject.subfolders[newSubfolderName];
+            this.#currentFullPathStack.push(newSubfolderName);
         }
     }
 
-    createSubpath(subpath, gotoNewFolder = false) {
-        // NOTE: `./` is not allowed!!!
-        if (!isLegalPathNameInFileSystem(subpath) || subpath[0] === "/")
-            throw new Error(`Subpath name is illegal`);
-        const subfolderNames = subpath.split('/');
-        // Verify the subpath name in details
-        for (const subfolderName of subfolderNames) {
-            if (!isLegalKeyNameInFileSystem(subfolderName))
-                throw new Error(`Subpath name is illegal`);
-        }
-        let temp_currentFolder = this.#currentFolder;
-        for (const subfolderName of subfolderNames) {
-            if (temp_currentFolder.subfolders[subfolderName] === undefined) {
-                // Create new subfolder
-                temp_currentFolder.subfolders[subfolderName] = {
-                    parentFolder: temp_currentFolder,
-                    subfolders: {},
-                    files: {}
-                };
+    createPath(path, gotoNewFolder = false) {
+        if (path.length === 0) return;
+        if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
+            path += './' + path;
+        const pathStack = path.split('/');
+        let firstEmptyFolderName = true;
+        // check the availability of path for creation
+        for (const folderName of pathStack) {
+            switch (folderName) {
+                case '': {
+                    if (!firstEmptyFolderName)
+                        throw new Error(`Path name is illegal`);
+                    firstEmptyFolderName = false;
+                    break;
+                }
+                case '.':
+                case '..': {
+                    break;
+                }
+                default: {
+                    if (!isLegalKeyNameInFileSystem(folderName))
+                        throw new Error(`Path name is illegal`);
+                    break;
+                }
             }
-            temp_currentFolder = temp_currentFolder.subfolders[subfolderName];
         }
-        if (gotoNewFolder === true) {
-            this.#currentFolder = temp_currentFolder;
+        // do the creation of path
+        const tempFolderPointer = this.duplicate();
+        for (const folderName of pathStack) {
+            switch (folderName) {
+                case '': {
+                    tempFolderPointer.gotoRoot();
+                    break;
+                }
+                case '.': {
+                    // do nothing (goto the current folder)
+                    break;
+                }
+                case '..': {
+                    tempFolderPointer.gotoParentFolder();
+                    break;
+                }
+                default: {
+                    tempFolderPointer.createSubfolder(folderName, true);
+                    break;
+                }
+            }
+        }
+        if (gotoNewFolder === true){
+            this.#currentFolderObject = tempFolderPointer.#currentFolderObject;
+            this.#currentFullPathStack = tempFolderPointer.#currentFullPathStack;
         }
     }
 
     renameExistingSubfolder(oldSubfolderName, newSubfolderName) {
         if (!isLegalKeyNameInFileSystem(oldSubfolderName) || !isLegalKeyNameInFileSystem(newSubfolderName))
             throw new Error(`Subfolder name is illegal`);
-        if (this.#currentFolder.subfolders[oldSubfolderName] === undefined)
+        if (this.#currentFolderObject.subfolders[oldSubfolderName] === undefined)
             throw new Error(`Folder ${oldSubfolderName} not found`);
-        if (this.#currentFolder.subfolders[newSubfolderName] !== undefined)
+        if (this.#currentFolderObject.subfolders[newSubfolderName] !== undefined)
             throw new Error(`Folder ${newSubfolderName} already exists`);
-        this.#currentFolder.subfolders[newSubfolderName] = this.#currentFolder.subfolders[oldSubfolderName];
-        delete this.#currentFolder.subfolders[oldSubfolderName];
+        this.#currentFolderObject.subfolders[newSubfolderName] = this.#currentFolderObject.subfolders[oldSubfolderName];
+        delete this.#currentFolderObject.subfolders[oldSubfolderName];
     }
 
     deleteSubfolder(subfolderName) {
         if (!isLegalKeyNameInFileSystem(subfolderName))
             throw new Error(`Subfolder name is illegal`);
-        if (this.#currentFolder.subfolders[subfolderName] === undefined)
+        if (this.#currentFolderObject.subfolders[subfolderName] === undefined)
             throw new Error(`Folder ${subfolderName} not found`);
-        delete this.#currentFolder.subfolders[subfolderName]; // doable because of auto-garbage-collection
+        delete this.#currentFolderObject.subfolders[subfolderName]; // doable because of auto-garbage-collection
     }
 
 }

@@ -24,6 +24,48 @@
 
 // does();
 
+// const
+//     isLegalKeyNameInFileSystem = (() => {
+//         const reg = /^(?!\.{1,2}$)[^\/\0]{1,255}$/;
+//         return (x) => reg.test(x);
+//     })(),
+//     isLegalPathNameInFileSystem = (() => {
+//         const reg = /^(?!\.{1,2}$)[^\0]{1,255}$/;
+//         return (x) => reg.test(x);
+//     })();
+//
+// function fstr(str) {
+//     switch (str) {
+//         case '123':{
+//             console.log('onetwothree');
+//             break;
+//         }
+//         default:{
+//             console.log('default');
+//         }
+//     }
+// }
+//
+// fstr('22');
+
+
+// folderName = '...';
+//
+// switch (folderName) {
+//     case '': {
+//         break;
+//     }
+//     case '.':
+//     case '..': {
+//         console.log('123');
+//         break;
+//     }
+//     default: {
+//         tempFolderPointer.gotoSubfolder(folderName);
+//         break;
+//     }
+// }
+
 // function exportFS(root, cwd) {
 //     return {
 //         fs: root,

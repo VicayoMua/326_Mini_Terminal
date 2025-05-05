@@ -691,8 +691,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(state => {
                     importFS(fsRoot, state);                  // you’ll need an importFS to mirror exportFS
                     // restore working directory
-                    const cwd = state.cwd.startsWith('/') ? state.cwd.slice(1) : state.cwd;
-                    if (cwd) currentTerminalCore.getCurrentFolderPointer().gotoPathFromRoot(cwd);
+                    // const cwd = state.cwd.startsWith('/') ? state.cwd.slice(1) : state.cwd;
+                    // if (cwd) currentTerminalCore.getCurrentFolderPointer().gotoPathFromRoot(cwd);
                     currentTerminalCore.printToWindow('✅ Loaded from SQLite', false, true);
                 })
                 .catch(err => currentTerminalCore.printToWindow(`Load failed: ${err}`, false, true));
