@@ -459,29 +459,6 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
     xtermObj.write(` $ `);
     terminalLog.push(` $ `);
 
-    // ── Load persisted FS on startup ──
-(async () => {
-    try {
-      const resp  = await fetch('http://localhost:3000/api/fs/load');
-      const state = await resp.json();
-      if (state && state.fs) {
-        // clear out the root in place
-        fsRoot.subfolders = {};
-        fsRoot.files      = {};
-        // rebuild the FolderObject tree
-        importFS(fsRoot, state);
-        // reset pointer and cwd
-        currentTerminalFolderPointer.gotoRoot();
-        const cwd = state.cwd.startsWith('/') ? state.cwd.slice(1) : state.cwd;
-        if (cwd) currentTerminalFolderPointer.gotoPathFromRoot(cwd);
-        console.log('✅ Terminal FS loaded from server');
-      }
-    } catch (e) {
-      console.warn('Could not load FS from server', e);
-    }
-  })();
-  
-
     // Securely Release the Terminal APIs
     return {
         /*
