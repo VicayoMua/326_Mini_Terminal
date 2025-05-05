@@ -7,19 +7,11 @@ let
 const date = new Date();
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Create File System Root
-    const fsRoot = { // FolderObject
-        keyCheck: "TERMINAL FS ROOT",
-        parentFolder: undefined, // FolderObject
-        subfolders: {}, // subfolderName : folderObject
-        files: {} // fileName : fileContents
-    };
-    fsRoot.parentFolder = fsRoot;
 
-    // Initialize Supported Commands
-    const supportedCommands = {};
-
-    const terminalHTMLDivElements = [];
+    const
+        fsRoot = generateRootDirectory(), // Initialize File System Root
+        supportedCommands = {}, // Initialize Supported Commands
+        terminalHTMLDivElements = [];
 
     // Set Up Current Terminal Core Services
     let currentTerminalCore = null;

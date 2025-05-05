@@ -18,6 +18,17 @@ const
         return (x) => reg.test(x);
     })();
 
+function generateRootDirectory() {
+    const fsRoot = { // FolderObject
+        keyCheck: "TERMINAL FS ROOT",
+        parentFolder: null, // FolderObject
+        subfolders: {}, // subfolderName : folderObject
+        files: {} // fileName : fileContents
+    };
+    fsRoot.parentFolder = fsRoot;
+    return fsRoot;
+}
+
 class TerminalFolderPointer {
     #fsRoot;
     #currentFolder;
