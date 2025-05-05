@@ -6,6 +6,45 @@ let
 // Set Up System Time Object
 const date = new Date();
 
+// --- paste this at the very top of terminal_setup_core_and_commands.js ---
+
+// serialize a FolderObject tree into plain JS objects
+function serializeFolder(folder) {
+  return {
+    files: { ...folder.files },
+    subfolders: Object.fromEntries(
+      Object.entries(folder.subfolders)
+        .map(([name, sub]) => [name, serializeFolder(sub)])
+    )
+  };
+}
+
+// export the full FS tree plus cwd
+function exportFS(root, cwd) {
+  return {
+    fs: serializeFolder(root),
+    cwd
+  };
+}
+
+// recursively rebuild a FolderObject tree from plain data
+function buildFolder(folder, data) {
+  folder.files = { ...data.files };
+  folder.subfolders = {};
+  for (const [name, subData] of Object.entries(data.subfolders)) {
+    folder.subfolders[name] = { parentFolder: folder, subfolders: {}, files: {} };
+    buildFolder(folder.subfolders[name], subData);
+  }
+}
+
+// import the saved state back into your in‑memory root
+function importFS(root, state) {
+  buildFolder(root, state.fs);
+}
+
+// --- end of paste ---
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const
@@ -595,6 +634,45 @@ document.addEventListener('DOMContentLoaded', () => {
             '  files delete <path>\n' +
             '  files rename <old> <new>'
     };
+
+    supportedCommands['save'] = {
+        description: 'Persist FS to SQLite',
+        executable: () => {
+          const cwd   = currentTerminalCore.getCurrentFolderPointer().getFullPath();
+          const state = exportFS(fsRoot, cwd);
+      
+          fetch('http://localhost:3000/api/fs/save', {
+            method: 'POST',                            // ← must be POST
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(state),               // ← your JSON payload
+          })
+          .then(res => {
+            if (!res.ok) throw new Error(res.statusText);
+            currentTerminalCore.printToWindow('✅ Saved to SQLite', false, true);
+          })
+          .catch(err => {
+            currentTerminalCore.printToWindow(`Save failed: ${err}`, false, true);
+          });
+        }
+      };
+      
+      
+      supportedCommands['load'] = {
+        description: 'Load FS from SQLite',
+        executable: () => {
+          fetch('http://localhost:3000/api/fs/load')
+            .then(res => res.json())
+            .then(state => {
+              importFS(fsRoot, state);                  // you’ll need an importFS to mirror exportFS
+              // restore working directory
+              const cwd = state.cwd.startsWith('/') ? state.cwd.slice(1) : state.cwd;
+              if (cwd) currentTerminalCore.getCurrentFolderPointer().gotoPathFromRoot(cwd);
+              currentTerminalCore.printToWindow('✅ Loaded from SQLite', false, true);
+            })
+            .catch(err => currentTerminalCore.printToWindow(`Load failed: ${err}`, false, true));
+        }
+      };
+      
 
 });
 
