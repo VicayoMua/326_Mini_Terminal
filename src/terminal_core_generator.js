@@ -297,11 +297,11 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
     let terminalLog = [];
 
     // Initialize Current Keyboard Listener
-    let currentTerminalKeyboardListener = undefined;
+    let currentTerminalKeyboardListener = null;
 
     // Function to Set New Keyboard Listener
     function setNewTerminalKeyboardListener(keyboard_listening_callback) {
-        if (currentTerminalKeyboardListener !== undefined)
+        if (currentTerminalKeyboardListener !== null)
             currentTerminalKeyboardListener.dispose();
         currentTerminalKeyboardListener = xtermObj.onData(keyboard_listening_callback);
     }
