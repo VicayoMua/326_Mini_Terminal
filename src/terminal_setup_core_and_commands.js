@@ -402,6 +402,20 @@ document.addEventListener('DOMContentLoaded', () => {
         description: ''
     };
 
+    supportedCommands['rm'] = {
+        executable: (parameters) => {
+
+        },
+        description: ''
+    };
+
+    supportedCommands['download'] = {
+        executable: (parameters) => {
+
+        },
+        description: ''
+    };
+
     supportedCommands['edit'] = {
         executable: (parameters) => {
             //
