@@ -688,7 +688,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
     supportedCommands['load'] = {
         description: 'Load FS from SQLite',
         executable: () => {
