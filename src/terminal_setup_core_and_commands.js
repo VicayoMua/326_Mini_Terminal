@@ -1,5 +1,5 @@
 let
-    button_to_save_terminal_file_system_to_indexDB = undefined,
+    button_to_save_terminal_file_system_to_SQLite = undefined,
     button_to_download_terminal_log = undefined,
     button_to_add_local_file = undefined;
 
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // Set Up Button Functions Linking
-    button_to_save_terminal_file_system_to_indexDB = terminalCore.button_to_save_terminal_file_system_to_indexDB;
+    button_to_save_terminal_file_system_to_SQLite = terminalCore.button_to_save_terminal_file_system_to_SQLite;
     button_to_download_terminal_log = terminalCore.button_to_download_terminal_log;
     button_to_add_local_file = terminalCore.button_to_add_local_file;
 

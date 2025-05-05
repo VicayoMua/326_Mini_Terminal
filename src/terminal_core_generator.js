@@ -619,7 +619,7 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer) {
         //         alert(`generateTerminalCore: button_to_save_terminal_file_system_to_indexDB: Error saving terminal file system: ${event.target.error}.`);
         //     });
         // },
-        button_to_save_terminal_file_system_to_indexDB: () => {
+        button_to_save_terminal_file_system_to_SQLite: () => {
             // ── POST the FS tree to our new endpoint ──
             fetch('http://localhost:3000/api/fs/save', {
               method: 'POST',
