@@ -4,9 +4,6 @@ let
     button_to_add_local_file = null,
     button_to_save_terminal_fs = null;
 
-// Set Up System Time Object
-const date = new Date();
-
 let _root = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -167,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             url = URL.createObjectURL(new Blob([currentTerminalCore.getTerminalLogString()], {type: 'text/plain'})),
             link = document.createElement('a');
         link.href = url;
-        link.download = `terminal_log @ ${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`; // the filename the user will get
+        link.download = `terminal_log @ ${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}''_${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`; // the filename the user will get
         link.click();
         URL.revokeObjectURL(url);
     };
@@ -185,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cfp = currentTerminalCore.getCurrentFolderPointer();
                 let filename = file.name;
                 if (cfp.haveFile(filename))
-                    filename = `${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}_${filename}`;
+                    filename = `${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}''_${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}_${filename}`;
                 cfp.changeFileContent(filename, fileContent);
                 alert(`Successfully added file '${filename}' to the current directory (${cfp.getFullPath()}).`);
             };
@@ -532,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             .then((text) => {
                                 const
                                     date = new Date(),
-                                    filename = `wget_${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`;
+                                    filename = `wget_${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}''_${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`;
                                 currentTerminalCore.getCurrentFolderPointer().changeFileContent(
                                     filename,
                                     text

@@ -520,13 +520,17 @@ class TerminalFolderPointer {
 }
 
 
-const rt = generateRootDirectory();
-const fp = new TerminalFolderPointer(rt);
-fp.createPath('abc', true);
-fp.createPath('123');
-fp.gotoRoot();
-fp.copyPath('directory', 'abc', 'new_abc');
-console.log(1);
+// const rt = generateRootDirectory();
+// const fp = new TerminalFolderPointer(rt);
+// fp.createPath('abc', true);
+// fp.createPath('123');
+// fp.gotoRoot();
+// fp.copyPath('directory', 'abc', 'new_abc');
+// console.log(1);
+
+const o = {a:1,b:2};
+delete o['a'];
+console.log(o['a']);
 
 // does();
 

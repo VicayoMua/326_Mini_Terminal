@@ -28,6 +28,9 @@ const
         return (x) => reg.test(x);
     })();
 
+// Set Up System Time Object
+const date = new Date();
+
 function generateRootDirectory() {
     const fsRoot = { // FolderObject
         keyCheck: "TERMINAL FS ROOT",
@@ -45,6 +48,24 @@ function generateSubfolderOf(currentFolderObject) {
         subfolders: {},
         files: {}
     };
+}
+
+function shallowCombineFolderObjects(destDir, srcDir) {
+    for (const fileName of Object.keys(srcDir.files)) {
+        if (destDir.files[fileName] === undefined) {
+            destDir.files[fileName] = srcDir.files[fileName];
+        } else {
+            destDir.files[`${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}'' ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}_${fileName}`] = srcDir.files[fileName];
+        }
+    }
+    for (const folderName of Object.keys(srcDir.subfolders)) {
+        if (destDir.subfolders[folderName] === undefined) {
+            destDir.subfolders[folderName] = srcDir.subfolders[folderName];
+            destDir.subfolders[folderName].parentFolder = destDir; // reset parent folder directory
+        } else {
+            shallowCombineFolderObjects(destDir.subfolders[folderName], srcDir.subfolders[folderName]);
+        }
+    }
 }
 
 class TerminalFolderPointer {
@@ -380,11 +401,17 @@ class TerminalFolderPointer {
                 // check the new dir status
                 const fp_new = this.duplicate();
                 fp_new.createPath(newDirParent, true);
-                if (fp_new.#currentFolderObject.subfolders[newDirName] !== undefined)
-                    throw new Error(`The new path is already existing`);
                 // do the movement
+                if (fp_new.#currentFolderObject.subfolders[newDirName] === undefined) {
+                    // directly deposit the folder directory
+                    fp_new.#currentFolderObject.subfolders[newDirName] = oldDir;
+                    oldDir.parentFolder = fp_new.#currentFolderObject;
+                } else {
+                    // combine two folder directories (shallow copying)
+                    shallowCombineFolderObjects(fp_new.#currentFolderObject.subfolders[newDirName], oldDir);
+                }
+                // delete the moved folder directory
                 delete fp_old.#currentFolderObject.subfolders[oldDirName];
-                fp_new.#currentFolderObject.subfolders[newDirName] = oldDir;
                 break;
             }
             default: {
@@ -457,27 +484,26 @@ class TerminalFolderPointer {
                 // check the new dir status
                 const fp_new = this.duplicate();
                 fp_new.createPath(newDirParent, true);
-                if (fp_new.#currentFolderObject.subfolders[newDirName] !== undefined)
-                    throw new Error(`The new path is already existing`);
 
-                // make a copy of oldDri (named oldDirName), and append it to newParentOfOldDir
-                function deepCopyOfFolderObject(oldDir, newDirName, newParentOfOldDir) {
+                // make a deep-copy of oldDri (named oldDirName), and append it to newParentOfOldDir
+                function deepCopyOfFolderObject(oldFolderObject, newFolderName, newParentOfOldFolderObject) {
                     // create a new dir with the same name as the old dir
-                    const newDir = generateSubfolderOf(newParentOfOldDir);
-
-                    const oldDirFileNames = Object.keys(oldDir.files);
-                    for (const fileName of oldDirFileNames)
-                        newDir.files[fileName] = `${oldDir.files[fileName]}`;
-
-                    const oldDirSubfolderNames = Object.keys(oldDir.subfolders);
-                    for (const subfolderName of oldDirSubfolderNames)
-                        deepCopyOfFolderObject(oldDir.subfolders[subfolderName], subfolderName, newDir);
-
-                    newParentOfOldDir.subfolders[newDirName] = newDir;
+                    const newDir = generateSubfolderOf(newParentOfOldFolderObject);
+                    for (const fileName of Object.keys(oldFolderObject.files))
+                        newDir.files[fileName] = `${oldFolderObject.files[fileName]}`;
+                    for (const subfolderName of Object.keys(oldFolderObject.subfolders))
+                        deepCopyOfFolderObject(oldFolderObject.subfolders[subfolderName], subfolderName, newDir);
+                    newParentOfOldFolderObject.subfolders[newFolderName] = newDir;
                 }
 
-                // deep-copy the directory
-                deepCopyOfFolderObject(oldDir, newDirName, fp_new.#currentFolderObject);
+                if (fp_new.#currentFolderObject.subfolders[newDirName] === undefined) {
+                    // deep-copy the directory
+                    deepCopyOfFolderObject(oldDir, newDirName, fp_new.#currentFolderObject);
+                } else {
+                    const emptyFolderObject = generateSubfolderOf(null);
+                    deepCopyOfFolderObject(oldDir, newDirName,emptyFolderObject);
+                    shallowCombineFolderObjects(fp_new.#currentFolderObject.subfolders[newDirName], emptyFolderObject.subfolders[newDirName]);
+                }
                 break;
             }
             default: {
