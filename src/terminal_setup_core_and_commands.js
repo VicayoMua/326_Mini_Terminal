@@ -500,6 +500,14 @@ document.addEventListener('DOMContentLoaded', () => {
             '       download -d directory_path'
     };
 
+    supportedCommands['print'] = {
+        executable: (parameters) => {
+            //
+        },
+        description: 'Print an existing file to the terminal window.\n' +
+            'Usage: print file_path'
+    };
+
     // Update Needed
     supportedCommands['edit'] = {
         executable: (parameters) => {
