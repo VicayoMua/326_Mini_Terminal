@@ -7,43 +7,43 @@ let
 // Set Up System Time Object
 const date = new Date();
 
-// export the full FS tree plus cwd
-function exportFS(root, cwd) {
-    // serialize a FolderObject tree into plain JS objects
-    function serializeFolder(folder) {
-        return {
-            files: {...folder.files},
-            subfolders: Object.fromEntries(
-                Object.entries(folder.subfolders)
-                    .map(([name, sub]) => [name, serializeFolder(sub)])
-            )
-        };
-    }
-
-    return {
-        fs: serializeFolder(root),
-        cwd: cwd
-    };
-}
-
-// import the saved state back into in‑memory root
-function importFS(root, state) {
-    // recursively rebuild a FolderObject tree from plain data
-    function buildFolder(folder, data) {
-        folder.files = {...data.files};
-        folder.subfolders = {};
-        for (const [name, subData] of Object.entries(data.subfolders)) {
-            folder.subfolders[name] = {parentFolder: folder, subfolders: {}, files: {}};
-            buildFolder(folder.subfolders[name], subData);
-        }
-    }
-
-    buildFolder(root, state.fs);
-}
-
 // let _root = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    // export the full FS tree plus cwd
+    function exportFS(root, cwd) {
+        // serialize a FolderObject tree into plain JS objects
+        function serializeFolder(folder) {
+            return {
+                files: {...folder.files},
+                subfolders: Object.fromEntries(
+                    Object.entries(folder.subfolders)
+                        .map(([name, sub]) => [name, serializeFolder(sub)])
+                )
+            };
+        }
+
+        return {
+            fs: serializeFolder(root),
+            cwd: cwd
+        };
+    }
+
+    // import the saved state back into in‑memory root
+    function importFS(root, state) {
+        // recursively rebuild a FolderObject tree from plain data
+        function buildFolder(folder, data) {
+            folder.files = {...data.files};
+            folder.subfolders = {};
+            for (const [name, subData] of Object.entries(data.subfolders)) {
+                folder.subfolders[name] = {parentFolder: folder, subfolders: {}, files: {}};
+                buildFolder(folder.subfolders[name], subData);
+            }
+        }
+
+        buildFolder(root, state.fs);
+    }
 
     const
         fsRoot = generateRootDirectory(), // Initialize File System Root
