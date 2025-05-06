@@ -310,8 +310,7 @@ class TerminalFolderPointer {
                 break;
             }
             default: {
-                // Nothing Here
-                break;
+                throw new Error(`Path type is illegal`);
             }
         }
     }
@@ -327,8 +326,7 @@ class TerminalFolderPointer {
                 break;
             }
             default: {
-                // Nothing Here
-                break;
+                throw new Error(`Path type is illegal`);
             }
         }
     }
@@ -344,8 +342,7 @@ class TerminalFolderPointer {
                 break;
             }
             default: {
-                // Nothing Here
-                break;
+                throw new Error(`Path type is illegal`);
             }
         }
     }
