@@ -401,7 +401,8 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
                 const param = parsingHelper();
                 if (param.length > 0) commandParameters.push(param);
             }
-            if (supportedCommands[commandName] === undefined) return [1, commandName]; // Error: Command is not supported.
+            if (supportedCommands[commandName] === undefined)
+                return [1, commandName]; // Error: Command is not supported.
             try {
                 supportedCommands[commandName].executable(commandParameters);
                 return [0, commandName]; // Success!
@@ -451,45 +452,41 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
                     }
                     break;
                 }
-                default: { // allowing proper copy and paste from the clipboard
-                    for (const char of keyboardInput) {
-                        switch (char) {
-                            case '\r': { // Enter
-                                xtermObj.write('\n\r   ');
-                                terminalLog.push('\n   ');
-                                {
-                                    const [statusCode, commandName] = commandInputBufferHandler.execute();
-                                    switch (statusCode) {
-                                        case -1: {
-                                            // (Empty) Command is not supported.
-                                            break;
-                                        }
-                                        case 1: {
-                                            xtermObj.write(`${commandName}: command not found`);
-                                            terminalLog.push(`${commandName}: command not found`);
-                                            break;
-                                        }
-                                        case 2: {
-                                            xtermObj.write(`${commandName}: command failed due to uncaught errors`);
-                                            terminalLog.push(`${commandName}: command failed due to uncaught errors`);
-                                            break;
-                                        }
-                                        default: {
-                                        }
-                                    }
-                                }
-                                commandInputBufferHandler.clear();
-                                xtermObj.write('\n\n\r $ ');
-                                terminalLog.push('\n\n $ ');
+                case '\r': { // Enter
+                    xtermObj.write('\n\r   ');
+                    terminalLog.push('\n   ');
+                    {
+                        const [statusCode, commandName] = commandInputBufferHandler.execute();
+                        switch (statusCode) {
+                            case 0: {
+                                // success execution
                                 break;
                             }
-                            default: { // Other keys
-                                if (char >= String.fromCharCode(0x20) && char <= String.fromCharCode(0x7E) || char >= '\u00a0') {
-                                    commandInputBufferHandler.addChar(char);
-                                    xtermObj.write(char);
-                                    terminalLog.push(char);
-                                }
+                            case 1: {
+                                xtermObj.write(`${commandName}: command not found`);
+                                terminalLog.push(`${commandName}: command not found`);
+                                break;
                             }
+                            case 2: {
+                                xtermObj.write(`${commandName}: command failed due to uncaught errors`);
+                                terminalLog.push(`${commandName}: command failed due to uncaught errors`);
+                                break;
+                            }
+                            default: {
+                            }
+                        }
+                    }
+                    commandInputBufferHandler.clear();
+                    xtermObj.write('\n\n\r $ ');
+                    terminalLog.push('\n\n $ ');
+                    break;
+                }
+                default: { // allowing proper copy and paste from the clipboard
+                    for (const char of keyboardInput) {
+                        if (char >= String.fromCharCode(0x20) && char <= String.fromCharCode(0x7E) || char >= '\u00a0') {
+                            commandInputBufferHandler.addChar(char);
+                            xtermObj.write(char);
+                            terminalLog.push(char);
                         }
                     }
                 }

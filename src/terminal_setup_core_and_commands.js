@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'List all the folders and files.\nUsage: ls [folder_path]'
     };
 
-    // Update Needed
+    // Finished
     supportedCommands['mkdir'] = {
         executable: (parameters) => {
             switch (parameters.length) {
