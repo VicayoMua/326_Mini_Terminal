@@ -445,14 +445,13 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
                     break;
                 }
                 case '\u007F': { // Backspace
-                    const success = commandInputBufferHandler.removeChar();
-                    if (success) {
+                    if (commandInputBufferHandler.removeChar()) { // if the char is successfully removed from the buffer
                         xtermObj.write('\b \b');
                         terminalLog.pop(); // because commandInputBufferHandler.removeChar() is success!!
                     }
                     break;
                 }
-                default:{ // allowing proper copy and paste from the clipboard
+                default: { // allowing proper copy and paste from the clipboard
                     for (const char of keyboardInput) {
                         switch (char) {
                             case '\r': { // Enter
