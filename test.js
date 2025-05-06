@@ -22,6 +22,9 @@
 //     })();
 // }
 
+console.log('123/'.substring(4).length);
+// alert('22');
+
 // does();
 
 // function gobj(n) {

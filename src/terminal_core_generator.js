@@ -120,12 +120,8 @@ class TerminalFolderPointer {
             this.#currentFullPathStack.pop();
     }
 
-    // gotoSubpath(subpath) {
-    // }
-    //
-    // gotoPathFromRoot(path) {
-    // }
-
+    // gotoSubpath(subpath)
+    // gotoPathFromRoot(path)
     gotoPath(path) {
         if (path.length === 0) return;
         if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
@@ -220,9 +216,7 @@ class TerminalFolderPointer {
         }
     }
 
-    // createSubpath(subpath, gotoNewFolder = false) {
-    // }
-
+    // createSubpath(subpath, gotoNewFolder = false)
     createPath(path, gotoNewFolder = false) {
         if (path.length === 0) return;
         if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
@@ -300,6 +294,60 @@ class TerminalFolderPointer {
         if (this.#currentFolderObject.subfolders[subfolderName] === undefined)
             throw new Error(`Folder ${subfolderName} not found`);
         delete this.#currentFolderObject.subfolders[subfolderName]; // doable because of auto-garbage-collection
+    }
+
+    /*
+    *  Other powerful Controllers
+    * */
+    movePath(type, oldPath, newPath) {
+        switch (type) {
+            case 'file': {
+
+                break;
+            }
+            case 'directory': {
+
+                break;
+            }
+            default: {
+                // Nothing Here
+                break;
+            }
+        }
+    }
+
+    copyPath(type, oldPath, newPath) {
+        switch (type) {
+            case 'file': {
+
+                break;
+            }
+            case 'directory': {
+
+                break;
+            }
+            default: {
+                // Nothing Here
+                break;
+            }
+        }
+    }
+
+    deletePath(type, oldPath, newPath) {
+        switch (type) {
+            case 'file': {
+
+                break;
+            }
+            case 'directory': {
+
+                break;
+            }
+            default: {
+                // Nothing Here
+                break;
+            }
+        }
     }
 
 }

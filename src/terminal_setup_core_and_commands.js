@@ -394,31 +394,36 @@ document.addEventListener('DOMContentLoaded', () => {
             'Usage: cd folder_name/folder_path'
     };
 
-    // Update Needed
-    supportedCommands['rename'] = {
+    // Finished
+    supportedCommands['mv'] = {
         executable: (parameters) => {
             if (
                 (parameters.length !== 3) ||
                 (parameters[0] !== '-f' && parameters[0] !== '-d')
             ) {
-                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: rename -f old_file_path new_file_path\n       rename -d old_directory_path new_directory_path`, false, true);
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: mv -f old_file_path new_file_path\n       mv -d old_directory_path new_directory_path`, false, true);
                 return;
             }
-            const cfp = currentTerminalCore.getCurrentFolderPointer();
-            if (parameters[0] === '-f') { // rename a file
-                const old_file_path = parameters[1], new_file_path = parameters[2];
-                // ...
-            } else if (parameters[0] === '-d') { // rename a directory
-                const old_directory_path = parameters[1], new_directory_path = parameters[2];
-                // ...
+            try {
+                const cfp = currentTerminalCore.getCurrentFolderPointer();
+                if (parameters[0] === '-f') { // move a file
+                    // const old_file_path = parameters[1], new_file_path = parameters[2];
+                    cfp.movePath('file', parameters[1], parameters[2]);
+                } else if (parameters[0] === '-d') { // move a directory
+                    // const old_directory_path = parameters[1], new_directory_path = parameters[2];
+                    cfp.movePath('directory', parameters[1], parameters[2]);
+                }
+                currentTerminalCore.printToWindow(`Successfully moved the path.`, false, true);
+            } catch (error) {
+                currentTerminalCore.printToWindow(`${error}`, false, true);
             }
         },
-        description: 'Rename an existing file or directory.\n' +
-            'Usage: rename -f old_file_path new_file_path\n' +
-            '       rename -d old_directory_path new_directory_path'
+        description: 'mv an existing file or directory.\n' +
+            'Usage: mv -f old_file_path new_file_path\n' +
+            '       mv -d old_directory_path new_directory_path'
     };
 
-    // Update Needed
+    // Finished
     supportedCommands['cp'] = {
         executable: (parameters) => {
             if (
@@ -428,13 +433,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: cp -f original_file_path destination_file_path\n       cp -d original_directory_path destination_directory_path`, false, true);
                 return;
             }
-            const cfp = currentTerminalCore.getCurrentFolderPointer();
-            if (parameters[0] === '-f') { // rename a file
-                const original_file_path = parameters[1], destination_file_path = parameters[2];
-                // ...
-            } else if (parameters[0] === '-d') { // rename a directory
-                const original_directory_path = parameters[1], destination_directory_path = parameters[2];
-                // ...
+            try {
+                const cfp = currentTerminalCore.getCurrentFolderPointer();
+                if (parameters[0] === '-f') { // move a file
+                    // const old_file_path = parameters[1], new_file_path = parameters[2];
+                    cfp.copyPath('file', parameters[1], parameters[2]);
+                } else if (parameters[0] === '-d') { // move a directory
+                    // const old_directory_path = parameters[1], new_directory_path = parameters[2];
+                    cfp.copyPath('directory', parameters[1], parameters[2]);
+                }
+                currentTerminalCore.printToWindow(`Successfully copied the path.`, false, true);
+            } catch (error) {
+                currentTerminalCore.printToWindow(`${error}`, false, true);
             }
         },
         description: 'Copy an existing file or directory.\n' +
@@ -442,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '       cp -d original_directory_path destination_directory_path'
     };
 
-    // Update Needed
+    // Finished
     supportedCommands['rm'] = {
         executable: (parameters) => {
             if (
@@ -452,13 +462,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: rm -f file_path\n       rm -d directory_path`, false, true);
                 return;
             }
-            const cfp = currentTerminalCore.getCurrentFolderPointer();
-            if (parameters[0] === '-f') { // rename a file
-                const file_path = parameters[1];
-                // ...
-            } else if (parameters[0] === '-d') { // rename a directory
-                const directory_path = parameters[1];
-                // ...
+            try {
+                const cfp = currentTerminalCore.getCurrentFolderPointer();
+                if (parameters[0] === '-f') { // move a file
+                    // const old_file_path = parameters[1], new_file_path = parameters[2];
+                    cfp.deletePath('file', parameters[1], parameters[2]);
+                } else if (parameters[0] === '-d') { // move a directory
+                    // const old_directory_path = parameters[1], new_directory_path = parameters[2];
+                    cfp.deletePath('directory', parameters[1], parameters[2]);
+                }
+                currentTerminalCore.printToWindow(`Successfully deleted the path.`, false, true);
+            } catch (error) {
+                currentTerminalCore.printToWindow(`${error}`, false, true);
             }
         },
         description: 'Remove (delete) an existing file or directory.\n' +
