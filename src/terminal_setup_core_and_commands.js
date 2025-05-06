@@ -500,6 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '       download -d directory_path'
     };
 
+    // Update Needed
     supportedCommands['print'] = {
         executable: (parameters) => {
             //
