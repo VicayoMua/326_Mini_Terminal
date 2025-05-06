@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         );
                     } else {
                         currentTerminalCore.printToWindow(
-                            `Description of ${commandName}: \n\n${commandObject.description}`,
+                            commandObject.description,
                             false,
                             true
                         );
@@ -263,7 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         },
-        description: 'A detailed manual of the terminal simulator.\nUsage: man [command_name]',
+        description: 'A detailed manual of the terminal simulator.\n' +
+            'Usage: man command_name',
     };
 
     // Finished
@@ -282,7 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 false, true
             );
         },
-        description: 'Simply print all the parameters -- with quotation marks [\'] added at the beginning and the end.\n Usage: echo [parameter_sequence]',
+        description: 'Simply print all the parameters -- with quotation marks [\'] added at the beginning and the end.\n' +
+            'Usage: echo [parameter_sequence]',
     };
 
     // Finished
@@ -309,7 +311,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         },
-        description: 'List all the folders and files.\nUsage: ls [folder_path]'
+        description: 'List all the folders and files.\n' +
+            'Usage: ls [folder_path]'
     };
 
     // Finished
@@ -331,7 +334,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         },
-        description: 'Make a new directory.\nUsage: mkdir folder_name/folder_path'
+        description: 'Make a new directory.\n' +
+            'Usage: mkdir folder_name/folder_path'
     };
 
     // Finished
@@ -363,7 +367,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         },
-        description: 'Make a new file in the current directory.\nUsage: touch file_name'
+        description: 'Make a new file in the current directory.\n' +
+            'Usage: touch file_name'
     };
 
     // Finished
@@ -385,44 +390,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         },
-        description: 'Goto the given folder.\nUsage: cd folder_name/folder_path'
+        description: 'Goto the given folder.\n' +
+            'Usage: cd folder_name/folder_path'
     };
 
+    // Update Needed
     supportedCommands['rename'] = {
         executable: (parameters) => {
 
         },
-        description: ''
+        description: 'Rename an existing file or directory.\n' +
+            'Usage: rename -f old_file_path new_file_path\n' +
+            '       rename -d old_directory_path new_directory_path'
     };
 
+    // Update Needed
     supportedCommands['cp'] = {
         executable: (parameters) => {
 
         },
-        description: ''
+        description: 'Copy an existing file or directory.\n' +
+            'Usage: cp -f original_file_path destination_file_path\n' +
+            '       cp -d original_directory_path destination_directory_path'
     };
 
+    // Update Needed
     supportedCommands['rm'] = {
         executable: (parameters) => {
 
         },
-        description: ''
+        description: 'Remove (delete) an existing file or directory.\n' +
+            'Usage: rm -f file_path\n' +
+            '       rm -d directory_path'
     };
 
+    // Update Needed
     supportedCommands['download'] = {
         executable: (parameters) => {
 
         },
-        description: ''
+        description: 'Download a single file or a directory (as .zip file) in the terminal file system.\n' +
+            'Usage: download -f file_path\n' +
+            '       download -d directory_path'
     };
 
+    // Update Needed
     supportedCommands['edit'] = {
         executable: (parameters) => {
             //
         },
-        description: ''
+        description: 'Edit an existing file.\n' +
+            'Usage: edit file_path'
     };
 
+    // Update Needed
     supportedCommands['wget'] = {
         executable: (parameters) => {
             switch (parameters.length) {
@@ -460,6 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Download file from html link.\nUsage: wget html_link'
     };
 
+    // Update Needed
     supportedCommands['ping'] = {
         executable: (parameters) => {
             if (parameters.length === 0) {
@@ -486,6 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Ping a domain or IP address.\nUsage: ping [hostname]'
     };
 
+    // Update Needed
     supportedCommands['curl'] = {
         executable: (params) => {
             // Validate
@@ -530,6 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Fetch a URL via your server proxy and show status, headers & a 1 000-char body snippet'
     };
 
+    // Update Needed
     supportedCommands['files'] = {
         executable: (params) => {
             const fp = currentTerminalCore.getCurrentFolderPointer();
@@ -643,6 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '  files rename <old> <new>'
     };
 
+    // Update Needed
     supportedCommands['save'] = {
         description: 'Persist FS to SQLite',
         executable: () => {
@@ -664,6 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Update Needed
     supportedCommands['load'] = {
         description: 'Load FS from SQLite',
         executable: () => {
