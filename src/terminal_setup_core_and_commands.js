@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Finished
     supportedCommands['hello'] = {
         executable: (_) => {
-            currentTerminalCore.printToWindow('Hello World!', false, true);
+            currentTerminalCore.printToWindow(`Hello World!`, false, true);
         },
         description: `Say 'Hello World!'`
     };
@@ -397,7 +397,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Needed
     supportedCommands['rename'] = {
         executable: (parameters) => {
-
+            if (
+                (parameters.length !== 3) ||
+                (parameters[0] !== '-f' && parameters[0] !== '-d')
+            ) {
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: rename -f old_file_path new_file_path\n       rename -d old_directory_path new_directory_path`, false, true);
+                return;
+            }
+            const cfp = currentTerminalCore.getCurrentFolderPointer();
+            if (parameters[0] === '-f') { // rename a file
+                const old_file_path = parameters[1], new_file_path = parameters[2];
+                // ...
+            } else if (parameters[0] === '-d') { // rename a directory
+                const old_directory_path = parameters[1], new_directory_path = parameters[2];
+                // ...
+            }
         },
         description: 'Rename an existing file or directory.\n' +
             'Usage: rename -f old_file_path new_file_path\n' +
@@ -407,7 +421,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Needed
     supportedCommands['cp'] = {
         executable: (parameters) => {
-
+            if (
+                (parameters.length !== 3) ||
+                (parameters[0] !== '-f' && parameters[0] !== '-d')
+            ) {
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: cp -f original_file_path destination_file_path\n       cp -d original_directory_path destination_directory_path`, false, true);
+                return;
+            }
+            const cfp = currentTerminalCore.getCurrentFolderPointer();
+            if (parameters[0] === '-f') { // rename a file
+                const original_file_path = parameters[1], destination_file_path = parameters[2];
+                // ...
+            } else if (parameters[0] === '-d') { // rename a directory
+                const original_directory_path = parameters[1], destination_directory_path = parameters[2];
+                // ...
+            }
         },
         description: 'Copy an existing file or directory.\n' +
             'Usage: cp -f original_file_path destination_file_path\n' +
@@ -417,7 +445,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Needed
     supportedCommands['rm'] = {
         executable: (parameters) => {
-
+            if (
+                (parameters.length !== 2) ||
+                (parameters[0] !== '-f' && parameters[0] !== '-d')
+            ) {
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: rm -f file_path\n       rm -d directory_path`, false, true);
+                return;
+            }
+            const cfp = currentTerminalCore.getCurrentFolderPointer();
+            if (parameters[0] === '-f') { // rename a file
+                const file_path = parameters[1];
+                // ...
+            } else if (parameters[0] === '-d') { // rename a directory
+                const directory_path = parameters[1];
+                // ...
+            }
         },
         description: 'Remove (delete) an existing file or directory.\n' +
             'Usage: rm -f file_path\n' +
@@ -427,7 +469,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Needed
     supportedCommands['download'] = {
         executable: (parameters) => {
-
+            if (
+                (parameters.length !== 2) ||
+                (parameters[0] !== '-f' && parameters[0] !== '-d')
+            ) {
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: download -f file_path\n       download -d directory_path`, false, true);
+                return;
+            }
+            const cfp = currentTerminalCore.getCurrentFolderPointer();
+            if (parameters[0] === '-f') { // rename a file
+                const file_path = parameters[1];
+                // ...
+            } else if (parameters[0] === '-d') { // rename a directory
+                const directory_path = parameters[1];
+                // ...
+            }
         },
         description: 'Download a single file or a directory (as .zip file) in the terminal file system.\n' +
             'Usage: download -f file_path\n' +
