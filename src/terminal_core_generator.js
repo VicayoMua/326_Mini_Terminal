@@ -163,9 +163,10 @@ class TerminalFolderPointer {
     getFileContent(fileName) {
         if (!isLegalKeyNameInFileSystem(fileName))
             throw new Error(`File name is illegal`);
-        if (this.#currentFolderObject.files[fileName] === undefined)
+        const fileContent = this.#currentFolderObject.files[fileName];
+        if (fileContent === undefined)
             throw new Error(`File ${fileName} not found`);
-        return this.#currentFolderObject.files[fileName];
+        return fileContent;
     }
 
     changeFileContent(fileName, newContent) {
@@ -299,10 +300,38 @@ class TerminalFolderPointer {
     /*
     *  Other powerful Controllers
     * */
+
     movePath(type, oldPath, newPath) {
         switch (type) {
             case 'file': {
-
+                // analyze the old file path
+                let index = oldPath.lastIndexOf('/');
+                const [oldFileDir, oldFileName] = index !== -1 ?
+                    [oldPath.substring(0, index), oldPath.slice(index + 1)] :
+                    ['.', oldPath];
+                if (!isLegalKeyNameInFileSystem(oldFileName))
+                    throw new Error(`The old file name is illegal`);
+                // analyze the new file path
+                index = newPath.lastIndexOf('/');
+                const [newFileDir, newFileName] = index !== -1 ?
+                    [newPath.substring(0, index), newPath.slice(index + 1)] :
+                    ['.', newPath];
+                if (!isLegalKeyNameInFileSystem(newFileName))
+                    throw new Error(`The new file name is illegal`);
+                // check the old file status
+                const fp_old = this.duplicate();
+                fp_old.gotoPath(oldFileDir);
+                const oldFile = fp_old.#currentFolderObject.files[oldFileName];
+                if (oldFile === undefined)
+                    throw new Error(`The old path is not found`);
+                // check the new file status
+                const fp_new = this.duplicate();
+                fp_new.gotoPath(newFileDir);
+                if (fp_new.#currentFolderObject.files[newFileName] !== undefined)
+                    throw new Error(`The new path is already existing`);
+                // do the movement
+                delete fp_old.#currentFolderObject.files[oldFileName];
+                fp_new.#currentFolderObject.files[newFileName] = oldFile;
                 break;
             }
             case 'directory': {
