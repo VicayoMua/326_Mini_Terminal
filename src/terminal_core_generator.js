@@ -337,6 +337,11 @@ class TerminalFolderPointer {
     * */
 
     movePath(type, oldPath, newPath) {
+        /*
+        *  When moving a single file, if the destination is already existing, then the copy will stop.
+        *  When moving a directory, if a destination folder is already existing, then the folders will be merged;
+        *                            if a destination file is already existing, then the file will be renamed and copied.
+        * */
         switch (type) {
             case 'file': {
                 // analyze the old file path
@@ -362,12 +367,12 @@ class TerminalFolderPointer {
                 fp_old.gotoPath(oldFileDir);
                 const oldFile = fp_old.#currentFolderObject.files[oldFileName];
                 if (oldFile === undefined)
-                    throw new Error(`The old path is not found`);
+                    throw new Error(`The old file is not found`);
                 // check the new file status
                 const fp_new = this.duplicate();
                 fp_new.createPath(newFileDir, true);
                 if (fp_new.#currentFolderObject.files[newFileName] !== undefined)
-                    throw new Error(`The new path is already existing`);
+                    throw new Error(`The new file is already existing`);
                 // do the movement
                 delete fp_old.#currentFolderObject.files[oldFileName];
                 fp_new.#currentFolderObject.files[newFileName] = oldFile;
@@ -382,7 +387,7 @@ class TerminalFolderPointer {
                     return [oldPath.substring(0, index), oldPath.slice(index + 1)];
                 })();
                 if (!isLegalKeyNameInFileSystem(oldDirName))
-                    throw new Error(`The old file name is illegal`);
+                    throw new Error(`The old directory name is illegal`);
                 // analyze the new dir path
                 index = newPath.lastIndexOf('/');
                 const [newDirParent, newDirName] = (() => {
@@ -391,13 +396,13 @@ class TerminalFolderPointer {
                     return [newPath.substring(0, index), newPath.slice(index + 1)];
                 })();
                 if (!isLegalKeyNameInFileSystem(newDirName))
-                    throw new Error(`The new file name is illegal`);
+                    throw new Error(`The new directory name is illegal`);
                 // check the old dir status
                 const fp_old = this.duplicate();
                 fp_old.gotoPath(oldDirParent);
                 const oldDir = fp_old.#currentFolderObject.subfolders[oldDirName];
                 if (oldDir === undefined)
-                    throw new Error(`The old path is not found`);
+                    throw new Error(`The old directory is not found`);
                 // check the new dir status
                 const fp_new = this.duplicate();
                 fp_new.createPath(newDirParent, true);
@@ -421,6 +426,11 @@ class TerminalFolderPointer {
     }
 
     copyPath(type, oldPath, newPath) {
+        /*
+        *  When copying a single file, if the destination is already existing, then the copy will stop.
+        *  When copying a directory, if a destination folder is already existing, then the folders will be merged;
+        *                            if a destination file is already existing, then the file will be renamed and copied.
+        * */
         switch (type) {
             case 'file': {
                 // analyze the old file path
@@ -446,12 +456,12 @@ class TerminalFolderPointer {
                 fp_old.gotoPath(oldFileDir);
                 const oldFile = fp_old.#currentFolderObject.files[oldFileName];
                 if (oldFile === undefined)
-                    throw new Error(`The old path is not found`);
+                    throw new Error(`The old file is not found`);
                 // check the new file status
                 const fp_new = this.duplicate();
                 fp_new.createPath(newFileDir, true);
                 if (fp_new.#currentFolderObject.files[newFileName] !== undefined)
-                    throw new Error(`The new path is already existing`);
+                    throw new Error(`The new file is already existing`);
                 // deep-copy the file
                 fp_new.#currentFolderObject.files[newFileName] = `${oldFile}`; // deep copy of the string
                 break;
@@ -465,7 +475,7 @@ class TerminalFolderPointer {
                     return [oldPath.substring(0, index), oldPath.slice(index + 1)];
                 })();
                 if (!isLegalKeyNameInFileSystem(oldDirName))
-                    throw new Error(`The old file name is illegal`);
+                    throw new Error(`The old directory name is illegal`);
                 // analyze the new dir path
                 index = newPath.lastIndexOf('/');
                 const [newDirParent, newDirName] = (() => {
@@ -474,13 +484,13 @@ class TerminalFolderPointer {
                     return [newPath.substring(0, index), newPath.slice(index + 1)];
                 })();
                 if (!isLegalKeyNameInFileSystem(newDirName))
-                    throw new Error(`The new file name is illegal`);
+                    throw new Error(`The new directory name is illegal`);
                 // check the old dir status
                 const fp_old = this.duplicate();
                 fp_old.gotoPath(oldDirParent);
                 const oldDir = fp_old.#currentFolderObject.subfolders[oldDirName];
                 if (oldDir === undefined)
-                    throw new Error(`The old path is not found`);
+                    throw new Error(`The old directory is not found`);
                 // check the new dir status
                 const fp_new = this.duplicate();
                 fp_new.createPath(newDirParent, true);
@@ -501,7 +511,7 @@ class TerminalFolderPointer {
                     deepCopyOfFolderObject(oldDir, newDirName, fp_new.#currentFolderObject);
                 } else {
                     const emptyFolderObject = generateSubfolderOf(null);
-                    deepCopyOfFolderObject(oldDir, newDirName,emptyFolderObject);
+                    deepCopyOfFolderObject(oldDir, newDirName, emptyFolderObject);
                     shallowCombineFolderObjects(fp_new.#currentFolderObject.subfolders[newDirName], emptyFolderObject.subfolders[newDirName]);
                 }
                 break;
@@ -512,14 +522,44 @@ class TerminalFolderPointer {
         }
     }
 
-    deletePath(type, oldPath, newPath) {
+    deletePath(type, path) {
         switch (type) {
             case 'file': {
-
+                // analyze the file path
+                let index = path.lastIndexOf('/');
+                const [fileDir, fileName] = (() => {
+                    if (index === -1) return ['.', path];
+                    if (index === 0) return ['/', path.slice(1)];
+                    return [path.substring(0, index), path.slice(index + 1)];
+                })();
+                if (!isLegalKeyNameInFileSystem(fileName))
+                    throw new Error(`The file name is illegal`);
+                // check the file status
+                const fp = this.duplicate();
+                fp.gotoPath(fileDir);
+                // delete the file
+                if (fp.#currentFolderObject.files[fileName] === undefined)
+                    throw new Error(`The file is not found`);
+                delete fp.#currentFolderObject.files[fileName];
                 break;
             }
             case 'directory': {
-
+                // analyze the dir path
+                let index = path.lastIndexOf('/');
+                const [dirParent, dirName] = (() => {
+                    if (index === -1) return ['.', path];
+                    if (index === 0) return ['/', path.slice(1)];
+                    return [path.substring(0, index), path.slice(index + 1)];
+                })();
+                if (!isLegalKeyNameInFileSystem(dirName))
+                    throw new Error(`The directory name is illegal`);
+                // check the dir status
+                const fp = this.duplicate();
+                fp.gotoPath(dirParent);
+                // delete the file
+                if (fp.#currentFolderObject.subfolders[dirName] === undefined)
+                    throw new Error(`The directory is not found`);
+                delete fp.#currentFolderObject.subfolders[dirName];
                 break;
             }
             default: {

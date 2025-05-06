@@ -430,19 +430,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: cp -f original_file_path destination_file_path\n       cp -d original_directory_path destination_directory_path`, false, true);
                 return;
             }
-            // try {
+            try {
                 const cfp = currentTerminalCore.getCurrentFolderPointer();
                 if (parameters[0] === '-f') { // move a file
-                    // const old_file_path = parameters[1], new_file_path = parameters[2];
                     cfp.copyPath('file', parameters[1], parameters[2]);
                 } else if (parameters[0] === '-d') { // move a directory
-                    // const old_directory_path = parameters[1], new_directory_path = parameters[2];
                     cfp.copyPath('directory', parameters[1], parameters[2]);
                 }
                 currentTerminalCore.printToWindow(`Successfully copied the path.`, false, true);
-            // } catch (error) {
-            //     currentTerminalCore.printToWindow(`${error}`, false, true);
-            // }
+            } catch (error) {
+                currentTerminalCore.printToWindow(`${error}`, false, true);
+            }
         },
         description: 'Copy an existing file or directory.\n' +
             'Usage: cp -f original_file_path destination_file_path\n' +
@@ -463,10 +461,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cfp = currentTerminalCore.getCurrentFolderPointer();
                 if (parameters[0] === '-f') { // move a file
                     // const old_file_path = parameters[1], new_file_path = parameters[2];
-                    cfp.deletePath('file', parameters[1], parameters[2]);
+                    cfp.deletePath('file', parameters[1]);
                 } else if (parameters[0] === '-d') { // move a directory
                     // const old_directory_path = parameters[1], new_directory_path = parameters[2];
-                    cfp.deletePath('directory', parameters[1], parameters[2]);
+                    cfp.deletePath('directory', parameters[1]);
                 }
                 currentTerminalCore.printToWindow(`Successfully deleted the path.`, false, true);
             } catch (error) {
