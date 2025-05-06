@@ -131,7 +131,7 @@ class TerminalFolderPointer {
         if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
             path = './' + path;
         const pathStack = path.split('/');
-        if (pathStack[pathStack.length - 1] === '') delete pathStack[pathStack.length - 1];
+        if (pathStack[pathStack.length - 1] === '') pathStack.pop();
         let firstEmptyFolderName = true;
         const tempFolderPointer = this.duplicate();
         for (const folderName of pathStack) {
@@ -228,7 +228,7 @@ class TerminalFolderPointer {
         if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
             path = './' + path;
         const pathStack = path.split('/');
-        if (pathStack[pathStack.length - 1] === '') delete pathStack[pathStack.length - 1];
+        if (pathStack[pathStack.length - 1] === '') pathStack.pop();
         let firstEmptyFolderName = true;
         // check the availability of path for creation
         for (const folderName of pathStack) {

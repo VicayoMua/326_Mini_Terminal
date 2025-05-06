@@ -24,6 +24,35 @@
 
 // does();
 
+// function gobj(n) {
+//     return {
+//         a: n,
+//         b: Math.random()
+//     };
+// }
+//
+// const l = [1, 2, 3, 4, 5].map(gobj);
+//
+// const o = l[1];
+// // delete l[1];
+// l.pop();
+// l.push(gobj(10));
+//
+// console.log(l.length, l);
+// console.log(o.a, o.b);
+
+
+const o2 = {
+    a: [1, 2, 3],
+    b: [4, 5, 6],
+    c: [7, 8, 9]
+};
+const a456 = o2['b'];
+a456.push(10);
+delete o2['b'];
+console.log(o2);
+console.log(a456);
+
 // const
 //     isLegalKeyNameInFileSystem = (() => {
 //         const reg = /^(?!\.{1,2}$)[^\/\0]{1,255}$/;
