@@ -8,6 +8,20 @@
 * **************************************************************************************************************
 * */
 
+// export {generateRootDirectory, generateSubfolderOf, TerminalFolderPointer};
+
+function printObj(obj) {
+    console.log(
+        `{${
+            Object.keys(obj).reduce((acc, key, index) => {
+                acc += `    ${key}: ${obj[key]}`;
+                if (index < Object.keys(obj).length - 1) acc += ',\n';
+                return acc;
+            }, '')
+        }}`
+    );
+}
+
 const
     isLegalKeyNameInFileSystem = (() => {
         const reg = /^(?!\.{1,2}$)[^\/\0]{1,255}$/;
@@ -306,16 +320,20 @@ class TerminalFolderPointer {
             case 'file': {
                 // analyze the old file path
                 let index = oldPath.lastIndexOf('/');
-                const [oldFileDir, oldFileName] = index !== -1 ?
-                    [oldPath.substring(0, index), oldPath.slice(index + 1)] :
-                    ['.', oldPath];
+                const [oldFileDir, oldFileName] = (() => {
+                    if (index === -1) return ['.', oldPath];
+                    if (index === 0) return ['/', oldPath.slice(1)];
+                    return [oldPath.substring(0, index), oldPath.slice(index + 1)];
+                })();
                 if (!isLegalKeyNameInFileSystem(oldFileName))
                     throw new Error(`The old file name is illegal`);
                 // analyze the new file path
                 index = newPath.lastIndexOf('/');
-                const [newFileDir, newFileName] = index !== -1 ?
-                    [newPath.substring(0, index), newPath.slice(index + 1)] :
-                    ['.', newPath];
+                const [newFileDir, newFileName] = (() => {
+                    if (index === -1) return ['.', newPath];
+                    if (index === 0) return ['/', newPath.slice(1)];
+                    return [newPath.substring(0, index), newPath.slice(index + 1)];
+                })();
                 if (!isLegalKeyNameInFileSystem(newFileName))
                     throw new Error(`The new file name is illegal`);
                 // check the old file status
@@ -326,7 +344,7 @@ class TerminalFolderPointer {
                     throw new Error(`The old path is not found`);
                 // check the new file status
                 const fp_new = this.duplicate();
-                fp_new.gotoPath(newFileDir);
+                fp_new.createPath(newFileDir, true);
                 if (fp_new.#currentFolderObject.files[newFileName] !== undefined)
                     throw new Error(`The new path is already existing`);
                 // do the movement
@@ -335,7 +353,38 @@ class TerminalFolderPointer {
                 break;
             }
             case 'directory': {
-
+                // analyze the old dir path
+                let index = oldPath.lastIndexOf('/');
+                const [oldDirParent, oldDirName] = (() => {
+                    if (index === -1) return ['.', oldPath];
+                    if (index === 0) return ['/', oldPath.slice(1)];
+                    return [oldPath.substring(0, index), oldPath.slice(index + 1)];
+                })();
+                if (!isLegalKeyNameInFileSystem(oldDirName))
+                    throw new Error(`The old file name is illegal`);
+                // analyze the new dir path
+                index = newPath.lastIndexOf('/');
+                const [newDirParent, newDirName] = (() => {
+                    if (index === -1) return ['.', newPath];
+                    if (index === 0) return ['/', newPath.slice(1)];
+                    return [newPath.substring(0, index), newPath.slice(index + 1)];
+                })();
+                if (!isLegalKeyNameInFileSystem(newDirName))
+                    throw new Error(`The new file name is illegal`);
+                // check the old dir status
+                const fp_old = this.duplicate();
+                fp_old.gotoPath(oldDirParent);
+                const oldDir = fp_old.#currentFolderObject.subfolders[oldDirName];
+                if (oldDir === undefined)
+                    throw new Error(`The old path is not found`);
+                // check the new dir status
+                const fp_new = this.duplicate();
+                fp_new.createPath(newDirParent, true);
+                if (fp_new.#currentFolderObject.subfolders[newDirName] !== undefined)
+                    throw new Error(`The new path is already existing`);
+                // do the movement
+                delete fp_old.#currentFolderObject.subfolders[oldDirName];
+                fp_new.#currentFolderObject.subfolders[newDirName] = oldDir;
                 break;
             }
             default: {
@@ -347,11 +396,88 @@ class TerminalFolderPointer {
     copyPath(type, oldPath, newPath) {
         switch (type) {
             case 'file': {
-
+                // analyze the old file path
+                let index = oldPath.lastIndexOf('/');
+                const [oldFileDir, oldFileName] = (() => {
+                    if (index === -1) return ['.', oldPath];
+                    if (index === 0) return ['/', oldPath.slice(1)];
+                    return [oldPath.substring(0, index), oldPath.slice(index + 1)];
+                })();
+                if (!isLegalKeyNameInFileSystem(oldFileName))
+                    throw new Error(`The old file name is illegal`);
+                // analyze the new file path
+                index = newPath.lastIndexOf('/');
+                const [newFileDir, newFileName] = (() => {
+                    if (index === -1) return ['.', newPath];
+                    if (index === 0) return ['/', newPath.slice(1)];
+                    return [newPath.substring(0, index), newPath.slice(index + 1)];
+                })();
+                if (!isLegalKeyNameInFileSystem(newFileName))
+                    throw new Error(`The new file name is illegal`);
+                // check the old file status
+                const fp_old = this.duplicate();
+                fp_old.gotoPath(oldFileDir);
+                const oldFile = fp_old.#currentFolderObject.files[oldFileName];
+                if (oldFile === undefined)
+                    throw new Error(`The old path is not found`);
+                // check the new file status
+                const fp_new = this.duplicate();
+                fp_new.createPath(newFileDir, true);
+                if (fp_new.#currentFolderObject.files[newFileName] !== undefined)
+                    throw new Error(`The new path is already existing`);
+                // deep-copy the file
+                fp_new.#currentFolderObject.files[newFileName] = `${oldFile}`; // deep copy of the string
                 break;
             }
             case 'directory': {
+                // analyze the old dir path
+                let index = oldPath.lastIndexOf('/');
+                const [oldDirParent, oldDirName] = (() => {
+                    if (index === -1) return ['.', oldPath];
+                    if (index === 0) return ['/', oldPath.slice(1)];
+                    return [oldPath.substring(0, index), oldPath.slice(index + 1)];
+                })();
+                if (!isLegalKeyNameInFileSystem(oldDirName))
+                    throw new Error(`The old file name is illegal`);
+                // analyze the new dir path
+                index = newPath.lastIndexOf('/');
+                const [newDirParent, newDirName] = (() => {
+                    if (index === -1) return ['.', newPath];
+                    if (index === 0) return ['/', newPath.slice(1)];
+                    return [newPath.substring(0, index), newPath.slice(index + 1)];
+                })();
+                if (!isLegalKeyNameInFileSystem(newDirName))
+                    throw new Error(`The new file name is illegal`);
+                // check the old dir status
+                const fp_old = this.duplicate();
+                fp_old.gotoPath(oldDirParent);
+                const oldDir = fp_old.#currentFolderObject.subfolders[oldDirName];
+                if (oldDir === undefined)
+                    throw new Error(`The old path is not found`);
+                // check the new dir status
+                const fp_new = this.duplicate();
+                fp_new.createPath(newDirParent, true);
+                if (fp_new.#currentFolderObject.subfolders[newDirName] !== undefined)
+                    throw new Error(`The new path is already existing`);
 
+                // make a copy of oldDri (named oldDirName), and append it to newParentOfOldDir
+                function deepCopyOfFolderObject(oldDir, newDirName, newParentOfOldDir) {
+                    // create a new dir with the same name as the old dir
+                    const newDir = generateSubfolderOf(newParentOfOldDir);
+
+                    const oldDirFileNames = Object.keys(oldDir.files);
+                    for (const fileName of oldDirFileNames)
+                        newDir.files[fileName] = `${oldDir.files[fileName]}`;
+
+                    const oldDirSubfolderNames = Object.keys(oldDir.subfolders);
+                    for (const subfolderName of oldDirSubfolderNames)
+                        deepCopyOfFolderObject(oldDir.subfolders[subfolderName], subfolderName, newDir);
+
+                    newParentOfOldDir.subfolders[newDirName] = newDir;
+                }
+
+                // deep-copy the directory
+                deepCopyOfFolderObject(oldDir, newDirName, fp_new.#currentFolderObject);
                 break;
             }
             default: {
@@ -480,9 +606,9 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
             try {
                 supportedCommands[commandName].executable(commandParameters);
                 return [0, commandName]; // Success!
-            } catch (e) { // e is alerted as a pop-up!!!
-                alert(`generateTerminalCore: commandInputBufferHandler: ${e}.`);
-                return [2, commandName]; // Error: Command exists but throws exceptions.
+            } catch (e) { // Error: Command exists but throws exceptions.
+                // alert(`generateTerminalCore: commandInputBufferHandler: ${e}.`);
+                return [2, commandName];
             }
         },
         clear: () => { // returns void

@@ -7,7 +7,7 @@ let
 // Set Up System Time Object
 const date = new Date();
 
-// let _root = null;
+let _root = null;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         terminalHTMLDivElements = [];
 
     // testing
-    // _root = fsRoot;
+    _root = fsRoot;
 
     // ── Load persisted FS on startup ──
     (async () => {
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         const cfp = currentTerminalCore.getCurrentFolderPointer();
                         cfp.createPath(parameters[0]);
-                        currentTerminalCore.printToWindow(`Successfully created the directory.`, false, true);
+                        currentTerminalCore.printToWindow(`Successfully created the directory (Or the directory may have been existing).`, false, true);
                     } catch (error) {
                         currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: cp -f original_file_path destination_file_path\n       cp -d original_directory_path destination_directory_path`, false, true);
                 return;
             }
-            try {
+            // try {
                 const cfp = currentTerminalCore.getCurrentFolderPointer();
                 if (parameters[0] === '-f') { // move a file
                     // const old_file_path = parameters[1], new_file_path = parameters[2];
@@ -443,9 +443,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     cfp.copyPath('directory', parameters[1], parameters[2]);
                 }
                 currentTerminalCore.printToWindow(`Successfully copied the path.`, false, true);
-            } catch (error) {
-                currentTerminalCore.printToWindow(`${error}`, false, true);
-            }
+            // } catch (error) {
+            //     currentTerminalCore.printToWindow(`${error}`, false, true);
+            // }
         },
         description: 'Copy an existing file or directory.\n' +
             'Usage: cp -f original_file_path destination_file_path\n' +
