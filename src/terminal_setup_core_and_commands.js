@@ -575,46 +575,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update Needed
     supportedCommands['edit'] = {
-        executable: async (parameters) => {
+          executable: async (parameters) => {
             try {
-                const filePath = parameters[0];
-                if (!filePath) {
-                    currentTerminalCore.printToWindow("Usage: edit <file_path>", false, true);
-                    return;
+              const filePath = parameters[0];
+              if (!filePath) {
+                currentTerminalCore.printToWindow("Usage: edit <file_path>", false, true);
+                return;
+              }
+              const tfp = currentTerminalCore.getCurrentFolderPointer().duplicate();
+              const index = filePath.lastIndexOf('/');
+              const [fileDir, fileName] = (() => {
+                if (index === -1)      return ['.', filePath];
+                if (index === 0)       return ['/', filePath.slice(1)];
+                                         return [filePath.substring(0, index), filePath.slice(index + 1)];
+              })();
+        
+              tfp.gotoPath(fileDir);
+              const fileContent = tfp.getFileContent(fileName);
+        
+              showEditor(fileName, fileContent, async (newContent) => {
+                try {
+                  
+                  tfp.changeFileContent(fileName, newContent);
+                  currentTerminalCore.printToWindow(`✅ ${fileName} updated in memory.`, false, true);
+                  await saveFSState(fsRoot);
+                  currentTerminalCore.printToWindow(`🗄️ File system saved to database.`, false, true);
+        
+                } catch (saveError) {
+                  currentTerminalCore.printToWindow(`❌ Error while saving: ${saveError.message}`, false, true);
                 }
-    
-                const tfp = currentTerminalCore.getCurrentFolderPointer().duplicate();
-                const index = filePath.lastIndexOf('/');
-                const [fileDir, fileName] = (() => {
-                    if (index === -1) return ['.', filePath];
-                    if (index === 0) return ['/', filePath.slice(1)];
-                    return [filePath.substring(0, index), filePath.slice(index + 1)];
-                })();
-    
-                tfp.gotoPath(fileDir);
-                const fileContent = tfp.getFileContent(fileName);
-    
-                showEditor(fileName, fileContent, async (newContent) => {
-                    try {
-                        // 1. Save to in-memory FS
-                        tfp.changeFileContent(fileName, newContent);
-                        currentTerminalCore.printToWindow(`✅ ${fileName} updated in memory.`, false, true);
-    
-                        // 2. Persist full FS to backend
-                        const fsRoot = currentTerminalCore.getNewFolderPointer().duplicate(); // get root
-                        await saveFSState(fsRoot);
-                        currentTerminalCore.printToWindow(`🗄️ File system saved to database.`, false, true);
-                    } catch (saveError) {
-                        currentTerminalCore.printToWindow(`❌ Error while saving: ${saveError.message}`, false, true);
-                    }
-                });
-    
-            } catch (error) {
-                currentTerminalCore.printToWindow(`❌ Error: ${error.message}`, false, true);
+              });
+        
+            } catch (err) {
+              currentTerminalCore.printToWindow(`❌ Error: ${err.message}`, false, true);
             }
-        },
-        description: "✏️ Edit a file and save it to the virtual file system.\nUsage: edit <file_path>"
-    };
+          },
+          description: "✏️ Edit an existing file.\nUsage: edit <file_path>"
+        };
 
 
 
