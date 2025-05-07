@@ -111,6 +111,10 @@ class TerminalFolderPointer {
         return contents.length === 0 ? 'No file or folder existing here...' : contents;
     }
 
+    getZipFileOfFolder(){
+
+    }
+
     getFullPath() {
         return this.#currentFullPathStack.length === 0 ? '/' :
             this.#currentFullPathStack.reduce((acc, elem) => `${acc}/${elem}`, '');
@@ -526,7 +530,7 @@ class TerminalFolderPointer {
         switch (type) {
             case 'file': {
                 // analyze the file path
-                let index = path.lastIndexOf('/');
+                const index = path.lastIndexOf('/');
                 const [fileDir, fileName] = (() => {
                     if (index === -1) return ['.', path];
                     if (index === 0) return ['/', path.slice(1)];
@@ -545,7 +549,7 @@ class TerminalFolderPointer {
             }
             case 'directory': {
                 // analyze the dir path
-                let index = path.lastIndexOf('/');
+                const index = path.lastIndexOf('/');
                 const [dirParent, dirName] = (() => {
                     if (index === -1) return ['.', path];
                     if (index === 0) return ['/', path.slice(1)];

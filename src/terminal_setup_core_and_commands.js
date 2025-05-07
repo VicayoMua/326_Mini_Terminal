@@ -173,23 +173,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '';
-        input.onchange = (event) => {
-            const file = event.target.files[0];
+        input.onchange = (input_event) => {
+            const file = input_event.target.files[0];
             if (!file) return;   // user hit “cancel”
+            // set up a reader for the file
             const reader = new FileReader();
-            reader.onload = (evt) => {
-                const fileContent = evt.target.result;  // the file’s text content
-                const cfp = currentTerminalCore.getCurrentFolderPointer();
-                let filename = file.name;
-                if (cfp.haveFile(filename))
-                    filename = `${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}''_${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}_${filename}`;
+            // set up behaviors on errors
+            reader.onerror = (error) => {
+                alert(`button_to_add_local_file: error reading the file '${file.name}', ${error}.`);
+            };
+            // set up behaviors on loading
+            const cfp = currentTerminalCore.getCurrentFolderPointer();
+            let filename = file.name;
+            reader.onload = (reader_event) => {
+                const fileContent = reader_event.target.result;
+                if (cfp.haveFile(filename)) {
+                    const date = new Date();
+                    filename = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}_${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}_${filename}`;
+                }
                 cfp.changeFileContent(filename, fileContent);
                 alert(`Successfully added file '${filename}' to the current directory (${cfp.getFullPath()}).`);
             };
-            reader.onerror = (error) => {
-                alert(`generateTerminalCore: button_to_add_local_file: error reading the file '${file.name}', ${error}.`);
-            };
-            reader.readAsText(file);
+            // Check the file type to determine HOW to read it
+            if (file.type.startsWith('text/')) {
+                // Read as text if the file is a text-based file
+                reader.readAsText(file);
+            } else {
+                // Read as binary (ArrayBuffer) for non-text files (e.g., images)
+                reader.readAsArrayBuffer(file);  // For binary files (e.g., images)
+            }
         };
         input.click();
     };
@@ -476,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '       rm -d directory_path'
     };
 
-    // Update Needed
+    // Finished
     supportedCommands['download'] = {
         executable: (parameters) => {
             if (
@@ -490,16 +502,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const tfp = currentTerminalCore.getCurrentFolderPointer().duplicate();
                 if (parameters[0] === '-f') { // rename a file
                     const file_path = parameters[1];
-                    let index = file_path.lastIndexOf('/');
+                    const index = file_path.lastIndexOf('/');
                     const [fileDir, fileName] = (() => {
                         if (index === -1) return ['.', file_path];
                         if (index === 0) return ['/', file_path.slice(1)];
                         return [file_path.substring(0, index), file_path.slice(index + 1)];
                     })();
                     tfp.gotoPath(fileDir);
-                    const fileContent = tfp.getFileContent(fileName);
                     const
-                        url = URL.createObjectURL(new Blob([fileContent], {type: 'text/plain'})),
+                        url = URL.createObjectURL(new Blob([tfp.getFileContent(fileName)], {type: 'application/octet-stream'})),
                         link = document.createElement('a');
                     link.href = url;
                     link.download = fileName; // the filename the user will get
@@ -507,7 +518,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     URL.revokeObjectURL(url);
                 } else if (parameters[0] === '-d') { // rename a directory
                     const directory_path = parameters[1];
-                    // ...
+                    tfp.gotoPath(directory_path);
+                    const
+                        url = URL.createObjectURL(new Blob([tfp.getZipFileOfFolder()], {type: 'application/octet-stream'})),
+                        link = document.createElement('a');
+                    link.href = url;
+                    link.download = tfp.getFullPath().replaceAll('/','_'); // the filename the user will get
+                    link.click();
+                    URL.revokeObjectURL(url);
                 }
                 currentTerminalCore.printToWindow(`Successfully downloaded the path.`, false, true);
             } catch (error) {
