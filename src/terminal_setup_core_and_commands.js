@@ -574,12 +574,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update Needed
     supportedCommands['edit'] = {
-        executable: (parameters) => {
-            //
+        executable: async (parameters) => {
+            try {
+                const filePath = parameters[0];
+                if (!filePath) {
+                    currentTerminalCore.printToWindow("Usage: edit <file_path>", false, true);
+                    return;
+                }
+    
+                const tfp = currentTerminalCore.getCurrentFolderPointer().duplicate();
+                const index = filePath.lastIndexOf('/');
+                const [fileDir, fileName] = (() => {
+                    if (index === -1) return ['.', filePath];
+                    if (index === 0) return ['/', filePath.slice(1)];
+                    return [filePath.substring(0, index), filePath.slice(index + 1)];
+                })();
+    
+                tfp.gotoPath(fileDir);
+                const fileContent = tfp.getFileContent(fileName);
+    
+                // Assuming showEditor is globally available
+                showEditor(fileName, fileContent, async (newContent) => {
+                    tfp.updateFile(fileName, newContent);
+                    currentTerminalCore.printToWindow(`✅ Saved ${fileName}`, false, true);
+                });
+    
+            } catch (error) {
+                currentTerminalCore.printToWindow(`❌ Error: ${error.message}`, false, true);
+            }
         },
-        description: 'Edit an existing file.\n' +
-            'Usage: edit file_path'
+        description: "✏️ Edit an existing file.\nUsage: edit file_path"
     };
+
 
     // Update Needed
     supportedCommands['wget'] = {
