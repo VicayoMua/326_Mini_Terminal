@@ -597,7 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return [filePath.substring(0, index), filePath.slice(index + 1)];
                 })();
                 tfp.gotoPath(fileDir);
-                showEditor(fileName, tfp.getFileContent(fileName), (newFileContent) => {
+                openFileEditor(fileName, tfp.getFileContent(fileName), (newFileContent) => {
                     tfp.changeFileContent(fileName, newFileContent);
                 });
             } catch (error) {

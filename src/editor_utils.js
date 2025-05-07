@@ -1,4 +1,4 @@
-function showEditor(fileName, orginalFileContent, callbackToSaveFile) {
+function openFileEditor(fileName, orginalFileContent, callbackToSaveFile) {
     // remove any potentially existing terminal file editor
     const existingEditor = document.getElementById('terminal-file-editor');
     if (existingEditor) existingEditor.remove();
