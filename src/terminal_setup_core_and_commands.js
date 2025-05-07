@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         description: 'A detailed manual of the terminal simulator.\n' +
-            'Usage: man command_name',
+            'Usage: man [command_name]',
     };
 
     // Finished
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         },
         description: 'Simply print all the parameters -- with quotation marks [\'] added at the beginning and the end.\n' +
-            'Usage: echo [parameter_sequence]',
+            'Usage: echo [parameters]',
     };
 
     // Finished
@@ -347,12 +347,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 }
                 default: {
-                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: mkdir folder_name/folder_path`, false, true);
+                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: mkdir [folder_path]`, false, true);
                 }
             }
         },
         description: 'Make a new directory.\n' +
-            'Usage: mkdir folder_name/folder_path'
+            'Usage: mkdir [folder_path]'
     };
 
     // Finished
@@ -380,12 +380,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 }
                 default: {
-                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: touch file_name`, false, true);
+                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: touch [file_name]`, false, true);
                 }
             }
         },
         description: 'Make a new file in the current directory.\n' +
-            'Usage: touch file_name'
+            'Usage: touch [file_name]'
     };
 
     // Finished
@@ -403,12 +403,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 }
                 default: {
-                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: cd folder_name/folder_path`, false, true);
+                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: cd [folder_path]`, false, true);
                 }
             }
         },
         description: 'Goto the given folder.\n' +
-            'Usage: cd folder_name/folder_path'
+            'Usage: cd [folder_path]'
     };
 
     // Finished
@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 (parameters.length !== 3) ||
                 (parameters[0] !== '-f' && parameters[0] !== '-d')
             ) {
-                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: mv -f old_file_path new_file_path\n       mv -d old_directory_path new_directory_path`, false, true);
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: mv -f [old_file_path] [new_file_path]\n       mv -d [old_directory_path] [new_directory_path]`, false, true);
                 return;
             }
             try {
@@ -436,8 +436,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         description: 'mv an existing file or directory.\n' +
-            'Usage: mv -f old_file_path new_file_path\n' +
-            '       mv -d old_directory_path new_directory_path'
+            'Usage: mv -f [old_file_path] [new_file_path]\n' +
+            '       mv -d [old_directory_path] [new_directory_path]'
     };
 
     // Finished
@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 (parameters.length !== 3) ||
                 (parameters[0] !== '-f' && parameters[0] !== '-d')
             ) {
-                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: cp -f original_file_path destination_file_path\n       cp -d original_directory_path destination_directory_path`, false, true);
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: cp -f [original_file_path] [destination_file_path]\n       cp -d [original_directory_path] [destination_directory_path]`, false, true);
                 return;
             }
             try {
@@ -463,8 +463,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         description: 'Copy an existing file or directory.\n' +
-            'Usage: cp -f original_file_path destination_file_path\n' +
-            '       cp -d original_directory_path destination_directory_path'
+            'Usage: cp -f [original_file_path] [destination_file_path]\n' +
+            '       cp -d [original_directory_path] [destination_directory_path]'
     };
 
     // Finished
@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 (parameters.length !== 2) ||
                 (parameters[0] !== '-f' && parameters[0] !== '-d')
             ) {
-                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: rm -f file_path\n       rm -d directory_path`, false, true);
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: rm -f [file_path]\n       rm -d [directory_path]`, false, true);
                 return;
             }
             try {
@@ -492,8 +492,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         description: 'Remove (delete) an existing file or directory.\n' +
-            'Usage: rm -f file_path\n' +
-            '       rm -d directory_path'
+            'Usage: rm -f [file_path]\n' +
+            '       rm -d [directory_path]'
     };
 
     // Finished
@@ -503,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 (parameters.length !== 2) ||
                 (parameters[0] !== '-f' && parameters[0] !== '-d')
             ) {
-                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: download -f file_path\n       download -d directory_path`, false, true);
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: download -f [file_path]\n       download -d [directory_path]`, false, true);
                 return;
             }
             try {
@@ -550,15 +550,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         description: 'Download a single file or a directory (as .zip file) in the terminal file system.\n' +
-            'Usage: download -f file_path\n' +
-            '       download -d directory_path'
+            'Usage: download -f [file_path]\n' +
+            '       download -d [directory_path]'
     };
 
     // Finished
     supportedCommands['print'] = {
         executable: (parameters) => {
             if (parameters.length !== 1) {
-                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: print file_path`, false, true);
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: print [file_path]`, false, true);
                 return;
             }
             try {
@@ -577,14 +577,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         description: 'Print an existing file to the terminal window.\n' +
-            'Usage: print file_path'
+            'Usage: print [file_path]'
     };
 
     // Finished
     supportedCommands['edit'] = {
         executable: (parameters) => {
             if (parameters.length !== 1) {
-                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: edit file_path`, false, true);
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: edit [file_path]`, false, true);
                 return;
             }
             try {
@@ -604,7 +604,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentTerminalCore.printToWindow(`${error}`, false, true);
             }
         },
-        description: 'Edit an existing file.\nUsage: edit file_path'
+        description: 'Edit an existing file.\nUsage: edit [file_path]'
     };
 
     supportedCommands['webass'] = {
