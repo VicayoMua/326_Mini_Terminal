@@ -546,10 +546,27 @@ document.addEventListener('DOMContentLoaded', () => {
             '       download -d directory_path'
     };
 
-    // Update Needed
+    // Finished
     supportedCommands['print'] = {
         executable: (parameters) => {
-            //
+            if (parameters.length !== 1) {
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: print file_path`, false, true);
+                return;
+            }
+            try {
+                const tfp = currentTerminalCore.getCurrentFolderPointer().duplicate();
+                const file_path = parameters[0];
+                const index = file_path.lastIndexOf('/');
+                const [fileDir, fileName] = (() => {
+                    if (index === -1) return ['.', file_path];
+                    if (index === 0) return ['/', file_path.slice(1)];
+                    return [file_path.substring(0, index), file_path.slice(index + 1)];
+                })();
+                tfp.gotoPath(fileDir);
+                currentTerminalCore.printToWindow(tfp.getFileContent(fileName), false, true);
+            } catch (error) {
+                currentTerminalCore.printToWindow(`${error}`, false, true);
+            }
         },
         description: 'Print an existing file to the terminal window.\n' +
             'Usage: print file_path'
