@@ -111,8 +111,21 @@ class TerminalFolderPointer {
         return contents.length === 0 ? 'No file or folder existing here...' : contents;
     }
 
-    getZipFileOfFolder(){
+    getZipBlobOfFolder() {
+        // Helper function to recursively add folder content to the zip file
+        function addFolderToZip(folderObject, zipObject) {
+            for (const [fileName, fileContent] of Object.entries(folderObject.files))
+                zipObject.file(fileName, fileContent, {binary: true});
+            for (const [subfolderName, subfolderObject] of Object.entries(folderObject.subfolders))
+                addFolderToZip(subfolderObject, zipObject.folder(subfolderName));
+        }
 
+        // Create a new JSZip instance to generate the .zip file
+        const zip = new JSZip();
+        // Start the process from the current folder
+        addFolderToZip(this.#currentFolderObject, zip); // '' means root of the zip
+        // Generate the zip file as a Blob
+        return zip.generateAsync({type: 'blob'});
     }
 
     getFullPath() {

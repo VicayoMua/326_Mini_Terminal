@@ -519,15 +519,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (parameters[0] === '-d') { // rename a directory
                     const directory_path = parameters[1];
                     tfp.gotoPath(directory_path);
-                    const
-                        url = URL.createObjectURL(new Blob([tfp.getZipFileOfFolder()], {type: 'application/octet-stream'})),
-                        link = document.createElement('a');
-                    link.href = url;
-                    link.download = tfp.getFullPath().replaceAll('/','_'); // the filename the user will get
-                    link.click();
-                    URL.revokeObjectURL(url);
+                    (async () => {
+                        tfp.getZipBlobOfFolder().then(
+                            (blob) => {
+                                const
+                                    url = URL.createObjectURL(blob),
+                                    link = document.createElement('a'),
+                                    fullPath = tfp.getFullPath();
+                                link.href = url;
+                                link.download = `${
+                                    (fullPath === '/') ? 'root' : fullPath.substring(1).replaceAll('/', '_')
+                                }.zip`; // the filename the user will get
+                                link.click();
+                                URL.revokeObjectURL(url);
+                            }
+                        );
+                    })();
                 }
-                currentTerminalCore.printToWindow(`Successfully downloaded the path.`, false, true);
+                // currentTerminalCore.printToWindow(`Successfully downloaded the path.`, false, true);
             } catch (error) {
                 currentTerminalCore.printToWindow(`${error}`, false, true);
             }
