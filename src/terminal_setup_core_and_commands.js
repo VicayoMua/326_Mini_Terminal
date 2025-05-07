@@ -607,6 +607,11 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Edit an existing file.\nUsage: edit file_path'
     };
 
+    supportedCommands['webass'] = {
+        executable: (parameters) => {},
+        description: ''
+    }
+
     // Update Needed
     supportedCommands['wget'] = {
         executable: (parameters) => {
