@@ -172,8 +172,6 @@ class TerminalFolderPointer {
             this.#currentFullPathStack.pop();
     }
 
-    // gotoSubpath(subpath)
-    // gotoPathFromRoot(path)
     gotoPath(path) {
         if (path.length === 0) return;
         if (!path.startsWith('/') && !path.startsWith('./') && !path.startsWith('../'))
