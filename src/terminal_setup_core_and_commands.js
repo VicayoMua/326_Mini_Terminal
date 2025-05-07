@@ -1,3 +1,4 @@
+import { showEditor, saveFSState } from './editor_utils.js';
 let
     button_to_open_new_terminal_window = null,
     button_to_download_terminal_log = null,
@@ -581,12 +582,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update Needed
     supportedCommands['edit'] = {
-        executable: (parameters) => {
-            //
-        },
-        description: 'Edit an existing file.\n' +
-            'Usage: edit file_path'
-    };
+          executable: async (parameters) => {
+            try {
+              const filePath = parameters[0];
+              if (!filePath) {
+                currentTerminalCore.printToWindow("Usage: edit <file_path>", false, true);
+                return;
+              }
+              const tfp = currentTerminalCore.getCurrentFolderPointer().duplicate();
+              const index = filePath.lastIndexOf('/');
+              const [fileDir, fileName] = (() => {
+                if (index === -1)      return ['.', filePath];
+                if (index === 0)       return ['/', filePath.slice(1)];
+                                         return [filePath.substring(0, index), filePath.slice(index + 1)];
+              })();
+        
+              tfp.gotoPath(fileDir);
+              const fileContent = tfp.getFileContent(fileName);
+        
+              showEditor(fileName, fileContent, async (newContent) => {
+                try {
+                  
+                  tfp.changeFileContent(fileName, newContent);
+                  currentTerminalCore.printToWindow(`✅ ${fileName} updated in memory.`, false, true);
+                  await saveFSState(fsRoot);
+                  currentTerminalCore.printToWindow(`🗄️ File system saved to database.`, false, true);
+        
+                } catch (saveError) {
+                  currentTerminalCore.printToWindow(`❌ Error while saving: ${saveError.message}`, false, true);
+                }
+              });
+        
+            } catch (err) {
+              currentTerminalCore.printToWindow(`❌ Error: ${err.message}`, false, true);
+            }
+          },
+          description: "✏️ Edit an existing file.\nUsage: edit <file_path>"
+        };
+
+
 
     // Update Needed
     supportedCommands['wget'] = {
@@ -850,7 +884,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 .catch(err => currentTerminalCore.printToWindow(`Load failed: ${err}`, false, true));
         }
     };
-
+document.querySelector('.additional-buttons button:nth-child(1)').onclick = button_to_open_new_terminal_window;
+document.querySelector('.additional-buttons button:nth-child(2)').onclick = button_to_download_terminal_log;
+document.querySelector('.additional-buttons button:nth-child(3)').onclick = button_to_add_local_file;
+document.querySelector('.additional-buttons button:nth-child(4)').onclick = button_to_save_terminal_fs;
 
 });
 
