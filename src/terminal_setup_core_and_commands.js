@@ -1,3 +1,4 @@
+import { showEditor } from './multi_view.js';
 let
     button_to_open_new_terminal_window = null,
     button_to_download_terminal_log = null,
@@ -574,7 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update Needed
     supportedCommands['edit'] = {
-        executable: async (parameters) => {
+        executable: (parameters) => {
             try {
                 const filePath = parameters[0];
                 if (!filePath) {
@@ -593,18 +594,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 tfp.gotoPath(fileDir);
                 const fileContent = tfp.getFileContent(fileName);
     
-                // Assuming showEditor is globally available
-                showEditor(fileName, fileContent, async (newContent) => {
-                    tfp.updateFile(fileName, newContent);
-                    currentTerminalCore.printToWindow(`✅ Saved ${fileName}`, false, true);
+                showEditor(fileName, fileContent, (newContent) => {
+                    tfp.changeFileContent(fileName, newContent);
+                    currentTerminalCore.printToWindow(`✅ ${fileName} saved successfully.`, false, true);
                 });
-    
             } catch (error) {
                 currentTerminalCore.printToWindow(`❌ Error: ${error.message}`, false, true);
             }
         },
         description: "✏️ Edit an existing file.\nUsage: edit file_path"
     };
+
 
 
     // Update Needed
