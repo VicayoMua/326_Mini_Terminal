@@ -486,13 +486,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: download -f file_path\n       download -d directory_path`, false, true);
                 return;
             }
-            const cfp = currentTerminalCore.getCurrentFolderPointer();
-            if (parameters[0] === '-f') { // rename a file
-                const file_path = parameters[1];
-                // ...
-            } else if (parameters[0] === '-d') { // rename a directory
-                const directory_path = parameters[1];
-                // ...
+            try {
+                const tfp = currentTerminalCore.getCurrentFolderPointer().duplicate();
+                if (parameters[0] === '-f') { // rename a file
+                    const file_path = parameters[1];
+                    let index = file_path.lastIndexOf('/');
+                    const [fileDir, fileName] = (() => {
+                        if (index === -1) return ['.', file_path];
+                        if (index === 0) return ['/', file_path.slice(1)];
+                        return [file_path.substring(0, index), file_path.slice(index + 1)];
+                    })();
+                    tfp.gotoPath(fileDir);
+                    const fileContent = tfp.getFileContent(fileName);
+                    const
+                        url = URL.createObjectURL(new Blob([fileContent], {type: 'text/plain'})),
+                        link = document.createElement('a');
+                    link.href = url;
+                    link.download = fileName; // the filename the user will get
+                    link.click();
+                    URL.revokeObjectURL(url);
+                } else if (parameters[0] === '-d') { // rename a directory
+                    const directory_path = parameters[1];
+                    // ...
+                }
+                currentTerminalCore.printToWindow(`Successfully downloaded the path.`, false, true);
+            } catch (error) {
+                currentTerminalCore.printToWindow(`${error}`, false, true);
             }
         },
         description: 'Download a single file or a directory (as .zip file) in the terminal file system.\n' +
