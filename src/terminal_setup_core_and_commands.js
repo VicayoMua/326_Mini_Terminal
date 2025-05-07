@@ -44,8 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const
         fsRoot = generateRootDirectory(), // Initialize File System Root
-        supportedCommands = {}, // Initialize Supported Commands
-        terminalHTMLDivElements = [];
+        supportedCommands = {}; // Initialize Supported Commands
 
     // testing
     _root = fsRoot;
@@ -79,6 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
     button_to_open_new_terminal_window = (() => {
         const divTerminalContainer = document.getElementById('terminal-container');
         const navViewNavigation = document.getElementById('view-navigation');
+        const terminalHTMLDivElements = [];
+        const terminalHTMLButtonElements = [];
         let windowCount = 0;
         return () => {
             if (windowCount === 8) {
@@ -133,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const buttonNewTerminalViewNavigation = document.createElement('button');
             buttonNewTerminalViewNavigation.type = 'button';
             buttonNewTerminalViewNavigation.textContent = `{ Window #${windowCount} }`;
+            buttonNewTerminalViewNavigation.style.fontWeight = 'normal';
             buttonNewTerminalViewNavigation.addEventListener('mouseover', () => {
                 buttonNewTerminalViewNavigation.style.textDecoration = 'underline';
             });
@@ -141,6 +143,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             buttonNewTerminalViewNavigation.addEventListener('click', () => {
                 if (currentTerminalCore !== newTerminalCore) { // view switching needed
+                    // switch the nav button style
+                    for (const button of terminalHTMLButtonElements)
+                        button.style.fontWeight = 'normal';
+                    buttonNewTerminalViewNavigation.style.fontWeight = 'bold';
+                    // switch the terminal window view
                     for (const div of terminalHTMLDivElements)
                         div.style.display = 'none';
                     divNewTerminalHTMLDivElement.style.display = 'block';
@@ -152,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 50);
             });
             navViewNavigation.appendChild(buttonNewTerminalViewNavigation);
+            terminalHTMLButtonElements.push(buttonNewTerminalViewNavigation);
             if (currentTerminalCore === null) // if the terminal window is <Window #1>
                 buttonNewTerminalViewNavigation.click();
         };
