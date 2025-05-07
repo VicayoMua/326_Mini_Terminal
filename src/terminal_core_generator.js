@@ -8,19 +8,17 @@
 * **************************************************************************************************************
 * */
 
-// export {generateRootDirectory, generateSubfolderOf, TerminalFolderPointer};
-
-function printObj(obj) {
-    console.log(
-        `{${
-            Object.keys(obj).reduce((acc, key, index) => {
-                acc += `    ${key}: ${obj[key]}`;
-                if (index < Object.keys(obj).length - 1) acc += ',\n';
-                return acc;
-            }, '')
-        }}`
-    );
-}
+// function printObj(obj) {
+//     console.log(
+//         `{${
+//             Object.keys(obj).reduce((acc, key, index) => {
+//                 acc += `    ${key}: ${obj[key]}`;
+//                 if (index < Object.keys(obj).length - 1) acc += ',\n';
+//                 return acc;
+//             }, '')
+//         }}`
+//     );
+// }
 
 const
     isLegalKeyNameInFileSystem = (() => {

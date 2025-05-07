@@ -1,4 +1,4 @@
-export function showEditor(fileName, content, onSaveCallback) {
+function showEditor(fileName, content, onSaveCallback) {
     const existingEditor = document.getElementById('terminal-file-editor');
     if (existingEditor) existingEditor.remove();
 
@@ -79,7 +79,7 @@ export function showEditor(fileName, content, onSaveCallback) {
 }
 
 /*Save the current in-memory file system to the backend SQLite DB.*/
-export async function saveFSState(fsRoot) {
+async function saveFSState(fsRoot) {
     try {
         await fetch('/api/fs/save', {
             method: 'POST',

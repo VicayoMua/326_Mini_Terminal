@@ -8,22 +8,23 @@
 
     <title>Mini Terminal</title>
 
+    <!-- Style Sheets -->
     <link rel="stylesheet" href="lib/xterm.css"/>
     <link rel="stylesheet" href="./index.css"/>
     <link rel="stylesheet" href="./styles/add_local_file.css"/>
 
-
     <!-- Library Scripts -->
-    <!--<script src="https://unpkg.com/xterm/lib/xterm.js"></script> &lt;!&ndash; Include xterm.js from CDN &ndash;&gt;-->
+    <!--    <script src="https://unpkg.com/xterm/lib/xterm.js"></script> &lt;!&ndash; Include xterm.js from CDN &ndash;&gt;-->
     <script src="lib/xterm.js"></script>
-    <!--<script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script> &lt;!&ndash; Include xterm-addon-fit.js from CDN &ndash;&gt;-->
+    <!--    <script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script> &lt;!&ndash; Include xterm-addon-fit.js from CDN &ndash;&gt;-->
     <script src="lib/xterm-addon-fit.js"></script>
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>-->
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>-->
     <script src="lib/jszip.min.js"></script>
 
     <!-- Terminal Core Scripts -->
     <script src="src/terminal_core_generator.js"></script>
-    <script type="module" src="src/terminal_setup_core_and_commands.js"></script>
+    <script src="src/editor_utils.js"></script>
+    <script src="src/terminal_setup_core_and_commands.js"></script>
 
 </head>
 
