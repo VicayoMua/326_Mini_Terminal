@@ -1,4 +1,4 @@
-import { showEditor } from './multi_view.js';
+import { showEditor, saveFSState } from './editor_utils.js';
 let
     button_to_open_new_terminal_window = null,
     button_to_download_terminal_log = null,
@@ -575,7 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update Needed
     supportedCommands['edit'] = {
-        executable: (parameters) => {
+        executable: async (parameters) => {
             try {
                 const filePath = parameters[0];
                 if (!filePath) {
@@ -594,15 +594,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 tfp.gotoPath(fileDir);
                 const fileContent = tfp.getFileContent(fileName);
     
-                showEditor(fileName, fileContent, (newContent) => {
-                    tfp.changeFileContent(fileName, newContent);
-                    currentTerminalCore.printToWindow(`✅ ${fileName} saved successfully.`, false, true);
+                showEditor(fileName, fileContent, async (newContent) => {
+                    try {
+                        // 1. Save to in-memory FS
+                        tfp.changeFileContent(fileName, newContent);
+                        currentTerminalCore.printToWindow(`✅ ${fileName} updated in memory.`, false, true);
+    
+                        // 2. Persist full FS to backend
+                        const fsRoot = currentTerminalCore.getNewFolderPointer().duplicate(); // get root
+                        await saveFSState(fsRoot);
+                        currentTerminalCore.printToWindow(`🗄️ File system saved to database.`, false, true);
+                    } catch (saveError) {
+                        currentTerminalCore.printToWindow(`❌ Error while saving: ${saveError.message}`, false, true);
+                    }
                 });
+    
             } catch (error) {
                 currentTerminalCore.printToWindow(`❌ Error: ${error.message}`, false, true);
             }
         },
-        description: "✏️ Edit an existing file.\nUsage: edit file_path"
+        description: "✏️ Edit a file and save it to the virtual file system.\nUsage: edit <file_path>"
     };
 
 
