@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     button_to_save_terminal_fs = () => {
         try {
             supportedCommands['save'].executable();
-        }catch (error) {
+        } catch (error) {
             alert(`[Button:] ${error}`);
         }
     };
@@ -580,46 +580,32 @@ document.addEventListener('DOMContentLoaded', () => {
             'Usage: print file_path'
     };
 
-    // Update Needed
+    // Finished
     supportedCommands['edit'] = {
-          executable: async (parameters) => {
-            try {
-              const filePath = parameters[0];
-              if (!filePath) {
-                currentTerminalCore.printToWindow("Usage: edit <file_path>", false, true);
+        executable: (parameters) => {
+            if (parameters.length !== 1) {
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: edit file_path`, false, true);
                 return;
-              }
-              const tfp = currentTerminalCore.getCurrentFolderPointer().duplicate();
-              const index = filePath.lastIndexOf('/');
-              const [fileDir, fileName] = (() => {
-                if (index === -1)      return ['.', filePath];
-                if (index === 0)       return ['/', filePath.slice(1)];
-                                         return [filePath.substring(0, index), filePath.slice(index + 1)];
-              })();
-        
-              tfp.gotoPath(fileDir);
-              const fileContent = tfp.getFileContent(fileName);
-        
-              showEditor(fileName, fileContent, async (newContent) => {
-                try {
-                  
-                  tfp.changeFileContent(fileName, newContent);
-                  currentTerminalCore.printToWindow(`✅ ${fileName} updated in memory.`, false, true);
-                  await saveFSState(fsRoot);
-                  currentTerminalCore.printToWindow(`🗄️ File system saved to database.`, false, true);
-        
-                } catch (saveError) {
-                  currentTerminalCore.printToWindow(`❌ Error while saving: ${saveError.message}`, false, true);
-                }
-              });
-        
-            } catch (err) {
-              currentTerminalCore.printToWindow(`❌ Error: ${err.message}`, false, true);
             }
-          },
-          description: "✏️ Edit an existing file.\nUsage: edit <file_path>"
-        };
-
+            try {
+                const tfp = currentTerminalCore.getCurrentFolderPointer().duplicate();
+                const filePath = parameters[0];
+                const index = filePath.lastIndexOf('/');
+                const [fileDir, fileName] = (() => {
+                    if (index === -1) return ['.', filePath];
+                    if (index === 0) return ['/', filePath.slice(1)];
+                    return [filePath.substring(0, index), filePath.slice(index + 1)];
+                })();
+                tfp.gotoPath(fileDir);
+                showEditor(fileName, tfp.getFileContent(fileName), (newFileContent) => {
+                    tfp.changeFileContent(fileName, newFileContent);
+                });
+            } catch (error) {
+                currentTerminalCore.printToWindow(`${error}`, false, true);
+            }
+        },
+        description: 'Edit an existing file.\nUsage: edit file_path'
+    };
 
 
     // Update Needed
