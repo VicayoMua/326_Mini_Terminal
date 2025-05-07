@@ -208,12 +208,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Save FS button handler
     button_to_save_terminal_fs = () => {
-        const cmd = supportedCommands['save'];
-        // if (cmd && typeof cmd.executable === 'function') {
-        cmd.executable();
-        // } else {
-        //     console.error('Save command not found');
-        // }
+        try {
+            supportedCommands['save'].executable();
+        }catch (error) {
+            alert(`[Button:] ${error}`);
+        }
     };
 
     // Finished
