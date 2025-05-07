@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                         null
                     )
-                }.\nFor more details, please use the command 'man [command_name]'.`,
+                }.\nFor more details of each command, please use the command 'man [command_name]'.`,
                 false,
                 true
             );
