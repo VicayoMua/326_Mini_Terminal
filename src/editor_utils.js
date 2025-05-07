@@ -1,10 +1,11 @@
-function openFileEditor(fileName, orginalFileContent, callbackToSaveFile) {
+function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, callbackToSaveFile) {
     // remove any potentially existing terminal file editor
-    const existingEditor = document.getElementById('terminal-file-editor');
-    if (existingEditor) existingEditor.remove();
+    // const existingEditor = document.getElementById('terminal-file-editor');
+    // if (existingEditor) existingEditor.remove();
+
     // set up a new terminal file editor
     const container = document.createElement('div');
-    container.id = 'terminal-file-editor';
+    // container.id = 'terminal-file-editor';
     container.style.position = 'fixed';
     container.style.top = '50%';
     container.style.left = '50%';
@@ -73,7 +74,7 @@ function openFileEditor(fileName, orginalFileContent, callbackToSaveFile) {
         }
         container.appendChild(buttons);
     }
-    document.body.appendChild(container);
+    HTMLDivForTerminalWindow.appendChild(container);
 }
 
 

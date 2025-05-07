@@ -548,9 +548,9 @@ class TerminalFolderPointer {
 
 }
 
-function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supportedCommands) {
+function generateTerminalCore(xtermObj, HTMLDivElement_TerminalWindowContainer, fsRoot, supportedCommands) {
     // Put Terminal Window to Webpage Container
-    xtermObj.open(htmlElem_terminalContainer);
+    xtermObj.open(HTMLDivElement_TerminalWindowContainer);
 
     // const isWebglEnabled = (() => {
     //     try {
@@ -778,7 +778,7 @@ function generateTerminalCore(xtermObj, htmlElem_terminalContainer, fsRoot, supp
         * */
         getFitAddon: () => fitAddon,
         getTerminalLogString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
-
+        getHTMLDivForTerminalWindow: ()=> HTMLDivElement_TerminalWindowContainer,
 
         /*
         *  Terminal File System Ports
