@@ -607,7 +607,6 @@ document.addEventListener('DOMContentLoaded', () => {
         description: 'Edit an existing file.\nUsage: edit file_path'
     };
 
-
     // Update Needed
     supportedCommands['wget'] = {
         executable: (parameters) => {
