@@ -1,11 +1,5 @@
 function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, callbackToSaveFile) {
-    // remove any potentially existing terminal file editor
-    // const existingEditor = document.getElementById('terminal-file-editor');
-    // if (existingEditor) existingEditor.remove();
-
-    // set up a new terminal file editor
     const container = document.createElement('div');
-    // container.id = 'terminal-file-editor';
     container.style.position = 'fixed';
     container.style.top = '50%';
     container.style.left = '50%';
