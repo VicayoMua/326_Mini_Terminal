@@ -257,17 +257,17 @@ class TerminalFolderPointer {
     /*
     *  Directory Subfolder Controllers
     * */
-    createSubfolder(newSubfolderName, gotoNewFolder = false) {
-        if (!isLegalKeyNameInFileSystem(newSubfolderName))
-            throw new Error(`Subfolder name is illegal`);
-        if (this.#currentFolderObject.subfolders[newSubfolderName] !== undefined)
-            throw new Error(`Folder ${newSubfolderName} already exists`);
-        this.#currentFolderObject.subfolders[newSubfolderName] = generateSubfolderOf(this.#currentFolderObject);
-        if (gotoNewFolder === true) {
-            this.#currentFolderObject = this.#currentFolderObject.subfolders[newSubfolderName];
-            this.#currentFullPathStack.push(newSubfolderName);
-        }
-    }
+    // createSubfolder(newSubfolderName, gotoNewFolder = false) {
+    //     if (!isLegalKeyNameInFileSystem(newSubfolderName))
+    //         throw new Error(`Subfolder name is illegal`);
+    //     if (this.#currentFolderObject.subfolders[newSubfolderName] !== undefined)
+    //         throw new Error(`Folder ${newSubfolderName} already exists`);
+    //     this.#currentFolderObject.subfolders[newSubfolderName] = generateSubfolderOf(this.#currentFolderObject);
+    //     if (gotoNewFolder === true) {
+    //         this.#currentFolderObject = this.#currentFolderObject.subfolders[newSubfolderName];
+    //         this.#currentFullPathStack.push(newSubfolderName);
+    //     }
+    // }
 
     // createSubpath(subpath, gotoNewFolder = false)
     createPath(path, gotoNewFolder = false) {
@@ -330,24 +330,24 @@ class TerminalFolderPointer {
         }
     }
 
-    renameExistingSubfolder(oldSubfolderName, newSubfolderName) {
-        if (!isLegalKeyNameInFileSystem(oldSubfolderName) || !isLegalKeyNameInFileSystem(newSubfolderName))
-            throw new Error(`Subfolder name is illegal`);
-        if (this.#currentFolderObject.subfolders[oldSubfolderName] === undefined)
-            throw new Error(`Folder ${oldSubfolderName} not found`);
-        if (this.#currentFolderObject.subfolders[newSubfolderName] !== undefined)
-            throw new Error(`Folder ${newSubfolderName} already exists`);
-        this.#currentFolderObject.subfolders[newSubfolderName] = this.#currentFolderObject.subfolders[oldSubfolderName];
-        delete this.#currentFolderObject.subfolders[oldSubfolderName];
-    }
+    // renameExistingSubfolder(oldSubfolderName, newSubfolderName) {
+    //     if (!isLegalKeyNameInFileSystem(oldSubfolderName) || !isLegalKeyNameInFileSystem(newSubfolderName))
+    //         throw new Error(`Subfolder name is illegal`);
+    //     if (this.#currentFolderObject.subfolders[oldSubfolderName] === undefined)
+    //         throw new Error(`Folder ${oldSubfolderName} not found`);
+    //     if (this.#currentFolderObject.subfolders[newSubfolderName] !== undefined)
+    //         throw new Error(`Folder ${newSubfolderName} already exists`);
+    //     this.#currentFolderObject.subfolders[newSubfolderName] = this.#currentFolderObject.subfolders[oldSubfolderName];
+    //     delete this.#currentFolderObject.subfolders[oldSubfolderName];
+    // }
 
-    deleteSubfolder(subfolderName) {
-        if (!isLegalKeyNameInFileSystem(subfolderName))
-            throw new Error(`Subfolder name is illegal`);
-        if (this.#currentFolderObject.subfolders[subfolderName] === undefined)
-            throw new Error(`Folder ${subfolderName} not found`);
-        delete this.#currentFolderObject.subfolders[subfolderName]; // doable because of auto-garbage-collection
-    }
+    // deleteSubfolder(subfolderName) {
+    //     if (!isLegalKeyNameInFileSystem(subfolderName))
+    //         throw new Error(`Subfolder name is illegal`);
+    //     if (this.#currentFolderObject.subfolders[subfolderName] === undefined)
+    //         throw new Error(`Folder ${subfolderName} not found`);
+    //     delete this.#currentFolderObject.subfolders[subfolderName]; // doable because of auto-garbage-collection
+    // }
 
     /*
     *  Other powerful Controllers
