@@ -54,7 +54,6 @@ app.get('/api/fs/load', async (req, res) => {
   }
 });
 
-// server.js (near the top, right after you instantiate `sequelize`)
 (async () => {
   try {
     // 1) Check the connection

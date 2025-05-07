@@ -654,9 +654,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const state = exportFS(fsRoot, cwd);
       
           fetch('http://localhost:3000/api/fs/save', {
-            method: 'POST',                            // ← must be POST
+            method: 'POST',                            
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(state),               // ← your JSON payload
+            body: JSON.stringify(state),               
           })
           .then(res => {
             if (!res.ok) throw new Error(res.statusText);
@@ -675,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
           fetch('http://localhost:3000/api/fs/load')
             .then(res => res.json())
             .then(state => {
-              importFS(fsRoot, state);                  // you’ll need an importFS to mirror exportFS
+              importFS(fsRoot, state);                  
               // restore working directory
               const cwd = state.cwd.startsWith('/') ? state.cwd.slice(1) : state.cwd;
               if (cwd) currentTerminalCore.getCurrentFolderPointer().gotoPathFromRoot(cwd);
