@@ -77,3 +77,17 @@ export function showEditor(fileName, content, onSaveCallback) {
 
     document.body.appendChild(container);
 }
+
+/*Save the current in-memory file system to the backend SQLite DB.*/
+export async function saveFSState(fsRoot) {
+    try {
+        await fetch('/api/fs/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(fsRoot),
+        });
+        console.log('🗄️ File system saved.');
+    } catch (err) {
+        console.error('❌ Failed to save file system:', err);
+    }
+}
