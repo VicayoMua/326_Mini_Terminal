@@ -877,7 +877,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 .catch(err => currentTerminalCore.printToWindow(`Load failed: ${err}`, false, true));
         }
     };
-
+document.querySelector('.additional-buttons button:nth-child(1)').onclick = button_to_open_new_terminal_window;
+document.querySelector('.additional-buttons button:nth-child(2)').onclick = button_to_download_terminal_log;
+document.querySelector('.additional-buttons button:nth-child(3)').onclick = button_to_add_local_file;
+document.querySelector('.additional-buttons button:nth-child(4)').onclick = button_to_save_terminal_fs;
 
 });
 
