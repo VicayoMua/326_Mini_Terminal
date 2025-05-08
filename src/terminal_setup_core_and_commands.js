@@ -604,11 +604,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     return [filePath.substring(0, index), filePath.slice(index + 1)];
                 })();
                 tfp.gotoPath(fileDir);
-                currentTerminalCore.setNewKeyboardListener((_) => {});
+                const fileContent = tfp.getFileContent(fileName); // need this line to make sure the file is loaded before resetting the keyboard listener
+                currentTerminalCore.setNewKeyboardListener((_) => { // empty keyboard listener
+                });
                 openFileEditor(
                     currentTerminalCore.getHTMLDivForTerminalWindow(),
                     fileName,
-                    tfp.getFileContent(fileName),
+                    fileContent,
                     (newFileContent) => {
                         tfp.changeFileContent(fileName, newFileContent);
                         currentTerminalCore.setDefaultKeyboardListener();

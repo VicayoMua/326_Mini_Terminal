@@ -10,6 +10,7 @@ function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, 
     divEditorWindowContainer.style.borderRadius = '8px';
     divEditorWindowContainer.style.zIndex = '9999';
     divEditorWindowContainer.style.width = '60%';
+    divEditorWindowContainer.style.height = '80%';
     {
         // the title of the editor window
         const title = document.createElement('h3');
@@ -20,7 +21,7 @@ function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, 
 
         // Ace-Editor container
         const aceEditorContainer = document.createElement('div');
-        aceEditorContainer.style.height = '600px'; // Set height for the editor
+        aceEditorContainer.style.height = '85%'; // Set height for the editor
         // Initialize Ace-Editor
         const aceEditor = ace.edit(aceEditorContainer); // Create Ace editor in the div container
         aceEditor.setValue(orginalFileContent);  // Set the initial content of the file
