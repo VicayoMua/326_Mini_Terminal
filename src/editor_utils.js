@@ -38,15 +38,31 @@ function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, 
         divButtons.style.marginTop = '15px';
         divButtons.style.textAlign = 'right';
         {
+            function initializeButtonProperties(buttonElement) {
+                buttonElement.style.padding = '6px 12px';
+                buttonElement.style.borderRadius = '4px';
+                buttonElement.style.border = 'none';
+                buttonElement.style.cursor = 'pointer';
+                buttonElement.style.color = 'white';
+                buttonElement.onmouseenter = () => {
+                    buttonElement.style.transform = 'translateY(-1.5px)'; // Apply the lift effect
+                };
+                buttonElement.onmouseleave = () => {
+                    buttonElement.style.transform = ''; // Reset transform to original state when hover ends
+                };
+                buttonElement.onmousedown = () => {
+                    buttonElement.style.transform = 'translateY(0)'; // Reset to original position on click
+                };
+                buttonElement.onmouseup = () => {
+                    buttonElement.style.transform = 'translateY(-1.5px)'; // Apply the lift effect when mouse button is released
+                };
+            }
+
             const buttonToSave = document.createElement('button');
             buttonToSave.innerText = '💾 Save';
-            buttonToSave.style.marginRight = '10px';
-            buttonToSave.style.padding = '6px 12px';
-            buttonToSave.style.borderRadius = '4px';
-            buttonToSave.style.border = 'none';
-            buttonToSave.style.cursor = 'pointer';
             buttonToSave.style.backgroundColor = '#4CAF50';
-            buttonToSave.style.color = 'white';
+            buttonToSave.style.marginRight = '10px';
+            initializeButtonProperties(buttonToSave);
             buttonToSave.onclick = () => {
                 callbackToSaveFile(textarea.value);
                 divEditorWindowContainer.remove();
@@ -55,12 +71,8 @@ function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, 
 
             const buttonToCancel = document.createElement('button');
             buttonToCancel.innerText = '✖ Cancel';
-            buttonToCancel.style.padding = '6px 12px';
-            buttonToCancel.style.borderRadius = '4px';
-            buttonToCancel.style.border = 'none';
-            buttonToCancel.style.cursor = 'pointer';
             buttonToCancel.style.backgroundColor = '#f44336';
-            buttonToCancel.style.color = 'white';
+            initializeButtonProperties(buttonToCancel);
             buttonToCancel.onclick = () => {
                 divEditorWindowContainer.remove();
             };
@@ -70,7 +82,6 @@ function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, 
     }
     HTMLDivForTerminalWindow.appendChild(divEditorWindowContainer);
 }
-
 
 
 // try {
