@@ -1,4 +1,4 @@
-function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, callbackToSaveFile) {
+function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, callbackToSaveFile, callbackToCancelEdit) {
     const divEditorWindowContainer = document.createElement('div');
     divEditorWindowContainer.style.position = 'fixed';
     divEditorWindowContainer.style.top = '50%';
@@ -74,6 +74,7 @@ function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, 
             buttonToCancel.style.backgroundColor = '#f44336';
             initializeButtonProperties(buttonToCancel);
             buttonToCancel.onclick = () => {
+                callbackToCancelEdit();
                 divEditorWindowContainer.remove();
             };
             divButtons.appendChild(buttonToCancel);

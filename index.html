@@ -36,16 +36,8 @@
         <h1>Mini Terminal</h1>
     </div>
 
-    <input type="button" id="body-theme-toggle" onclick="switch_theme()" hidden>
+    <input type="button" id="body-theme-toggle" onclick="button_to_switch_theme()" hidden>
     <label for="body-theme-toggle" class="body-theme-toggle">🌙</label>
-    <script>
-        const switch_theme = (() => {
-            const theme_icon = document.querySelector('label[for=\"body-theme-toggle\"]');
-            return () => {
-                theme_icon.innerHTML = document.body.classList.toggle('dark-body-mode') ? '☀️' : '🌙';
-            };
-        })();
-    </script>
 
     <nav class="view-navigation" id="view-navigation">
 <!--        <button-->

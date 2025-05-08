@@ -582,13 +582,14 @@ function generateTerminalCore(xtermObj, HTMLDivElement_TerminalWindowContainer, 
     let terminalLog = [];
 
     // Initialize Current Keyboard Listener
-    let currentTerminalKeyboardListener = null;
+    let currentKeyboardListenerCallback = null;
+    let currentXTermKeyboardListener = null;
 
     // Function to Set New Keyboard Listener
     function setNewTerminalKeyboardListener(keyboard_listening_callback) {
-        if (currentTerminalKeyboardListener !== null)
-            currentTerminalKeyboardListener.dispose();
-        currentTerminalKeyboardListener = xtermObj.onData(keyboard_listening_callback);
+        if (currentXTermKeyboardListener !== null)
+            currentXTermKeyboardListener.dispose();
+        currentXTermKeyboardListener = xtermObj.onData(currentKeyboardListenerCallback = keyboard_listening_callback);
     }
 
     // Initialize Command Buffer & Handler
@@ -661,85 +662,82 @@ function generateTerminalCore(xtermObj, HTMLDivElement_TerminalWindowContainer, 
     };
 
     // Function to Initialize Default Terminal Window's Listening to Keyboard Input
-    function setDefaultTerminalKeyboardListener() {
-        setNewTerminalKeyboardListener((keyboardInput) => {
-            switch (keyboardInput) {
-                case '\x1b[A': { // Up arrow
-                    break;
+    const defaultTerminalKeyboardLinstenerCallback = (keyboardInput) => {
+        switch (keyboardInput) {
+            case '\x1b[A': { // Up arrow
+                break;
+            }
+            case '\x1b[B': { // Down arrow
+                break;
+            }
+            case '\x1b[C': { // Right arrow
+                break;
+            }
+            case '\x1b[D': { // Left arrow
+                break;
+            }
+            case '\u0003': { // Ctrl+C
+                commandInputBufferHandler.clear();
+                xtermObj.write('^C\n\n\r $ ');
+                terminalLog.push('^C\n\n $ ');
+                break;
+            }
+            case '\u000C': { // Ctrl+L
+                // commandInputBufferHandler.clear();
+                xtermObj.write(`\x1b[2J\x1b[H $ `);
+                for (const char of commandInputBuffer)
+                    xtermObj.write(char);
+                break;
+            }
+            case '\u007F': { // Backspace
+                if (commandInputBufferHandler.removeChar()) { // if the char is successfully removed from the buffer
+                    xtermObj.write('\b \b');
+                    terminalLog.pop(); // because commandInputBufferHandler.removeChar() is success!!
                 }
-                case '\x1b[B': { // Down arrow
-                    break;
+                break;
+            }
+            case '\r': { // Enter
+                xtermObj.write('\n\r   ');
+                terminalLog.push('\n   ');
+                {
+                    const [statusCode, commandName] = commandInputBufferHandler.execute();
+                    switch (statusCode) {
+                        case 0: {
+                            // success execution
+                            break;
+                        }
+                        case 1: {
+                            xtermObj.write(`${commandName}: command not found`);
+                            terminalLog.push(`${commandName}: command not found`);
+                            break;
+                        }
+                        case 2: {
+                            xtermObj.write(`${commandName}: command failed due to uncaught errors`);
+                            terminalLog.push(`${commandName}: command failed due to uncaught errors`);
+                            break;
+                        }
+                        default: {
+                        }
+                    }
                 }
-                case '\x1b[C': { // Right arrow
-                    break;
-                }
-                case '\x1b[D': { // Left arrow
-                    break;
-                }
-                case '\u0003': { // Ctrl+C
-                    commandInputBufferHandler.clear();
-                    xtermObj.write('^C\n\n\r $ ');
-                    terminalLog.push('^C\n\n $ ');
-                    break;
-                }
-                case '\u000C': { // Ctrl+L
-                    // commandInputBufferHandler.clear();
-                    xtermObj.write(`\x1b[2J\x1b[H $ `);
-                    for (const char of commandInputBuffer)
+                commandInputBufferHandler.clear();
+                xtermObj.write('\n\n\r $ ');
+                terminalLog.push('\n\n $ ');
+                break;
+            }
+            default: { // allowing proper copy and paste from the clipboard
+                for (const char of keyboardInput) {
+                    if (char >= String.fromCharCode(0x20) && char <= String.fromCharCode(0x7E) || char >= '\u00a0') {
+                        commandInputBufferHandler.addChar(char);
                         xtermObj.write(char);
-                    break;
-                }
-                case '\u007F': { // Backspace
-                    if (commandInputBufferHandler.removeChar()) { // if the char is successfully removed from the buffer
-                        xtermObj.write('\b \b');
-                        terminalLog.pop(); // because commandInputBufferHandler.removeChar() is success!!
-                    }
-                    break;
-                }
-                case '\r': { // Enter
-                    xtermObj.write('\n\r   ');
-                    terminalLog.push('\n   ');
-                    {
-                        const [statusCode, commandName] = commandInputBufferHandler.execute();
-                        switch (statusCode) {
-                            case 0: {
-                                // success execution
-                                break;
-                            }
-                            case 1: {
-                                xtermObj.write(`${commandName}: command not found`);
-                                terminalLog.push(`${commandName}: command not found`);
-                                break;
-                            }
-                            case 2: {
-                                xtermObj.write(`${commandName}: command failed due to uncaught errors`);
-                                terminalLog.push(`${commandName}: command failed due to uncaught errors`);
-                                break;
-                            }
-                            default: {
-                            }
-                        }
-                    }
-                    commandInputBufferHandler.clear();
-                    xtermObj.write('\n\n\r $ ');
-                    terminalLog.push('\n\n $ ');
-                    break;
-                }
-                default: { // allowing proper copy and paste from the clipboard
-                    for (const char of keyboardInput) {
-                        if (char >= String.fromCharCode(0x20) && char <= String.fromCharCode(0x7E) || char >= '\u00a0') {
-                            commandInputBufferHandler.addChar(char);
-                            xtermObj.write(char);
-                            terminalLog.push(char);
-                        }
+                        terminalLog.push(char);
                     }
                 }
             }
-        });
-    }
-
+        }
+    };
     // Initialize Default Terminal Window's Listening to Keyboard Input
-    setDefaultTerminalKeyboardListener();
+    setNewTerminalKeyboardListener(defaultTerminalKeyboardLinstenerCallback);
 
     // Initialize Terminal Window Display
     xtermObj.write(` $ `);
@@ -765,12 +763,11 @@ function generateTerminalCore(xtermObj, HTMLDivElement_TerminalWindowContainer, 
         *  Terminal Keyboard Listener Controllers
         * */
         setDefaultKeyboardListener: () => { // returns void
-            setDefaultTerminalKeyboardListener();
+            setNewTerminalKeyboardListener(defaultTerminalKeyboardLinstenerCallback);
         },
         setNewKeyboardListener: (keyboard_listener_callback) => { // returns void
             setNewTerminalKeyboardListener(keyboard_listener_callback);
         },
-        getCurrentKeyboardListener: () => currentTerminalKeyboardListener,
 
 
         /*
@@ -778,7 +775,7 @@ function generateTerminalCore(xtermObj, HTMLDivElement_TerminalWindowContainer, 
         * */
         getFitAddon: () => fitAddon,
         getTerminalLogString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
-        getHTMLDivForTerminalWindow: ()=> HTMLDivElement_TerminalWindowContainer,
+        getHTMLDivForTerminalWindow: () => HTMLDivElement_TerminalWindowContainer,
 
         /*
         *  Terminal File System Ports

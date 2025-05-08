@@ -1,5 +1,6 @@
 // import { showEditor, saveFSState } from './editor_utils.js';
 let
+    button_to_switch_theme = null,
     button_to_open_new_terminal_window = null,
     button_to_download_terminal_log = null,
     button_to_add_local_file = null,
@@ -8,6 +9,12 @@ let
 // let _root = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+    button_to_switch_theme = (() => {
+        const theme_icon = document.querySelector('label[for=\"body-theme-toggle\"]');
+        return () => {
+            theme_icon.innerHTML = document.body.classList.toggle('dark-body-mode') ? '☀️' : '🌙';
+        };
+    })();
 
     // export the full FS tree plus cwd
     function exportFS(root, cwd) {
@@ -597,9 +604,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     return [filePath.substring(0, index), filePath.slice(index + 1)];
                 })();
                 tfp.gotoPath(fileDir);
-                openFileEditor(currentTerminalCore.getHTMLDivForTerminalWindow(), fileName, tfp.getFileContent(fileName), (newFileContent) => {
-                    tfp.changeFileContent(fileName, newFileContent);
-                });
+                currentTerminalCore.setNewKeyboardListener((_) => {});
+                openFileEditor(
+                    currentTerminalCore.getHTMLDivForTerminalWindow(),
+                    fileName,
+                    tfp.getFileContent(fileName),
+                    (newFileContent) => {
+                        tfp.changeFileContent(fileName, newFileContent);
+                        currentTerminalCore.setDefaultKeyboardListener();
+                    },
+                    () => {
+                        currentTerminalCore.setDefaultKeyboardListener();
+                    }
+                );
                 currentTerminalCore.printToWindow(`Successfully opened an editor.`, false, true);
             } catch (error) {
                 currentTerminalCore.printToWindow(`${error}`, false, true);
@@ -609,7 +626,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     supportedCommands['webass'] = {
-        executable: (parameters) => {},
+        executable: (parameters) => {
+        },
         description: ''
     }
 
