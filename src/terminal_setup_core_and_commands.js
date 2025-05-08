@@ -643,11 +643,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 }
                 default: {
-                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: wget html_link`, false, true);
+                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: wget [html_link]`, false, true);
                 }
             }
         },
-        description: 'Download file from html link.\nUsage: wget html_link'
+        description: 'Download file from html link.\nUsage: wget [html_link]'
     };
 
     // Update Needed
@@ -682,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
         executable: (params) => {
             // Validate
             if (params.length !== 1) {
-                currentTerminalCore.printToWindow('Usage: curl <url>\n', false, true);
+                currentTerminalCore.printToWindow('Usage: curl [url]\n', false, true);
                 return;
             }
             // Pull the URL from params
