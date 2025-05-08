@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // const old_directory_path = parameters[1], new_directory_path = parameters[2];
                     cfp.deletePath('directory', parameters[1]);
                 }
-                currentTerminalCore.printToWindow(`Successfully deleted the path.`, false, true);
+                currentTerminalCore.printToWindow(`Successfully removed the path.`, false, true);
             } catch (error) {
                 currentTerminalCore.printToWindow(`${error}`, false, true);
             }
