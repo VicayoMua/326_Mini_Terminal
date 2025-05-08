@@ -14,7 +14,7 @@ function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, 
     divEditorWindowContainer.style.maxWidth = '800px';
     {
         const title = document.createElement('h3');
-        title.innerText = `Editing: ${fileName}`;
+        title.innerText = `File: ${fileName}`;
         title.style.marginTop = '0';
         title.style.color = '#fff';
         divEditorWindowContainer.appendChild(title);
