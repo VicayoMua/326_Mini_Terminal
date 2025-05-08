@@ -600,6 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 openFileEditor(currentTerminalCore.getHTMLDivForTerminalWindow(), fileName, tfp.getFileContent(fileName), (newFileContent) => {
                     tfp.changeFileContent(fileName, newFileContent);
                 });
+                currentTerminalCore.printToWindow(`Successfully opened an editor.`, false, true);
             } catch (error) {
                 currentTerminalCore.printToWindow(`${error}`, false, true);
             }
