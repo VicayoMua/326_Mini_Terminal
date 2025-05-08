@@ -19,20 +19,22 @@ function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, 
         title.style.color = '#fff';
         divEditorWindowContainer.appendChild(title);
 
-        const textarea = document.createElement('textarea');
-        textarea.value = orginalFileContent;
-        textarea.rows = 20;
-        textarea.style.width = '100%';
-        textarea.style.boxSizing = 'border-box';
-        textarea.style.fontFamily = 'monospace';
-        textarea.style.fontSize = '14px';
-        textarea.style.marginTop = '10px';
-        textarea.style.backgroundColor = '#2e2e2e';
-        textarea.style.color = '#eee';
-        textarea.style.border = '1px solid #555';
-        textarea.style.padding = '10px';
-        textarea.style.borderRadius = '4px';
-        divEditorWindowContainer.appendChild(textarea);
+        // Editor container
+        const editorContainer = document.createElement('div');
+        editorContainer.style.height = '600px'; // Set height for the editor
+        divEditorWindowContainer.appendChild(editorContainer);
+        // Initialize Ace Editor
+        const editor = ace.edit(editorContainer); // Create Ace editor in the div container
+        editor.setValue(orginalFileContent);  // Set the initial content of the file
+        editor.setTheme("ace/theme/monokai");  // Set the theme for the editor
+        editor.session.setMode("ace/mode/javascript");  // Set the mode (e.g., JavaScript)
+        editor.setOptions({
+            fontSize: "14px",   // Set font size
+            showPrintMargin: false, // Disable the print margin
+            enableBasicAutocompletion: true, // Enable autocompletion
+            enableSnippets: true, // Enable code snippets
+            enableLiveAutocompletion: true // Enable live autocompletion
+        });
 
         const divButtons = document.createElement('div');
         divButtons.style.marginTop = '15px';
@@ -64,7 +66,7 @@ function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, 
             buttonToSave.style.marginRight = '10px';
             initializeButtonProperties(buttonToSave);
             buttonToSave.onclick = () => {
-                callbackToSaveFile(textarea.value);
+                callbackToSaveFile(editor.getValue());
                 divEditorWindowContainer.remove();
             };
             divButtons.appendChild(buttonToSave);
