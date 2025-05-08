@@ -1,23 +1,23 @@
 function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, callbackToSaveFile) {
-    const container = document.createElement('div');
-    container.style.position = 'fixed';
-    container.style.top = '50%';
-    container.style.left = '50%';
-    container.style.transform = 'translate(-50%, -50%)';
-    container.style.backgroundColor = '#1e1e1e';
-    container.style.padding = '20px';
-    container.style.border = '2px solid #888';
-    container.style.borderRadius = '8px';
-    container.style.zIndex = '9999';
-    container.style.color = '#eee';
-    container.style.width = '80%';
-    container.style.maxWidth = '800px';
+    const divEditorWindowContainer = document.createElement('div');
+    divEditorWindowContainer.style.position = 'fixed';
+    divEditorWindowContainer.style.top = '50%';
+    divEditorWindowContainer.style.left = '50%';
+    divEditorWindowContainer.style.transform = 'translate(-50%, -50%)';
+    divEditorWindowContainer.style.backgroundColor = '#1e1e1e';
+    divEditorWindowContainer.style.padding = '20px';
+    divEditorWindowContainer.style.border = '2px solid #888';
+    divEditorWindowContainer.style.borderRadius = '8px';
+    divEditorWindowContainer.style.zIndex = '9999';
+    divEditorWindowContainer.style.color = '#eee';
+    divEditorWindowContainer.style.width = '80%';
+    divEditorWindowContainer.style.maxWidth = '800px';
     {
         const title = document.createElement('h3');
         title.innerText = `Editing: ${fileName}`;
         title.style.marginTop = '0';
         title.style.color = '#fff';
-        container.appendChild(title);
+        divEditorWindowContainer.appendChild(title);
 
         const textarea = document.createElement('textarea');
         textarea.value = orginalFileContent;
@@ -32,43 +32,43 @@ function openFileEditor(HTMLDivForTerminalWindow, fileName, orginalFileContent, 
         textarea.style.border = '1px solid #555';
         textarea.style.padding = '10px';
         textarea.style.borderRadius = '4px';
-        container.appendChild(textarea);
+        divEditorWindowContainer.appendChild(textarea);
 
-        const buttons = document.createElement('div');
-        buttons.style.marginTop = '15px';
-        buttons.style.textAlign = 'right';
+        const divButtons = document.createElement('div');
+        divButtons.style.marginTop = '15px';
+        divButtons.style.textAlign = 'right';
         {
-            const saveBtn = document.createElement('button');
-            saveBtn.innerText = '💾 Save';
-            saveBtn.style.marginRight = '10px';
-            saveBtn.style.padding = '6px 12px';
-            saveBtn.style.borderRadius = '4px';
-            saveBtn.style.border = 'none';
-            saveBtn.style.cursor = 'pointer';
-            saveBtn.style.backgroundColor = '#4CAF50';
-            saveBtn.style.color = 'white';
-            saveBtn.onclick = () => {
+            const buttonToSave = document.createElement('button');
+            buttonToSave.innerText = '💾 Save';
+            buttonToSave.style.marginRight = '10px';
+            buttonToSave.style.padding = '6px 12px';
+            buttonToSave.style.borderRadius = '4px';
+            buttonToSave.style.border = 'none';
+            buttonToSave.style.cursor = 'pointer';
+            buttonToSave.style.backgroundColor = '#4CAF50';
+            buttonToSave.style.color = 'white';
+            buttonToSave.onclick = () => {
                 callbackToSaveFile(textarea.value);
-                container.remove();
+                divEditorWindowContainer.remove();
             };
-            buttons.appendChild(saveBtn);
+            divButtons.appendChild(buttonToSave);
 
-            const cancelBtn = document.createElement('button');
-            cancelBtn.innerText = '✖ Cancel';
-            cancelBtn.style.padding = '6px 12px';
-            cancelBtn.style.borderRadius = '4px';
-            cancelBtn.style.border = 'none';
-            cancelBtn.style.cursor = 'pointer';
-            cancelBtn.style.backgroundColor = '#f44336';
-            cancelBtn.style.color = 'white';
-            cancelBtn.onclick = () => {
-                container.remove();
+            const buttonToCancel = document.createElement('button');
+            buttonToCancel.innerText = '✖ Cancel';
+            buttonToCancel.style.padding = '6px 12px';
+            buttonToCancel.style.borderRadius = '4px';
+            buttonToCancel.style.border = 'none';
+            buttonToCancel.style.cursor = 'pointer';
+            buttonToCancel.style.backgroundColor = '#f44336';
+            buttonToCancel.style.color = 'white';
+            buttonToCancel.onclick = () => {
+                divEditorWindowContainer.remove();
             };
-            buttons.appendChild(cancelBtn);
+            divButtons.appendChild(buttonToCancel);
         }
-        container.appendChild(buttons);
+        divEditorWindowContainer.appendChild(divButtons);
     }
-    HTMLDivForTerminalWindow.appendChild(container);
+    HTMLDivForTerminalWindow.appendChild(divEditorWindowContainer);
 }
 
 
