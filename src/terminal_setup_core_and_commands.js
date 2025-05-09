@@ -591,12 +591,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentTerminalCore.getHTMLDivForTerminalWindow(),
                     fileName,
                     fileContent,
-                    (description, divWindow) => { // minimize
+                    (windowDescription, divAceEditorWindow, aceEditorObject) => { // minimize
                         const cmwr = currentTerminalCore.getMinimizedWindowRecords();
-                        cmwr.add(description, () => {
+                        cmwr.add(windowDescription, () => {
                             currentTerminalCore.setNewKeyboardListener((_) => {
                             });
-                            divWindow.style.display = '';
+                            divAceEditorWindow.style.display = '';
+                            aceEditorObject.focus();
                         });
                         currentTerminalCore.setDefaultKeyboardListener();
                     },

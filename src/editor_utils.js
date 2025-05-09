@@ -1,7 +1,7 @@
 function openFileEditor(
     HTMLDivForTerminalWindow,
     fileName, orginalFileContent,
-    callbackToMinimizeWindow, callbackToSaveFile, callbackToCancelEdit
+    callbackToRecoverMinimizedWindow, callbackToSaveFile, callbackToCancelEdit
 ) {
     const divAceEditorWindow = document.createElement('div');
     divAceEditorWindow.classList.add('ace-editor-window');
@@ -15,17 +15,13 @@ function openFileEditor(
         // Ace-Editor container
         const divAceEditorContainer = document.createElement('div');
         divAceEditorContainer.classList.add('ace-editor-container');
-        const aceEditor = ace.edit(divAceEditorContainer); // Create Ace editor in the div container
-        aceEditor.setValue(orginalFileContent);  // Set the initial content of the file
-        aceEditor.setTheme("ace/theme/monokai");  // Set the theme for the editor
-        aceEditor.session.setMode("ace/mode/javascript");  // Set the mode (e.g., JavaScript)
-        aceEditor.setOptions({
+        const aceEditorObject = ace.edit(divAceEditorContainer); // Create Ace editor in the div container
+        aceEditorObject.setValue(orginalFileContent);  // Set the initial content of the file
+        aceEditorObject.setOptions({
             fontSize: "14px",   // Set font size
             showPrintMargin: false, // Disable the print margin
-            enableBasicAutocompletion: true, // Enable autocompletion
-            enableSnippets: true, // Enable code snippets
-            enableLiveAutocompletion: true // Enable live autocompletion
         });
+        aceEditorObject.focus();
         divAceEditorWindow.appendChild(divAceEditorContainer);
 
         // exit buttons
@@ -36,7 +32,7 @@ function openFileEditor(
             minimizeButton.classList.add('ace-editor-minimize-button');
             minimizeButton.innerText = `🔽 Minimize`;
             minimizeButton.onclick = () => {
-                callbackToMinimizeWindow(`Editing File: ${fileName}`, divAceEditorWindow); // giving out info to recover the window
+                callbackToRecoverMinimizedWindow(`Editing File: ${fileName}`, divAceEditorWindow, aceEditorObject); // giving out info to recover the window
                 divAceEditorWindow.style.display = 'none'; // hide but not remove
             };
             divExitButtons.appendChild(minimizeButton);
@@ -45,7 +41,7 @@ function openFileEditor(
             saveButton.classList.add('ace-editor-save-button');
             saveButton.innerText = '💾 Save';
             saveButton.onclick = () => {
-                callbackToSaveFile(aceEditor.getValue());
+                callbackToSaveFile(aceEditorObject.getValue());
                 divAceEditorWindow.remove();
             };
             divExitButtons.appendChild(saveButton);
