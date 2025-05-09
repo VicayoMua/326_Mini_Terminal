@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 1: {
                     try {
                         currentTerminalCore.getCurrentFolderPointer().createNewFile(parameters[0]);
-                        currentTerminalCore.printToWindow(`Successfully create a file (${parameters[0]}).`, false, true);
+                        currentTerminalCore.printToWindow(`Successfully create a file.`, false, true);
                     } catch (error) {
                         currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
