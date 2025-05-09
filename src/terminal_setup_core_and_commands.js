@@ -68,11 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 fsRoot.files = {};
                 // rebuild the FolderObject tree
                 importFS(fsRoot, state);
-                // reset pointer and cwd
-                // currentTerminalFolderPointer.gotoRoot();
-                // const cwd = state.cwd.startsWith('/') ? state.cwd.slice(1) : state.cwd;
-                // if (cwd) currentTerminalFolderPointer.gotoPathFromRoot(cwd);
-                // console.log('✅ Terminal FS loaded from server');
             }
         } catch (e) {
             console.warn('Could not load FS from server', e);
