@@ -35,8 +35,8 @@ function openFileEditor(
             const minimizeButton = document.createElement('button');
             minimizeButton.classList.add('ace-editor-minimize-button');
             minimizeButton.innerText = `🔽 Minimize`;
-            minimizeButton.onclick = ()=>{
-                callbackToMinimizeWindow(`Editing File: ${fileName}`, divAceEditorWindow);
+            minimizeButton.onclick = () => {
+                callbackToMinimizeWindow(`Editing File: ${fileName}`, divAceEditorWindow); // giving out info to recover the window
                 divAceEditorWindow.style.display = 'none'; // hide but not remove
             };
             divExitButtons.appendChild(minimizeButton);
