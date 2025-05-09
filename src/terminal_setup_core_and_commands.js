@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         const cfp = currentTerminalCore.getCurrentFolderPointer();
                         cfp.createPath(parameters[0]);
-                        currentTerminalCore.printToWindow(`Successfully created the directory (Or the directory may have been existing).`, false, true);
+                        currentTerminalCore.printToWindow(`Successfully created a directory (Or the directory is already existing).`, false, true);
                     } catch (error) {
                         currentTerminalCore.printToWindow(`${error}`, false, true);
                     }
