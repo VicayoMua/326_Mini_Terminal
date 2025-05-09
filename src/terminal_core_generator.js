@@ -97,14 +97,18 @@ class TerminalFolderPointer {
             folderNames = Object.keys(this.#currentFolderObject.subfolders),
             fileNames = Object.keys(this.#currentFolderObject.files);
         if (folderNames.length > 0) {
-            contents += 'Folders:' + folderNames.reduce((acc, elem) =>
-                `${acc}\n            ${elem}`, '');
+            contents += 'Folders:' + folderNames.reduce(
+                (acc, elem) => `${acc}\n            ${elem}`,
+                ''
+            );
         }
         if (folderNames.length > 0 && fileNames.length > 0)
             contents += '\n';
         if (fileNames.length > 0) {
-            contents += 'Files:' + fileNames.reduce((acc, elem) =>
-                `${acc}\n            ${elem}`, '');
+            contents += 'Files:' + fileNames.reduce(
+                (acc, elem) => `${acc}\n            ${elem}`,
+                ''
+            );
         }
         return contents.length === 0 ? 'No file or folder existing here...' : contents;
     }
@@ -548,6 +552,39 @@ class TerminalFolderPointer {
 
 }
 
+class MinimizedWindowRecords {
+    #records;
+
+    constructor() {
+        this.#records = {};
+    }
+
+    add(description, windowRecoverCallback) {
+        if (this.#records[description] === undefined) {
+            this.#records[description] = windowRecoverCallback;
+        } else {
+            let index = 2;
+            let newDescription = null;
+            while (this.#records[newDescription = `${description} (${index})`] !== undefined)
+                index++;
+            this.#records[newDescription] = windowRecoverCallback;
+        }
+    }
+
+    getDescriptions() {
+        return Object.keys(this.#records);
+    }
+
+    getWindowRecoverCallback(description) {
+        return this.#records[description];
+    }
+
+    deleteDescription(description) {
+        if (this.#records[description] !== undefined)
+            delete this.#records[description];
+    }
+}
+
 function generateTerminalCore(xtermObj, HTMLDivElement_TerminalWindowContainer, fsRoot, supportedCommands) {
     // Put Terminal Window to Webpage Container
     xtermObj.open(HTMLDivElement_TerminalWindowContainer);
@@ -743,6 +780,10 @@ function generateTerminalCore(xtermObj, HTMLDivElement_TerminalWindowContainer, 
     xtermObj.write(` $ `);
     terminalLog.push(` $ `);
 
+    const terminalMinimizedWindowRecords = new MinimizedWindowRecords();
+
+    const terminalCacheSpace = {};
+
     // Securely Release the Terminal APIs
     return {
         /*
@@ -776,6 +817,8 @@ function generateTerminalCore(xtermObj, HTMLDivElement_TerminalWindowContainer, 
         getFitAddon: () => fitAddon,
         getTerminalLogString: () => terminalLog.reduce((acc, elem) => acc + elem, ''),
         getHTMLDivForTerminalWindow: () => HTMLDivElement_TerminalWindowContainer,
+        getCacheSpace: () => terminalCacheSpace,
+        getMinimizedWindowRecords: () => terminalMinimizedWindowRecords,
 
         /*
         *  Terminal File System Ports

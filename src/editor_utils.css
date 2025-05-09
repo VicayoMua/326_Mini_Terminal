@@ -22,13 +22,13 @@
     color: #fff;
 }
 
-.ace-editor-container{ /* row 2 */
+.ace-editor-container { /* row 2 */
     grid-column: 1/1;
     grid-row: 2/2;
     margin-top: 0;
 }
 
-.ace-editor-exit-buttons-container{  /* row 3 */
+.ace-editor-exit-buttons-container { /* row 3 */
     grid-column: 1/1;
     grid-row: 3/3;
     margin-top: 20px;
@@ -50,6 +50,11 @@
 
 .ace-editor-exit-buttons-container button:active {
     transform: translateY(0);
+}
+
+.ace-editor-minimize-button {
+    background-color: rebeccapurple;
+    margin-right: 20px; /* the gap between minimize and save buttons */
 }
 
 .ace-editor-save-button {

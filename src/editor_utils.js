@@ -1,7 +1,7 @@
 function openFileEditor(
     HTMLDivForTerminalWindow,
     fileName, orginalFileContent,
-    callbackToSaveFile, callbackToCancelEdit
+    callbackToMinimizeWindow, callbackToSaveFile, callbackToCancelEdit
 ) {
     const divAceEditorWindow = document.createElement('div');
     divAceEditorWindow.classList.add('ace-editor-window');
@@ -32,6 +32,15 @@ function openFileEditor(
         const divExitButtons = document.createElement('div');
         divExitButtons.classList.add('ace-editor-exit-buttons-container');
         {
+            const minimizeButton = document.createElement('button');
+            minimizeButton.classList.add('ace-editor-minimize-button');
+            minimizeButton.innerText = `🔽 Minimize`;
+            minimizeButton.onclick = ()=>{
+                callbackToMinimizeWindow(`Editing File: ${fileName}`, divAceEditorWindow);
+                divAceEditorWindow.style.display = 'none'; // hide but not remove
+            };
+            divExitButtons.appendChild(minimizeButton);
+
             const saveButton = document.createElement('button');
             saveButton.classList.add('ace-editor-save-button');
             saveButton.innerText = '💾 Save';

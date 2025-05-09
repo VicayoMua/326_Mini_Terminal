@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             switch (parameters.length) {
                 case 0: { // print current folder info
                     const cfp = currentTerminalCore.getCurrentFolderPointer();
-                    currentTerminalCore.printToWindow(`${cfp.getContentListAsString()}`, false, true);
+                    currentTerminalCore.printToWindow(cfp.getContentListAsString(), false, true);
                     break;
                 }
                 case 1: { // print the folder info of given path
@@ -551,7 +551,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         );
                     })();
                 }
-                // currentTerminalCore.printToWindow(`Successfully downloaded the path.`, false, true);
             } catch (error) {
                 currentTerminalCore.printToWindow(`${error}`, false, true);
             }
@@ -611,11 +610,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentTerminalCore.getHTMLDivForTerminalWindow(),
                     fileName,
                     fileContent,
-                    (newFileContent) => {
+                    (description, divWindow) => { // minimize
+                        const cmwr = currentTerminalCore.getMinimizedWindowRecords();
+                        cmwr.add(description, ()=>{
+                            currentTerminalCore.setNewKeyboardListener((_) => {});
+                            divWindow.style.display = '';
+                        });
+                        currentTerminalCore.setDefaultKeyboardListener();
+                    },
+                    (newFileContent) => { // save
                         tfp.changeFileContent(fileName, newFileContent);
                         currentTerminalCore.setDefaultKeyboardListener();
                     },
-                    () => {
+                    () => { // cancel
                         currentTerminalCore.setDefaultKeyboardListener();
                     }
                 );
@@ -624,7 +631,56 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentTerminalCore.printToWindow(`${error}`, false, true);
             }
         },
-        description: 'Edit an existing file.\nUsage: edit [file_path]'
+        description: 'Edit an existing file.\n' +
+            'Usage: edit [file_path]'
+    };
+
+    supportedCommands['mini'] = {
+        executable: (parameters) => {
+            if (
+                (parameters.length <= 0) ||
+                (parameters.length >= 3) || // length can only be 1 or 2
+                (parameters[0] !== '-l' && parameters[0] !== '-r') || // check the first parameter component
+                (parameters[0] === '-r' && parameters.length === 1) // check the second parameter component
+            ) {
+                currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: mini -l\n       mini -r [number]`, false, true);
+                return;
+            }
+            try {
+                if (parameters[0] === '-l') {
+                    // 'Folders:' + folderNames.reduce((acc, elem) =>
+                    //     `${acc}\n            ${elem}`, '');
+                    const cmwr = currentTerminalCore.getMinimizedWindowRecords();
+                    const cmwrDescriptions = cmwr.getDescriptions();
+                    if (cmwrDescriptions.length > 0){
+                        currentTerminalCore.printToWindow(
+                            'Minimized Windows:' + cmwrDescriptions.reduce(
+                                (acc, elem, index) => `${acc}\n                    [${index + 1}] ${elem}`, ''
+                            ),
+                            false,
+                            true
+                        );
+                    } else {
+                        currentTerminalCore.printToWindow('No window minimized...', false, true);
+                    }
+                } else if (parameters[0] === '-r') {
+                    const trueKeyIndex = Number.parseInt(parameters[1]) - 1;
+                    const cmwr = currentTerminalCore.getMinimizedWindowRecords();
+                    const cmwrDescriptions = cmwr.getDescriptions();
+                    if (Number.isNaN(trueKeyIndex) || trueKeyIndex < 0 || trueKeyIndex >= cmwrDescriptions.length) {
+                        currentTerminalCore.printToWindow('Wrong index!', false, true);
+                        return;
+                    }
+                    cmwr.getWindowRecoverCallback(cmwrDescriptions[trueKeyIndex])();
+                    cmwr.deleteDescription(cmwrDescriptions[trueKeyIndex]);
+                }
+            } catch (error) {
+                currentTerminalCore.printToWindow(`${error}`, false, true);
+            }
+        },
+        description: 'List all the minimized windows, or Re-open a minimized window.\n' +
+            'Usage: mini -l\n' +
+            '       mini -r [number]'
     };
 
     supportedCommands['webass'] = {
