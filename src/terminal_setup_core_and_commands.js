@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             theme_icon.innerHTML = document.body.classList.toggle('dark-body-mode') ? '☀️' : '🌙';
         };
     })();
-    document.getElementById('button_to_open_new_terminal_window').onclick = (() => {
+    document.getElementById('button_to_open_new_terminal_tab').onclick = (() => {
         const divTerminalContainer = document.getElementById('terminal-container');
         const navViewNavigation = document.getElementById('view-navigation');
         const terminalHTMLDivElements = [];
@@ -158,7 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 buttonNewTerminalViewNavigation.click();
         };
     })();
-    document.getElementById('button_to_open_new_terminal_window').click(); // auto-open window #1
+    document.getElementById('button_to_open_new_terminal_tab').click(); // auto-open window #1
+    document.getElementById('button_to_close_current_terminal_tab').onclick = () => {
+
+    };
     document.getElementById('button_to_download_terminal_log').onclick = () => {
         const
             url = URL.createObjectURL(new Blob([currentTerminalCore.getTerminalLogString()], {type: 'text/plain'})),
