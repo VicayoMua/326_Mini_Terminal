@@ -12,7 +12,7 @@
     border-radius: 8px;
     z-index: 9999; /* make the window always in the front */
     width: 60%;
-    height: 80%;
+    height: 60%;
 }
 
 .ace-editor-title { /* row 1 */
