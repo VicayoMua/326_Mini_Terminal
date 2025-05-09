@@ -1,21 +1,6 @@
-// import { showEditor, saveFSState } from './editor_utils.js';
-let
-    button_to_switch_theme = null,
-    button_to_open_new_terminal_window = null,
-    button_to_download_terminal_log = null,
-    button_to_add_local_file = null,
-    button_to_save_terminal_fs = null;
-
 // let _root = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    button_to_switch_theme = (() => {
-        const theme_icon = document.querySelector('label[for=\"body-theme-toggle\"]');
-        return () => {
-            theme_icon.innerHTML = document.body.classList.toggle('dark-body-mode') ? '☀️' : '🌙';
-        };
-    })();
-
     // export the full FS tree plus cwd
     function exportFS(root, cwd) {
         // serialize a FolderObject tree into plain JS objects
@@ -69,8 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // rebuild the FolderObject tree
                 importFS(fsRoot, state);
             }
-        } catch (e) {
-            console.warn('Could not load FS from server', e);
+        } catch (error) {
+            console.log(`Could not load FS from server ${error}`);
         }
     })();
 
@@ -78,7 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentTerminalCore = null;
 
     // Set Up Button Functions Links
-    button_to_open_new_terminal_window = (() => {
+    document.getElementById('button_to_switch_theme').onclick = (() => {
+        const theme_icon = document.querySelector('label[for=\"button_to_switch_theme\"]');
+        return () => {
+            theme_icon.innerHTML = document.body.classList.toggle('dark-body-mode') ? '☀️' : '🌙';
+        };
+    })();
+    document.getElementById('button_to_open_new_terminal_window').onclick = (() => {
         const divTerminalContainer = document.getElementById('terminal-container');
         const navViewNavigation = document.getElementById('view-navigation');
         const terminalHTMLDivElements = [];
@@ -167,10 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 buttonNewTerminalViewNavigation.click();
         };
     })();
-    // Automatically open one terminal window
-    button_to_open_new_terminal_window();
-
-    button_to_download_terminal_log = () => {
+    document.getElementById('button_to_open_new_terminal_window').click(); // auto-open window #1
+    document.getElementById('button_to_download_terminal_log').onclick = () => {
         const
             url = URL.createObjectURL(new Blob([currentTerminalCore.getTerminalLogString()], {type: 'text/plain'})),
             link = document.createElement('a');
@@ -179,8 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.click();
         URL.revokeObjectURL(url);
     };
-
-    button_to_add_local_file = () => {
+    document.getElementById('button_to_add_local_file').onclick = () => {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '';
@@ -216,9 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         input.click();
     };
-
-    // Save FS button handler
-    button_to_save_terminal_fs = () => {
+    document.getElementById('button_to_save_terminal_fs').onclick = () => {
         try {
             supportedCommands['save'].executable();
         } catch (error) {
@@ -607,8 +593,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     fileContent,
                     (description, divWindow) => { // minimize
                         const cmwr = currentTerminalCore.getMinimizedWindowRecords();
-                        cmwr.add(description, ()=>{
-                            currentTerminalCore.setNewKeyboardListener((_) => {});
+                        cmwr.add(description, () => {
+                            currentTerminalCore.setNewKeyboardListener((_) => {
+                            });
                             divWindow.style.display = '';
                         });
                         currentTerminalCore.setDefaultKeyboardListener();
@@ -647,7 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     //     `${acc}\n            ${elem}`, '');
                     const cmwr = currentTerminalCore.getMinimizedWindowRecords();
                     const cmwrDescriptions = cmwr.getDescriptions();
-                    if (cmwrDescriptions.length > 0){
+                    if (cmwrDescriptions.length > 0) {
                         currentTerminalCore.printToWindow(
                             'Minimized Windows:' + cmwrDescriptions.reduce(
                                 (acc, elem, index) => `${acc}\n                    [${index + 1}] ${elem}`, ''
@@ -666,8 +653,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         currentTerminalCore.printToWindow('Wrong index!', false, true);
                         return;
                     }
-                    cmwr.getWindowRecoverCallback(cmwrDescriptions[trueKeyIndex])();
-                    cmwr.deleteDescription(cmwrDescriptions[trueKeyIndex]);
+                    if (!cmwr.recoverWindow(cmwrDescriptions[trueKeyIndex])){
+                        currentTerminalCore.printToWindow('Unexpected error, failed to recover the minimized window.', false, true);
+                    }
                 }
             } catch (error) {
                 currentTerminalCore.printToWindow(`${error}`, false, true);
@@ -922,10 +910,10 @@ document.addEventListener('DOMContentLoaded', () => {
             })
                 .then(res => {
                     if (!res.ok) throw new Error(res.statusText);
-                    currentTerminalCore.printToWindow('✅ Saved to SQLite', false, true);
+                    console.log('✅ Saved to SQLite');
                 })
                 .catch(err => {
-                    currentTerminalCore.printToWindow(`Save failed: ${err}`, false, true);
+                    console.log(`Save failed: ${err}`);
                 });
         }
     };

@@ -47,7 +47,7 @@ body {
     color: var(--text-color);
 }
 
-.body-theme-toggle {
+.button_to_switch_theme {
     position: absolute;
     top: 10px;
     right: 15px;

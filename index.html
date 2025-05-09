@@ -38,8 +38,8 @@
         <h1>Mini Terminal</h1>
     </div>
 
-    <input type="button" id="body-theme-toggle" onclick="button_to_switch_theme()" hidden>
-    <label for="body-theme-toggle" class="body-theme-toggle">🌙</label>
+    <input type="button" id="button_to_switch_theme" hidden>
+    <label for="button_to_switch_theme" class="button_to_switch_theme">🌙</label>
 
     <nav class="view-navigation" id="view-navigation">
 <!--        <button-->
@@ -57,22 +57,22 @@
     <div class="additional-buttons">
         <button
                 type="button"
-                onclick="button_to_open_new_terminal_window()">
+                id="button_to_open_new_terminal_window">
             Open New Terminal Window
         </button>
         <button
                 type="button"
-                onclick="button_to_download_terminal_log()">
+                id="button_to_download_terminal_log">
             Download Terminal Log
         </button>
         <button
                 type="button"
-                onclick="button_to_add_local_file()">
+                id="button_to_add_local_file">
             Add Local File (To Current Directory)
         </button>
         <button
                 type="button"
-                onclick="button_to_save_terminal_fs()">
+                id="button_to_save_terminal_fs">
             Save Terminal File System
         </button>
     </div>
@@ -114,7 +114,9 @@
         20 - ping
 
     Challenging:
-        1 - make the window minimizable (using display hidings).
-        2 - handle more keyboard inputs: direction arrows, and tab (mute all other inputs...)
+        0 - window size long-then-short auto-fit issues.
+        1 - make editor window size changeable.
+        2 - solve issues with "add local file button" for PDF files.
+        3 - handle more keyboard inputs: direction arrows, and tab (mute all other inputs...)
 
 -->

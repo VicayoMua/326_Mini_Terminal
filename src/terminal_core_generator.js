@@ -575,13 +575,13 @@ class MinimizedWindowRecords {
         return Object.keys(this.#records);
     }
 
-    getWindowRecoverCallback(description) {
-        return this.#records[description];
-    }
-
-    deleteDescription(description) {
-        if (this.#records[description] !== undefined)
+    recoverWindow(description) {
+        if (this.#records[description] !== undefined) {
+            this.#records[description]();
             delete this.#records[description];
+            return true;
+        }
+        return false;
     }
 }
 
