@@ -74,16 +74,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const navViewNavigation = document.getElementById('view-navigation');
         const terminalHTMLDivElements = [];
         const terminalHTMLButtonElements = [];
-        let windowCount = 0;
+        let tabCount = 0;
         return () => {
-            if (windowCount === 8) {
-                alert('You can open at most 8 terminal windows.');
+            if (tabCount === 8) {
+                alert('You can open at most 8 terminal tabs.');
                 return;
             }
-            windowCount++;
+            tabCount++;
             const divNewTerminalHTMLDivElement = document.createElement('div');
-            divNewTerminalHTMLDivElement.setAttribute('class', 'terminal-window');
-            divNewTerminalHTMLDivElement.setAttribute('id', `terminal-window-${windowCount}`);
+            divNewTerminalHTMLDivElement.setAttribute('class', 'terminal-tab');
+            divNewTerminalHTMLDivElement.setAttribute('id', `terminal-tab-${tabCount}`);
             divNewTerminalHTMLDivElement.style.display = 'none';
             divTerminalContainer.appendChild(divNewTerminalHTMLDivElement);
             terminalHTMLDivElements.push(divNewTerminalHTMLDivElement);
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const buttonNewTerminalViewNavigation = document.createElement('button');
             buttonNewTerminalViewNavigation.type = 'button';
-            buttonNewTerminalViewNavigation.textContent = `{ Window #${windowCount} }`;
+            buttonNewTerminalViewNavigation.textContent = `{ Tab #${tabCount} }`;
             buttonNewTerminalViewNavigation.style.fontWeight = 'normal';
             buttonNewTerminalViewNavigation.addEventListener('mouseover', () => {
                 buttonNewTerminalViewNavigation.style.textDecoration = 'underline';
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     for (const button of terminalHTMLButtonElements)
                         button.style.fontWeight = 'normal';
                     buttonNewTerminalViewNavigation.style.fontWeight = 'bold';
-                    // switch the terminal window view
+                    // switch the terminal tab view
                     for (const div of terminalHTMLDivElements)
                         div.style.display = 'none';
                     divNewTerminalHTMLDivElement.style.display = 'block';
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             navViewNavigation.appendChild(buttonNewTerminalViewNavigation);
             terminalHTMLButtonElements.push(buttonNewTerminalViewNavigation);
-            if (currentTerminalCore === null) // if the terminal window is <Window #1>
+            if (currentTerminalCore === null) // if the terminal tab is <Tab #1>
                 buttonNewTerminalViewNavigation.click();
         };
     })();
