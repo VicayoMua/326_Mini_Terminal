@@ -666,239 +666,239 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         description: 'List all the minimized windows, or Re-open a minimized window.\n' +
-            'Usage: mini -l\n' +
-            '       mini -r [number]'
+            'Usage: mini -l             to list all the minimized windows\n' +
+            '       mini -r [number]    to recover the minimized window',
     };
 
-    supportedCommands['webass'] = {
-        executable: (parameters) => {
-        },
-        description: ''
-    }
+    // supportedCommands['webass'] = {
+    //     executable: (parameters) => {
+    //     },
+    //     description: ''
+    // }
 
     // Update Needed
-    supportedCommands['wget'] = {
-        executable: (parameters) => {
-            switch (parameters.length) {
-                case 1: {
-                    const url = parameters[0];
-                    // Example URL: https://static.vecteezy.com/system/resources/previews/036/333/113/large_2x/monarch-beautiful-butterflygraphy-beautiful-butterfly-on-flower-macrography-beautyful-nature-photo.jpg
-                    try {
-                        fetch(url)
-                            .then((response) => {
-                                if (!response.ok) {
-                                    throw new Error(`Could not find ${parameters[0]}`);
-                                }
-                                return response.text();
-                            })
-                            .then((text) => {
-                                const
-                                    date = new Date(),
-                                    filename = `wget_${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}''_${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`;
-                                currentTerminalCore.getCurrentFolderPointer().changeFileContent(
-                                    filename,
-                                    text
-                                );
-                                currentTerminalCore.printToWindow(`Success!`, false, true);
-                            });
-                    } catch (error) {
-                        currentTerminalCore.printToWindow(`${error}`, false, true);
-                    }
-                    break;
-                }
-                default: {
-                    currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: wget [html_link]`, false, true);
-                }
-            }
-        },
-        description: 'Download file from html link.\nUsage: wget [html_link]'
-    };
-
-    // Update Needed
-    supportedCommands['ping'] = {
-        executable: (parameters) => {
-            if (parameters.length === 0) {
-                currentTerminalCore.printToWindow(`Usage: ping [hostname]`, false, true);
-                return;
-            }
-
-            const fullCommand = `ping -c 4 ${parameters.join(' ')}`;
-            currentTerminalCore.printToWindow(`Running: ${fullCommand}\n`, false, true);
-
-            fetch('http://localhost:3000/api/run', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({command: fullCommand})
-            })
-                .then(res => res.text())
-                .then(output => {
-                    currentTerminalCore.printToWindow(output, false, true);
-                })
-                .catch(err => {
-                    currentTerminalCore.printToWindow(`Error executing ping: ${err}`, false, true);
-                });
-        },
-        description: 'Ping a domain or IP address.\nUsage: ping [hostname]'
-    };
-
-    // Update Needed
-    supportedCommands['curl'] = {
-        executable: (params) => {
-            // Validate
-            if (params.length !== 1) {
-                currentTerminalCore.printToWindow('Usage: curl [url]\n', false, true);
-                return;
-            }
-            // Pull the URL from params
-            const url = params[0];
-
-            // Print a fetch banner
-            currentTerminalCore.printToWindow(`Fetching ${url} …\n`, false, true);
-
-            fetch(`http://localhost:3000/api/proxy?url=${encodeURIComponent(url)}`)
-                .then(res => {
-                    // 5) Print status + headers
-                    currentTerminalCore.printToWindow(
-                        `$ HTTP ${res.status} ${res.statusText}` +
-                        [...res.headers.entries()]
-                            .map(([k, v]) => `\n${k}: ${v}`)
-                            .join('') +
-                        `\n\n`,
-                        false,
-                        true
-                    );
-                    // Return the body text
-                    return res.text();
-                })
-                .then(body => {
-                    // Print the HTML snippet
-                    const snippet = body.slice(0, 1000);
-                    currentTerminalCore.printToWindow(
-                        snippet + (body.length > 1000 ? '\n...[truncated]\n' : '\n'),
-                        false,
-                        true
-                    );
-                })
-                .catch(err => {
-                    currentTerminalCore.printToWindow(`curl failed: ${err.message}\n`, false, true);
-                });
-        },
-        description: 'Fetch a URL via your server proxy and show status, headers & a 1 000-char body snippet'
-    };
-
-    // Update Needed
-    supportedCommands['files'] = {
-        executable: (params) => {
-            const fp = currentTerminalCore.getCurrentFolderPointer();
-            const [action, ...rest] = params;
-
-            switch (action) {
-                case 'list': {
-                    // show folders and files in current dir
-                    const folders = fp.getSubfolderNames();
-                    const files = fp.getFileNames();
-                    currentTerminalCore.printToWindow(
-                        `Folders:\n  ${folders.join('\n  ')}\n\n` +
-                        `Files:\n  ${files.join('\n  ')}\n`,
-                        false, true
-                    );
-                    break;
-                }
-
-                case 'read': {
-                    // files read <filename>
-                    if (rest.length !== 1) {
-                        currentTerminalCore.printToWindow('Usage: files read <path>\n', false, true);
-                        return;
-                    }
-                    try {
-                        const content = fp.getFileContent(rest[0]);
-                        currentTerminalCore.printToWindow(content + '\n', false, true);
-                    } catch (e) {
-                        currentTerminalCore.printToWindow(`files read failed: ${e.message}\n`, false, true);
-                    }
-                    break;
-                }
-
-                case 'create': {
-                    // files create <filename> [initial content...]
-                    if (rest.length < 1) {
-                        currentTerminalCore.printToWindow('Usage: files create <path> [content]\n', false, true);
-                        return;
-                    }
-                    const [path, ...txt] = rest;
-                    try {
-                        fp.createNewFile(path);
-                        if (txt.length) fp.changeFileContent(path, txt.join(' '));
-                        currentTerminalCore.printToWindow(`Created ${path}\n`, false, true);
-                    } catch (e) {
-                        currentTerminalCore.printToWindow(`files create failed: ${e.message}\n`, false, true);
-                    }
-                    break;
-                }
-
-                case 'update': {
-                    // files update <filename> <new content...>
-                    if (rest.length < 2) {
-                        currentTerminalCore.printToWindow('Usage: files update <path> <content>\n', false, true);
-                        return;
-                    }
-                    const [path, ...txt] = rest;
-                    try {
-                        fp.changeFileContent(path, txt.join(' '));
-                        currentTerminalCore.printToWindow(`Updated ${path}\n`, false, true);
-                    } catch (e) {
-                        currentTerminalCore.printToWindow(`files update failed: ${e.message}\n`, false, true);
-                    }
-                    break;
-                }
-
-                case 'delete': {
-                    // files delete <filename>
-                    if (rest.length !== 1) {
-                        currentTerminalCore.printToWindow('Usage: files delete <path>\n', false, true);
-                        return;
-                    }
-                    try {
-                        fp.deleteFile(rest[0]);
-                        currentTerminalCore.printToWindow(`Deleted ${rest[0]}\n`, false, true);
-                    } catch (e) {
-                        currentTerminalCore.printToWindow(`files delete failed: ${e.message}\n`, false, true);
-                    }
-                    break;
-                }
-
-                case 'rename': {
-                    // files rename <oldName> <newName>
-                    if (rest.length !== 2) {
-                        currentTerminalCore.printToWindow('Usage: files rename <old> <new>\n', false, true);
-                        return;
-                    }
-                    try {
-                        fp.renameExistingFile(rest[0], rest[1]);
-                        currentTerminalCore.printToWindow(`Renamed ${rest[0]} → ${rest[1]}\n`, false, true);
-                    } catch (e) {
-                        currentTerminalCore.printToWindow(`files rename failed: ${e.message}\n`, false, true);
-                    }
-                    break;
-                }
-
-                default:
-                    currentTerminalCore.printToWindow(
-                        'Usage: files <list|read|create|update|delete|rename> [args]\n',
-                        false, true
-                    );
-            }
-        },
-        description:
-            'Virtual-FS CRUD operations:\n' +
-            '  files list\n' +
-            '  files read <path>\n' +
-            '  files create <path> [content]\n' +
-            '  files update <path> <content>\n' +
-            '  files delete <path>\n' +
-            '  files rename <old> <new>'
-    };
+    // supportedCommands['wget'] = {
+    //     executable: (parameters) => {
+    //         switch (parameters.length) {
+    //             case 1: {
+    //                 const url = parameters[0];
+    //                 // Example URL: https://static.vecteezy.com/system/resources/previews/036/333/113/large_2x/monarch-beautiful-butterflygraphy-beautiful-butterfly-on-flower-macrography-beautyful-nature-photo.jpg
+    //                 try {
+    //                     fetch(url)
+    //                         .then((response) => {
+    //                             if (!response.ok) {
+    //                                 throw new Error(`Could not find ${parameters[0]}`);
+    //                             }
+    //                             return response.text();
+    //                         })
+    //                         .then((text) => {
+    //                             const
+    //                                 date = new Date(),
+    //                                 filename = `wget_${date.getHours()}-${date.getMinutes()}'-${date.getSeconds()}''_${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.txt`;
+    //                             currentTerminalCore.getCurrentFolderPointer().changeFileContent(
+    //                                 filename,
+    //                                 text
+    //                             );
+    //                             currentTerminalCore.printToWindow(`Success!`, false, true);
+    //                         });
+    //                 } catch (error) {
+    //                     currentTerminalCore.printToWindow(`${error}`, false, true);
+    //                 }
+    //                 break;
+    //             }
+    //             default: {
+    //                 currentTerminalCore.printToWindow(`Wrong grammar!\nUsage: wget [html_link]`, false, true);
+    //             }
+    //         }
+    //     },
+    //     description: 'Download file from html link.\nUsage: wget [html_link]'
+    // };
+    //
+    // // Update Needed
+    // supportedCommands['ping'] = {
+    //     executable: (parameters) => {
+    //         if (parameters.length === 0) {
+    //             currentTerminalCore.printToWindow(`Usage: ping [hostname]`, false, true);
+    //             return;
+    //         }
+    //
+    //         const fullCommand = `ping -c 4 ${parameters.join(' ')}`;
+    //         currentTerminalCore.printToWindow(`Running: ${fullCommand}\n`, false, true);
+    //
+    //         fetch('http://localhost:3000/api/run', {
+    //             method: 'POST',
+    //             headers: {'Content-Type': 'application/json'},
+    //             body: JSON.stringify({command: fullCommand})
+    //         })
+    //             .then(res => res.text())
+    //             .then(output => {
+    //                 currentTerminalCore.printToWindow(output, false, true);
+    //             })
+    //             .catch(err => {
+    //                 currentTerminalCore.printToWindow(`Error executing ping: ${err}`, false, true);
+    //             });
+    //     },
+    //     description: 'Ping a domain or IP address.\nUsage: ping [hostname]'
+    // };
+    //
+    // // Update Needed
+    // supportedCommands['curl'] = {
+    //     executable: (params) => {
+    //         // Validate
+    //         if (params.length !== 1) {
+    //             currentTerminalCore.printToWindow('Usage: curl [url]\n', false, true);
+    //             return;
+    //         }
+    //         // Pull the URL from params
+    //         const url = params[0];
+    //
+    //         // Print a fetch banner
+    //         currentTerminalCore.printToWindow(`Fetching ${url} …\n`, false, true);
+    //
+    //         fetch(`http://localhost:3000/api/proxy?url=${encodeURIComponent(url)}`)
+    //             .then(res => {
+    //                 // 5) Print status + headers
+    //                 currentTerminalCore.printToWindow(
+    //                     `$ HTTP ${res.status} ${res.statusText}` +
+    //                     [...res.headers.entries()]
+    //                         .map(([k, v]) => `\n${k}: ${v}`)
+    //                         .join('') +
+    //                     `\n\n`,
+    //                     false,
+    //                     true
+    //                 );
+    //                 // Return the body text
+    //                 return res.text();
+    //             })
+    //             .then(body => {
+    //                 // Print the HTML snippet
+    //                 const snippet = body.slice(0, 1000);
+    //                 currentTerminalCore.printToWindow(
+    //                     snippet + (body.length > 1000 ? '\n...[truncated]\n' : '\n'),
+    //                     false,
+    //                     true
+    //                 );
+    //             })
+    //             .catch(err => {
+    //                 currentTerminalCore.printToWindow(`curl failed: ${err.message}\n`, false, true);
+    //             });
+    //     },
+    //     description: 'Fetch a URL via your server proxy and show status, headers & a 1 000-char body snippet'
+    // };
+    //
+    // // Update Needed
+    // supportedCommands['files'] = {
+    //     executable: (params) => {
+    //         const fp = currentTerminalCore.getCurrentFolderPointer();
+    //         const [action, ...rest] = params;
+    //
+    //         switch (action) {
+    //             case 'list': {
+    //                 // show folders and files in current dir
+    //                 const folders = fp.getSubfolderNames();
+    //                 const files = fp.getFileNames();
+    //                 currentTerminalCore.printToWindow(
+    //                     `Folders:\n  ${folders.join('\n  ')}\n\n` +
+    //                     `Files:\n  ${files.join('\n  ')}\n`,
+    //                     false, true
+    //                 );
+    //                 break;
+    //             }
+    //
+    //             case 'read': {
+    //                 // files read <filename>
+    //                 if (rest.length !== 1) {
+    //                     currentTerminalCore.printToWindow('Usage: files read <path>\n', false, true);
+    //                     return;
+    //                 }
+    //                 try {
+    //                     const content = fp.getFileContent(rest[0]);
+    //                     currentTerminalCore.printToWindow(content + '\n', false, true);
+    //                 } catch (e) {
+    //                     currentTerminalCore.printToWindow(`files read failed: ${e.message}\n`, false, true);
+    //                 }
+    //                 break;
+    //             }
+    //
+    //             case 'create': {
+    //                 // files create <filename> [initial content...]
+    //                 if (rest.length < 1) {
+    //                     currentTerminalCore.printToWindow('Usage: files create <path> [content]\n', false, true);
+    //                     return;
+    //                 }
+    //                 const [path, ...txt] = rest;
+    //                 try {
+    //                     fp.createNewFile(path);
+    //                     if (txt.length) fp.changeFileContent(path, txt.join(' '));
+    //                     currentTerminalCore.printToWindow(`Created ${path}\n`, false, true);
+    //                 } catch (e) {
+    //                     currentTerminalCore.printToWindow(`files create failed: ${e.message}\n`, false, true);
+    //                 }
+    //                 break;
+    //             }
+    //
+    //             case 'update': {
+    //                 // files update <filename> <new content...>
+    //                 if (rest.length < 2) {
+    //                     currentTerminalCore.printToWindow('Usage: files update <path> <content>\n', false, true);
+    //                     return;
+    //                 }
+    //                 const [path, ...txt] = rest;
+    //                 try {
+    //                     fp.changeFileContent(path, txt.join(' '));
+    //                     currentTerminalCore.printToWindow(`Updated ${path}\n`, false, true);
+    //                 } catch (e) {
+    //                     currentTerminalCore.printToWindow(`files update failed: ${e.message}\n`, false, true);
+    //                 }
+    //                 break;
+    //             }
+    //
+    //             case 'delete': {
+    //                 // files delete <filename>
+    //                 if (rest.length !== 1) {
+    //                     currentTerminalCore.printToWindow('Usage: files delete <path>\n', false, true);
+    //                     return;
+    //                 }
+    //                 try {
+    //                     fp.deleteFile(rest[0]);
+    //                     currentTerminalCore.printToWindow(`Deleted ${rest[0]}\n`, false, true);
+    //                 } catch (e) {
+    //                     currentTerminalCore.printToWindow(`files delete failed: ${e.message}\n`, false, true);
+    //                 }
+    //                 break;
+    //             }
+    //
+    //             case 'rename': {
+    //                 // files rename <oldName> <newName>
+    //                 if (rest.length !== 2) {
+    //                     currentTerminalCore.printToWindow('Usage: files rename <old> <new>\n', false, true);
+    //                     return;
+    //                 }
+    //                 try {
+    //                     fp.renameExistingFile(rest[0], rest[1]);
+    //                     currentTerminalCore.printToWindow(`Renamed ${rest[0]} → ${rest[1]}\n`, false, true);
+    //                 } catch (e) {
+    //                     currentTerminalCore.printToWindow(`files rename failed: ${e.message}\n`, false, true);
+    //                 }
+    //                 break;
+    //             }
+    //
+    //             default:
+    //                 currentTerminalCore.printToWindow(
+    //                     'Usage: files <list|read|create|update|delete|rename> [args]\n',
+    //                     false, true
+    //                 );
+    //         }
+    //     },
+    //     description:
+    //         'Virtual-FS CRUD operations:\n' +
+    //         '  files list\n' +
+    //         '  files read <path>\n' +
+    //         '  files create <path> [content]\n' +
+    //         '  files update <path> <content>\n' +
+    //         '  files delete <path>\n' +
+    //         '  files rename <old> <new>'
+    // };
 
     // Update Needed
     supportedCommands['save'] = {
